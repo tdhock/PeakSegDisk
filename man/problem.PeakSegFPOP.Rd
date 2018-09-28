@@ -71,14 +71,17 @@ changes <- fit$segments[, list(
   constraint=ifelse(diff(mean)==0, "equality", "inequality"),
   chromStart=chromEnd[-1],
   chromEnd=chromEnd[-1])]
-ggplot()+
-  theme_bw()+
-  penaltyLearning::geom_tallrect(aes(
-    xmin=chromStart, xmax=chromEnd,
-    fill=annotation),
-    color="grey",
-    data=Mono27ac$labels)+
-  scale_fill_manual("label", values=ann.colors)+
+gg <- ggplot()+theme_bw()
+if(require(penaltyLearning)){
+  gg <- gg+
+    geom_tallrect(aes(
+      xmin=chromStart, xmax=chromEnd,
+      fill=annotation),
+      color="grey",
+      data=Mono27ac$labels)+
+    scale_fill_manual("label", values=ann.colors)
+}
+gg <- gg+
   geom_step(aes(
     chromStart, count),
     color="grey50",
