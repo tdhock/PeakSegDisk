@@ -1,3 +1,7 @@
 28 Sept 2018
 
-Forking from PeakSegPipeline.
+Forked from PeakSegPipeline.
+
+problem.PeakSegFPOP: before was checking start/end pos in segments
+file with start/end pos in directory name. Now checking first/last
+line in coverage.bedGraph. No longer import namedCapture.
