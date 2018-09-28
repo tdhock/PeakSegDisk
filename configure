@@ -1,0 +1,7 @@
+#!/bin/bash
+curl -OL http://download.oracle.com/berkeley-db/db-6.2.23.NC.tar.gz
+tar xf db-6.2.23.NC.tar.gz
+cd db-6.2.23.NC/build_unix
+../dist/configure --prefix=$R_PACKAGE_DIR --enable-stl
+make
+make install

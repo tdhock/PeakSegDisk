@@ -1,2 +1,4 @@
+PKG_CPPFLAGS=-I${R_PACKAGE_DIR}/include
+PKG_LDFLAGS=-L${R_PACKAGE_DIR}/lib -Wl,-rpath=${R_PACKAGE_DIR}/lib
 CXX_STD = CXX11 
 PKG_LIBS = -ldb_stl
