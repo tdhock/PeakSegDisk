@@ -48,7 +48,7 @@ creates a large temporary file in the same directory, so make sure
 that there is disk space available on that device.}
   \item{pen.str}{character scalar that can be converted to a numeric scalar via
 as.numeric: non-negative penalty. More penalty means fewer
-peaks. 0 and Inf are OK. Character is required rather than
+peaks. "0" and "Inf" are OK. Character is required rather than
 numeric, so that the user can reliably find the results in the
 output files, which are in the same directory as bedGraph.file,
 and named using the penalty value,

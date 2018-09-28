@@ -12,7 +12,10 @@ that can save a lot of time.}
   \item{problem.dir}{Path to a directory like sampleID/problems/problemID which
 contains a coverage.bedGraph file with the aligned read counts for
 one genomic segmentation problem.}
-  \item{penalty.str}{Penalty parameter to pass to PeakSegFPOP_disk.}
+  \item{penalty.str}{character which can be interpreted as a non-negative numeric
+penalty parameter (larger values for fewer peaks). "0" means max
+peaks, "Inf" means no peaks. Needs to be a character because that
+is used to create files which cache/store the optimal solution.}
 }
 
 \value{List of data.tables: segments has one row for every segment in the
@@ -64,9 +67,6 @@ ann.colors <- c(
 library(ggplot2)
 lab.min <- Mono27ac$labels[1, chromStart]
 lab.max <- Mono27ac$labels[.N, chromEnd]
-in.labels <- function(dt){
-  dt[lab.min < chromEnd & chromStart < lab.max]
-}
 changes <- fit$segments[, list(
   constraint=ifelse(diff(mean)==0, "equality", "inequality"),
   chromStart=chromEnd[-1],
@@ -85,24 +85,27 @@ gg <- gg+
   geom_step(aes(
     chromStart, count),
     color="grey50",
-    data=in.labels(Mono27ac$coverage))+
+    data=Mono27ac$coverage)+
   geom_segment(aes(
     chromStart, mean,
     xend=chromEnd, yend=mean),
     color="green",
     size=1,
-    data=in.labels(fit$segments))+
+    data=fit$segments)+
   geom_segment(aes(
     chromStart, mean,
     xend=chromEnd, yend=mean),
     color="green",
     size=1,
-    data=in.labels(fit$segments))+
+    data=fit$segments)+
   geom_vline(aes(
     xintercept=chromEnd, linetype=constraint),
     color="green",
-    data=in.labels(changes))+
-  scale_linetype_manual(values=c(inequality="dotted", equality="solid"))+
+    data=changes)+
+  scale_linetype_manual(values=c(inequality="dotted", equality="solid"))
+gg
+
+gg+
   coord_cartesian(xlim=c(lab.min, lab.max))
 
 }

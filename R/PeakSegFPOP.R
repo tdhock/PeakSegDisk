@@ -57,7 +57,7 @@ PeakSegFPOP_disk <- structure(function # PeakSegFPOP on disk
   pen.str
 ### character scalar that can be converted to a numeric scalar via
 ### as.numeric: non-negative penalty. More penalty means fewer
-### peaks. 0 and Inf are OK. Character is required rather than
+### peaks. "0" and "Inf" are OK. Character is required rather than
 ### numeric, so that the user can reliably find the results in the
 ### output files, which are in the same directory as bedGraph.file,
 ### and named using the penalty value,
@@ -144,7 +144,10 @@ problem.PeakSegFPOP <- structure(function
 ### contains a coverage.bedGraph file with the aligned read counts for
 ### one genomic segmentation problem.
  penalty.str
-### Penalty parameter to pass to PeakSegFPOP_disk.
+### character which can be interpreted as a non-negative numeric
+### penalty parameter (larger values for fewer peaks). "0" means max
+### peaks, "Inf" means no peaks. Needs to be a character because that
+### is used to create files which cache/store the optimal solution.
  ){
   stopifnot(is.character(problem.dir))
   stopifnot(length(problem.dir)==1)
@@ -158,32 +161,35 @@ problem.PeakSegFPOP <- structure(function
   already.computed <- tryCatch({
     timing <- fread(penalty_timing.tsv)
     setnames(timing, c("penalty", "megabytes", "seconds"))
-    first.line <- fread(paste("head -1", penalty_segments.bed))
-    setnames(first.line, c("chrom", "chromStart", "chromEnd", "status", "mean"))
-    last.line <- fread(paste("tail -1", penalty_segments.bed))
-    setnames(last.line, c("chrom", "chromStart", "chromEnd", "status", "mean"))
+    first.seg.line <- fread(paste("head -1", penalty_segments.bed))
+    setnames(
+      first.seg.line,
+      c("chrom", "chromStart", "chromEnd", "status", "mean"))
+    last.seg.line <- fread(paste("tail -1", penalty_segments.bed))
+    setnames(
+      last.seg.line,
+      c("chrom", "chromStart", "chromEnd", "status", "mean"))
+    first.cov.line <- fread(paste("head -1", prob.cov.bedGraph))
+    setnames(
+      first.cov.line,
+      c("chrom", "chromStart", "chromEnd", "count"))
+    last.cov.line <- fread(paste("tail -1", prob.cov.bedGraph))
+    setnames(
+      last.cov.line,
+      c("chrom", "chromStart", "chromEnd", "count"))
     penalty.loss <- fread(penalty_loss.tsv)
     setnames(penalty.loss, c(
       "penalty", "segments", "peaks", "bases",
       "mean.pen.cost", "total.loss", "equality.constraints",
       "mean.intervals", "max.intervals"))
     loss.segments.consistent <-
-      first.line$chromEnd-last.line$chromStart == penalty.loss$bases
-    pattern <- paste0(
-      "(?<chrom>chr[^:]+)",
-      ":",
-      "(?<chromStart>[0-9]+)",
-      "-",
-      "(?<chromEnd>[0-9]+)")
-    problem.base <- basename(problem.dir)
-    problem <- namedCapture::str_match_named(problem.base, pattern, list(
-      chromStart=as.integer,
-      chromEnd=as.integer))
-    if(is.na(problem$chrom)){
-      stop("problem.dir=", problem.base, " does not match regex ", pattern)
-    }
-    start.ok <- problem$chromStart == last.line$chromStart
-    end.ok <- problem$chromEnd == first.line$chromEnd
+      first.seg.line$chromEnd-last.seg.line$chromStart == penalty.loss$bases
+    ## segments files are written by decoding/backtracking after
+    ## dynamic progamming, so it is normal that the first line of the
+    ## segment file is actually the last segment in terms of position
+    ## on the chromosome.
+    start.ok <- first.cov.line$chromStart == last.seg.line$chromStart
+    end.ok <- last.cov.line$chromEnd == first.seg.line$chromEnd
     loss.segments.consistent && start.ok && end.ok
   }, error=function(e){
     FALSE
@@ -264,9 +270,6 @@ problem.PeakSegFPOP <- structure(function
   library(ggplot2)
   lab.min <- Mono27ac$labels[1, chromStart]
   lab.max <- Mono27ac$labels[.N, chromEnd]
-  in.labels <- function(dt){
-    dt[lab.min < chromEnd & chromStart < lab.max]
-  }
   changes <- fit$segments[, list(
     constraint=ifelse(diff(mean)==0, "equality", "inequality"),
     chromStart=chromEnd[-1],
@@ -285,24 +288,27 @@ problem.PeakSegFPOP <- structure(function
     geom_step(aes(
       chromStart, count),
       color="grey50",
-      data=in.labels(Mono27ac$coverage))+
+      data=Mono27ac$coverage)+
     geom_segment(aes(
       chromStart, mean,
       xend=chromEnd, yend=mean),
       color="green",
       size=1,
-      data=in.labels(fit$segments))+
+      data=fit$segments)+
     geom_segment(aes(
       chromStart, mean,
       xend=chromEnd, yend=mean),
       color="green",
       size=1,
-      data=in.labels(fit$segments))+
+      data=fit$segments)+
     geom_vline(aes(
       xintercept=chromEnd, linetype=constraint),
       color="green",
-      data=in.labels(changes))+
-    scale_linetype_manual(values=c(inequality="dotted", equality="solid"))+
+      data=changes)+
+    scale_linetype_manual(values=c(inequality="dotted", equality="solid"))
+  gg
+
+  gg+
     coord_cartesian(xlim=c(lab.min, lab.max))
   
 })
