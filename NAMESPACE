@@ -1,0 +1,6 @@
+useDynLib(PeakSegDisk)
+exportPattern("^[[:alpha:]]+")
+import(data.table)
+import(namedCapture)
+import(parallel)
+importFrom("utils", "write.table")
