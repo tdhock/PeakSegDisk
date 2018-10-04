@@ -11,7 +11,7 @@ detection:
   H3K4me3). 
 - *Fast and memory efficient solver.* The on-disk implementation of
   the Generalized Functional Pruning Optimal Partitioning algorithm
-  (GFPOP, [[https://arxiv.org/abs/1703.03352][arXiv:1703.03352]]) is O(N log N) time, O(N log N) disk, O(log
+  (GFPOP, [[https://arxiv.org/abs/1810.00117][arXiv:1810.00117]]) is O(N log N) time, O(N log N) disk, O(log
   N) memory, which makes it possible to compute optimal peak models
   for even very large genomic subsets. For example when we split
   typical ChIP-seq data aligned to the human genome (hg19) into one
