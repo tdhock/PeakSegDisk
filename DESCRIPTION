@@ -9,7 +9,7 @@ Description: Disk-based implementation of PeakSegFPOP
  (independantly for each sample and genomic problem),
  can handle huge data sets (10^7 or more).
 License: GPL-3
-SystemRequirements: libdb5.1-stl-dev
+SystemRequirements: libdb_stl (BerkeleyDB C++ Standard Template Library compiled with --enable-stl)
 Depends: R (>= 2.10)
 Imports: data.table (>= 1.9.8), parallel
 Suggests: testthat, ggplot2, penaltyLearning
