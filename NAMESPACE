@@ -1,5 +1,7 @@
 useDynLib(PeakSegDisk)
-exportPattern("^[[:alpha:]]+")
+export(PeakSegFPOP_disk)
+export(problem.PeakSegFPOP)
+export(problem.sequentialSearch)
 import(data.table)
 import(parallel)
 importFrom("utils", "write.table")
