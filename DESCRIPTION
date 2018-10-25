@@ -13,6 +13,5 @@ SystemRequirements: libdb_stl (BerkeleyDB C++ Standard Template Library compiled
 Depends: R (>= 2.10)
 Imports: data.table (>= 1.9.8), parallel
 Suggests: testthat, ggplot2,
-#for geom_tallrect:
  penaltyLearning
 
