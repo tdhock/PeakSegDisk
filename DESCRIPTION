@@ -1,7 +1,7 @@
 Package: PeakSegDisk
 Type: Package
 Title: Disk-Based Implementation of PeakSegFPOP
-Version: 2018.09.28
+Version: 2018.10.25
 Author: Toby Dylan Hocking
 Maintainer: Toby Dylan Hocking <toby.hocking@r-project.org>
 Description: Disk-based implementation of PeakSegFPOP
@@ -12,5 +12,6 @@ License: GPL-3
 SystemRequirements: libdb_stl (BerkeleyDB C++ Standard Template Library compiled with --enable-stl)
 Depends: R (>= 2.10)
 Imports: data.table (>= 1.9.8), parallel
-Suggests: testthat, ggplot2, penaltyLearning
+Suggests: testthat, ggplot2,
+ penaltyLearning #for geom_tallrect
 

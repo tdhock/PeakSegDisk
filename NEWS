@@ -1,4 +1,11 @@
-28 Sept 2018
+2018.10.25
+
+C++ code writes number of bedGraph lines to loss file.
+
+problem.PeakSegFPOP outputs two data.tables rather than three (timings
+and loss are combined).
+
+2018.09.28
 
 Forked from PeakSegPipeline.
 

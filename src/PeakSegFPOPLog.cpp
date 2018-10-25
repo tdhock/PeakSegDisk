@@ -109,6 +109,7 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   std::string loss_file_name = penalty_prefix + "_loss.tsv";
   std::ofstream loss_file;
   loss_file.open(loss_file_name.c_str());
+  int data_count = line_i;
   if(penalty == INFINITY){
     if(cum_weighted_count != 0){
       best_cost = cum_weighted_count *
@@ -122,6 +123,7 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
       "\t" << 1 << //segments
       "\t" << 0 << //peaks
       "\t" << (int)cum_weight_i << //total bases
+      "\t" << data_count << //bedGraph_lines
       "\t" << best_cost/cum_weight_i << //mean penalized cost
       "\t" << best_cost << //total un-penalized cost
       "\t" << 0 << //n_constraints_equal
@@ -131,7 +133,6 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
     loss_file.close();
     return 0;
   }
-  int data_count = line_i;
   //Rprintf("data_count=%d min_log_mean=%f max_log_mean=%f\n", data_count, min_log_mean, max_log_mean);
   //return 0;
   bedGraph_file.clear();
@@ -361,6 +362,7 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
     "\t" << line_i << //segments
     "\t" << n_peaks << //peaks
     "\t" << (int)cum_weight_i << //total bases
+    "\t" << data_count << //bedGraph_lines
     "\t" << best_cost << //mean penalized cost
     "\t" << best_cost*cum_weight_i-penalty*n_peaks << //total un-penalized cost
     "\t" << n_equality_constraints <<
