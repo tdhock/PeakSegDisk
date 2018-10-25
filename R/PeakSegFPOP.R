@@ -1,3 +1,13 @@
+### Named list of character vectors (column names of bed/bedGraph/tsv
+### files).
+col.name.list <- list(
+  loss=c(
+    "penalty", "segments", "peaks", "bases", "bedGraph.lines",
+    "mean.pen.cost", "total.loss", "equality.constraints",
+    "mean.intervals", "max.intervals"),
+  segments=c("chrom","chromStart", "chromEnd", "status", "mean"),
+  coverage=c("chrom", "chromStart", "chromEnd", "count"))
+
 ### mclapply with error checking.
 mclapplyError <- function(...){
   result.list <- parallel::mclapply(...)
@@ -121,13 +131,10 @@ PeakSegFPOP_disk <- structure(function # PeakSegFPOP on disk
   names.list <- PeakSegFPOP_disk(tmp, "10.5")
   unlink(names.list$db)
   seg.df <- read.table(names.list$segments)
-  names(seg.df) <- c("chrom", "chromStart", "chromEnd", "status", "mean")
+  names(seg.df) <- col.name.list$segments
   seg.df
   loss.df <- read.table(names.list$loss)
-  names(loss.df) <- c(
-    "penalty", "segments", "peaks", "bases",
-    "mean.pen.cost", "total.loss", "equality.constraints",
-    "mean.intervals", "max.intervals")
+  names(loss.df) <- col.name.list$loss
   loss.df
   
 })
@@ -162,26 +169,15 @@ problem.PeakSegFPOP <- structure(function
     timing <- fread(penalty_timing.tsv)
     setnames(timing, c("penalty", "megabytes", "seconds"))
     first.seg.line <- fread(paste("head -1", penalty_segments.bed))
-    setnames(
-      first.seg.line,
-      c("chrom", "chromStart", "chromEnd", "status", "mean"))
+    setnames(first.seg.line, col.name.list$segments)
     last.seg.line <- fread(paste("tail -1", penalty_segments.bed))
-    setnames(
-      last.seg.line,
-      c("chrom", "chromStart", "chromEnd", "status", "mean"))
+    setnames(last.seg.line, col.name.list$segments)
     first.cov.line <- fread(paste("head -1", prob.cov.bedGraph))
-    setnames(
-      first.cov.line,
-      c("chrom", "chromStart", "chromEnd", "count"))
+    setnames(first.cov.line, col.name.list$coverage)
     last.cov.line <- fread(paste("tail -1", prob.cov.bedGraph))
-    setnames(
-      last.cov.line,
-      c("chrom", "chromStart", "chromEnd", "count"))
+    setnames(last.cov.line, col.name.list$coverage)
     penalty.loss <- fread(penalty_loss.tsv)
-    setnames(penalty.loss, c(
-      "penalty", "segments", "peaks", "bases",
-      "mean.pen.cost", "total.loss", "equality.constraints",
-      "mean.intervals", "max.intervals"))
+    setnames(penalty.loss, col.name.list$loss)
     loss.segments.consistent <-
       first.seg.line$chromEnd-last.seg.line$chromStart == penalty.loss$bases
     ## segments files are written by decoding/backtracking after
@@ -216,23 +212,22 @@ problem.PeakSegFPOP <- structure(function
       quote=FALSE, sep="\t")
     unlink(penalty.db)
     penalty.loss <- fread(penalty_loss.tsv)
-    setnames(penalty.loss, c(
-      "penalty", "segments", "peaks", "bases",
-      "mean.pen.cost", "total.loss", "equality.constraints",
-      "mean.intervals", "max.intervals"))
+    setnames(penalty.loss, col.name.list$loss)
   }
   penalty.segs <- fread(penalty_segments.bed)
-  setnames(penalty.segs, c("chrom","chromStart", "chromEnd", "status", "mean"))
+  setnames(penalty.segs, col.name.list$segments)
   list(
     segments=penalty.segs,
-    loss=penalty.loss,
-    timing=timing)
-### List of data.tables: segments has one row for every segment in the
-### optimal model, timing is one row with the time and disk usage, and
-### loss has one row and contains the following columns. penalty=same
-### as input, segments=number of segments in optimal model,
-### peaks=number of peaks in optimal model, bases=number of positions
-### described in bedGraph file, total.loss=total Poisson loss=sum_i
+    loss=data.table(
+      penalty.loss,
+      timing[, list(megabytes, seconds)]))
+### Named list of two data.tables: segments has one row for every
+### segment in the optimal model, and loss has one row and contains
+### the following columns. penalty=same as input, segments=number of
+### segments in optimal model, peaks=number of peaks in optimal model,
+### bases=number of positions described in bedGraph file,
+### bedGraph.lines=number of lines in bedGraph file, total.loss=total
+### Poisson loss=sum_i
 ### m_i-z_i*log(m_i)=mean.pen.cost*bases-penalty*peaks,
 ### mean.pen.cost=mean penalized
 ### cost=(total.loss+penalty*peaks)/bases, equality.constraints=number
@@ -240,7 +235,8 @@ problem.PeakSegFPOP <- structure(function
 ### solution, mean.intervals=mean number of intervals/candidate
 ### changepoints stored in optimal cost functions -- useful for
 ### characterizing the computational complexity of the algorithm,
-### max.intervals=maximum number of intervals.
+### max.intervals=maximum number of intervals, megabytes=disk usage of
+### *.db file, seconds=timing of PeakSegFPOP_disk.
 }, ex=function(){
 
   library(PeakSegDisk)
@@ -277,7 +273,7 @@ problem.PeakSegFPOP <- structure(function
   gg <- ggplot()+theme_bw()
   if(require(penaltyLearning)){
     gg <- gg+
-      geom_tallrect(aes(
+      penaltyLearning::geom_tallrect(aes(
         xmin=chromStart, xmax=chromEnd,
         fill=annotation),
         color="grey",
@@ -352,8 +348,6 @@ problem.sequentialSearch <- structure(function
     model.list[next.str] <- mclapplyError(
       next.str, function(penalty.str){
         L <- problem.PeakSegFPOP(problem.dir, penalty.str)
-        L$loss$seconds <- L$timing$seconds
-        L$loss$megabytes <- L$timing$megabytes
         L$loss$iteration <- iteration
         L$loss$under <- under$peaks
         L$loss$over <- over$peaks
