@@ -44,6 +44,14 @@ setkey(segs.dt, segStart1, segEnd)
 over.dt <- foverlaps(cov.dt, segs.dt, nomatch=0L)
 sprintf("%.12f", over.dt[, PeakSegDP::PoissonLoss(count, mean, chromEnd-chromStart)])
 
+2018.10.26
+
+add -ldb_cxx -ldb to Makevars for solaris.
+
+in SystemRequirements, link to source, name debian packages.
+
+cast log(int) to double, const DbException& e to avoid solaris warn/err.
+
 2018.10.25
 
 C++ code writes number of bedGraph lines to loss file.

@@ -1,7 +1,7 @@
 Package: PeakSegDisk
 Type: Package
 Title: Disk-Based Implementation of PeakSegFPOP
-Version: 2018.10.25
+Version: 2018.10.26
 Author: Toby Dylan Hocking
 Maintainer: Toby Dylan Hocking <toby.hocking@r-project.org>
 Description: Disk-based implementation of
