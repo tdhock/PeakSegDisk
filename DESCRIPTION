@@ -4,12 +4,13 @@ Title: Disk-Based Implementation of PeakSegFPOP
 Version: 2018.10.25
 Author: Toby Dylan Hocking
 Maintainer: Toby Dylan Hocking <toby.hocking@r-project.org>
-Description: Disk-based implementation of PeakSegFPOP
+Description: Disk-based implementation of
+ Functional Pruning Optimal Partitioning with up-down constraints
  <arXiv:1810.00117> for single-sample peak calling
- (independantly for each sample and genomic problem),
+ (independently for each sample and genomic problem),
  can handle huge data sets (10^7 or more).
 License: GPL-3
-SystemRequirements: libdb_stl (BerkeleyDB C++ Standard Template Library compiled with --enable-stl)
+SystemRequirements: libdb_stl (BerkeleyDB C++ Standard Template Library compiled with --enable-stl, source http://download.oracle.com/berkeley-db/db-6.2.23.NC.tar.gz , debian packages libdb5.3-stl-dev and libdb5.3++-dev)
 Depends: R (>= 2.10)
 Imports: data.table (>= 1.9.8), parallel
 Suggests: testthat, ggplot2,
