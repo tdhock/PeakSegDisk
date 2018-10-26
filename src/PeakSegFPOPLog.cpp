@@ -89,7 +89,7 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
       }
     }      
     prev_chromEnd = chromEnd;
-    log_data = log(coverage);
+    log_data = log( (double)coverage );
     if(log_data < min_log_mean){
       min_log_mean = log_data;
     }
@@ -299,7 +299,7 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
     try{
       cost_model_mat[data_i] = up_cost;
       cost_model_mat[data_i + data_count] = down_cost;
-    }catch(DbException e){
+    }catch(const DbException& e){
       //Rprintf("Db ERror: %d\n", e.get_errno());
       // need to close the database file, otherwise it takes up disk space
       // until R exists.
