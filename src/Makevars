@@ -1,3 +1,3 @@
 CXX_STD = CXX11 
 PKG_LIBS = -ldb_stl \
- -ldb -ldb_cxx #needed for solaris.
+ -pthread #needed for static linking on solaris.
