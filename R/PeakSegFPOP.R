@@ -139,6 +139,34 @@ PeakSegFPOP_disk <- structure(function # PeakSegFPOP on disk
   
 })
 
+fread.first <- function
+### Read the first line of a text file.
+(file.name,
+### Name of file to read.
+  col.name.vec
+### Character vector of column names.
+){
+  dt <- fread(file.name, nrows=1L, col.names=col.name.vec)
+  dt
+### Data table with one row.
+}
+
+fread.last <- function
+### Read the last line of a text file.
+(file.name,
+### Name of file to read.
+  col.name.vec
+### Character vector of column names.
+){
+  wc.cmd <- paste("wc -l", file.name)
+  wc.output <- system(wc.cmd, intern=TRUE)
+  lines.chr <- sub(" .*", "", wc.output)
+  lines.int <- as.integer(lines.chr)
+  dt <- fread(file.name, skip=lines.int-1L, col.names=col.name.vec)
+  dt
+### Data table with one row.
+}
+
 problem.PeakSegFPOP <- structure(function
 ### Run PeakSegFPOP_disk on one genomic segmentation problem
 ### directory, and read the result files into R. Actually, this
@@ -166,18 +194,14 @@ problem.PeakSegFPOP <- structure(function
   penalty_loss.tsv <- paste0(pre, "_loss.tsv")
   penalty_timing.tsv <- paste0(pre, "_timing.tsv")
   already.computed <- tryCatch({
-    timing <- fread(penalty_timing.tsv)
-    setnames(timing, c("penalty", "megabytes", "seconds"))
-    first.seg.line <- fread(paste("head -1", penalty_segments.bed))
-    setnames(first.seg.line, col.name.list$segments)
-    last.seg.line <- fread(paste("tail -1", penalty_segments.bed))
-    setnames(last.seg.line, col.name.list$segments)
-    first.cov.line <- fread(paste("head -1", prob.cov.bedGraph))
-    setnames(first.cov.line, col.name.list$coverage)
-    last.cov.line <- fread(paste("tail -1", prob.cov.bedGraph))
-    setnames(last.cov.line, col.name.list$coverage)
-    penalty.loss <- fread(penalty_loss.tsv)
-    setnames(penalty.loss, col.name.list$loss)
+    timing <- fread(
+      penalty_timing.tsv,
+      col.names=c("penalty", "megabytes", "seconds"))
+    first.seg.line <- fread.first(penalty_segments.bed, col.name.list$segments)
+    last.seg.line <- fread.last(penalty_segments.bed, col.name.list$segments)
+    first.cov.line <- fread.first(prob.cov.bedGraph, col.name.list$coverage)
+    last.cov.line <- fread.last(prob.cov.bedGraph, col.name.list$coverage)
+    penalty.loss <- fread(penalty_loss.tsv, col.names=col.name.list$loss)
     loss.segments.consistent <-
       first.seg.line$chromEnd-last.seg.line$chromStart == penalty.loss$bases
     ## segments files are written by decoding/backtracking after
@@ -211,11 +235,9 @@ problem.PeakSegFPOP <- structure(function
       row.names=FALSE, col.names=FALSE,
       quote=FALSE, sep="\t")
     unlink(penalty.db)
-    penalty.loss <- fread(penalty_loss.tsv)
-    setnames(penalty.loss, col.name.list$loss)
+    penalty.loss <- fread(penalty_loss.tsv, col.names=col.name.list$loss)
   }
-  penalty.segs <- fread(penalty_segments.bed)
-  setnames(penalty.segs, col.name.list$segments)
+  penalty.segs <- fread(penalty_segments.bed, col.names=col.name.list$segments)
   list(
     segments=penalty.segs,
     loss=data.table(
