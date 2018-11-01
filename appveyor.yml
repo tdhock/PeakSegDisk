@@ -40,7 +40,7 @@ build_script:
   - curl -OL http://download.oracle.com/berkeley-db/db-6.2.23.NC.tar.gz
   - tar xf db-6.2.23.NC.tar.gz
   - cd db-6.2.23.NC/build_unix
-  - ../dist/configure --enable-stl --enable-mingw
+  - ..\dist\configure --enable-stl --enable-mingw
   - make
   - make install
   - travis-tool.sh install_deps
