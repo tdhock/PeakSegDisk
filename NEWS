@@ -48,6 +48,8 @@ sprintf("%.12f", over.dt[, PeakSegDP::PoissonLoss(count, mean, chromEnd-chromSta
 
 export fread.first/last
 
+check for empty loss/timing files
+
 2018.10.31
 
 Use wc/nrows/skip in fread.first/last rather than fread("head/tail -1 file")
