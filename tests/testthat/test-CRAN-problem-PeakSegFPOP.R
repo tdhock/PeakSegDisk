@@ -28,3 +28,27 @@ test_that("large penalty should not crash solver", {
   fit <- problem.PeakSegFPOP(prob.dir, "866939314852865280")
   expect_identical(fit$loss$peaks, 0L)
 })
+
+loss.tsv <- file.path(prob.dir, "coverage.bedGraph_penalty=10_loss.tsv")
+unlink(loss.tsv)
+cat("", file=loss.tsv)
+test_that("empty loss.tsv is fine", {
+  fit <- problem.PeakSegFPOP(prob.dir, "10")
+  expect_is(fit, "list")
+})
+
+segments.tsv <- file.path(prob.dir, "coverage.bedGraph_penalty=5_segments.tsv")
+unlink(segments.tsv)
+cat("", file=segments.tsv)
+test_that("empty segments.tsv is fine", {
+  fit <- problem.PeakSegFPOP(prob.dir, "5")
+  expect_is(fit, "list")
+})
+
+timing.tsv <- file.path(prob.dir, "coverage.bedGraph_penalty=300_timing.tsv")
+unlink(timing.tsv)
+cat("", file=timing.tsv)
+test_that("empty timing.tsv is fine", {
+  fit <- problem.PeakSegFPOP(prob.dir, "300")
+  expect_is(fit, "list")
+})
