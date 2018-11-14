@@ -19,9 +19,10 @@ prob.dir <- file.path(
   "problems",
   "chr6_dbb_hap3:3491790-3736386")
 dir.create(prob.dir, showWarnings=FALSE, recursive=TRUE)
+coverage.bedGraph <- file.path(prob.dir, "coverage.bedGraph")
 fwrite(
   cov.dt,
-  file.path(prob.dir, "coverage.bedGraph"),
+  coverage.bedGraph,
   sep="\t", row.names=FALSE, col.names=FALSE)
 
 test_that("large penalty should not crash solver", {
@@ -30,7 +31,6 @@ test_that("large penalty should not crash solver", {
 })
 
 loss.tsv <- file.path(prob.dir, "coverage.bedGraph_penalty=10_loss.tsv")
-unlink(loss.tsv)
 cat("", file=loss.tsv)
 test_that("empty loss.tsv is fine", {
   fit <- problem.PeakSegFPOP(prob.dir, "10")
@@ -38,7 +38,6 @@ test_that("empty loss.tsv is fine", {
 })
 
 segments.tsv <- file.path(prob.dir, "coverage.bedGraph_penalty=5_segments.tsv")
-unlink(segments.tsv)
 cat("", file=segments.tsv)
 test_that("empty segments.tsv is fine", {
   fit <- problem.PeakSegFPOP(prob.dir, "5")
@@ -46,9 +45,28 @@ test_that("empty segments.tsv is fine", {
 })
 
 timing.tsv <- file.path(prob.dir, "coverage.bedGraph_penalty=300_timing.tsv")
-unlink(timing.tsv)
 cat("", file=timing.tsv)
 test_that("empty timing.tsv is fine", {
   fit <- problem.PeakSegFPOP(prob.dir, "300")
   expect_is(fit, "list")
+})
+
+cat("", file=coverage.bedGraph)
+test_that("empty coverage.bedGraph is an error", {
+  expect_error({
+    problem.PeakSegFPOP(prob.dir, "300")
+  }, "contains no data")
+})
+
+cat("chr1 0 1 5", file=coverage.bedGraph)
+test_that("one line coverage.bedGraph is fine", {
+  fit <- problem.PeakSegFPOP(prob.dir, "300")
+  expect_is(fit, "list")
+})
+
+cat("0 1 5", file=coverage.bedGraph)
+test_that("three columns in coverage.bedGraph is an error", {
+  expect_error({
+    problem.PeakSegFPOP(prob.dir, "300")
+  }, "should have exactly four columns")
 })

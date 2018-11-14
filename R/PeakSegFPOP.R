@@ -197,13 +197,15 @@ problem.PeakSegFPOP <- structure(function
     timing <- fread(
       penalty_timing.tsv,
       col.names=c("penalty", "megabytes", "seconds"))
-    timing.ok <- nrow(timing)==1
     first.seg.line <- fread.first(penalty_segments.bed, col.name.list$segments)
     last.seg.line <- fread.last(penalty_segments.bed, col.name.list$segments)
     first.cov.line <- fread.first(prob.cov.bedGraph, col.name.list$coverage)
     last.cov.line <- fread.last(prob.cov.bedGraph, col.name.list$coverage)
     penalty.loss <- fread(penalty_loss.tsv, col.names=col.name.list$loss)
-    loss.segments.consistent <- nrow(penalty.loss)==1 &&
+    nrow.ok <- nrow(timing)==1 && nrow(penalty.loss)==1 &&
+      nrow(first.seg.line)==1 && nrow(last.seg.line)==1 &&
+      nrow(first.cov.line)==1 && nrow(last.cov.line)==1
+    loss.segments.consistent <- 
       first.seg.line$chromEnd-last.seg.line$chromStart == penalty.loss$bases
     ## segments files are written by decoding/backtracking after
     ## dynamic progamming, so it is normal that the first line of the
@@ -211,7 +213,7 @@ problem.PeakSegFPOP <- structure(function
     ## on the chromosome.
     start.ok <- first.cov.line$chromStart == last.seg.line$chromStart
     end.ok <- last.cov.line$chromEnd == first.seg.line$chromEnd
-    loss.segments.consistent && start.ok && end.ok && timing.ok
+    nrow.ok && loss.segments.consistent && start.ok && end.ok
   }, error=function(e){
     FALSE
   })

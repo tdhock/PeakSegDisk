@@ -35,6 +35,9 @@ void PeakSegFPOP_interface
     error("unable to write to loss output file %s_penalty=%s_loss.tsv",
 	  bedGraph, penalty);
   }
+  if(status==ERROR_NO_DATA){
+    error("input file %s contains no data", bedGraph);
+  }
   if(status != 0){
     error("error code %d", status);
   }
