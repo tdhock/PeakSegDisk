@@ -18,12 +18,13 @@ peaks, "Inf" means no peaks. Needs to be a character because that
 is used to create files which cache/store the optimal solution.}
 }
 
-\value{List of data.tables: segments has one row for every segment in the
-optimal model, timing is one row with the time and disk usage, and
-loss has one row and contains the following columns. penalty=same
-as input, segments=number of segments in optimal model,
-peaks=number of peaks in optimal model, bases=number of positions
-described in bedGraph file, total.loss=total Poisson loss=sum_i
+\value{Named list of two data.tables: segments has one row for every
+segment in the optimal model, and loss has one row and contains
+the following columns. penalty=same as input, segments=number of
+segments in optimal model, peaks=number of peaks in optimal model,
+bases=number of positions described in bedGraph file,
+bedGraph.lines=number of lines in bedGraph file, total.loss=total
+Poisson loss=sum_i
 m_i-z_i*log(m_i)=mean.pen.cost*bases-penalty*peaks,
 mean.pen.cost=mean penalized
 cost=(total.loss+penalty*peaks)/bases, equality.constraints=number
@@ -31,7 +32,8 @@ of adjacent segment means that have equal values in the optimal
 solution, mean.intervals=mean number of intervals/candidate
 changepoints stored in optimal cost functions -- useful for
 characterizing the computational complexity of the algorithm,
-max.intervals=maximum number of intervals.}
+max.intervals=maximum number of intervals, megabytes=disk usage of
+*.db file, seconds=timing of PeakSegFPOP_disk.}
 
 \author{Toby Dylan Hocking}
 
@@ -74,7 +76,7 @@ changes <- fit$segments[, list(
 gg <- ggplot()+theme_bw()
 if(require(penaltyLearning)){
   gg <- gg+
-    geom_tallrect(aes(
+    penaltyLearning::geom_tallrect(aes(
       xmin=chromStart, xmax=chromEnd,
       fill=annotation),
       color="grey",

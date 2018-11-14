@@ -44,6 +44,10 @@ setkey(segs.dt, segStart1, segEnd)
 over.dt <- foverlaps(cov.dt, segs.dt, nomatch=0L)
 sprintf("%.12f", over.dt[, PeakSegDP::PoissonLoss(count, mean, chromEnd-chromStart)])
 
+2018.11.14
+
+export fread.first/last
+
 2018.10.31
 
 Use wc/nrows/skip in fread.first/last rather than fread("head/tail -1 file")

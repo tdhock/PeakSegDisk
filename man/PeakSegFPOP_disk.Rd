@@ -80,13 +80,10 @@ write.table(
 names.list <- PeakSegFPOP_disk(tmp, "10.5")
 unlink(names.list$db)
 seg.df <- read.table(names.list$segments)
-names(seg.df) <- c("chrom", "chromStart", "chromEnd", "status", "mean")
+names(seg.df) <- col.name.list$segments
 seg.df
 loss.df <- read.table(names.list$loss)
-names(loss.df) <- c(
-  "penalty", "segments", "peaks", "bases",
-  "mean.pen.cost", "total.loss", "equality.constraints",
-  "mean.intervals", "max.intervals")
+names(loss.df) <- col.name.list$loss
 loss.df
 
 }
