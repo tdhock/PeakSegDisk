@@ -2,6 +2,16 @@ library(testthat)
 context("PeakSegFPOP_disk")
 library(PeakSegDisk)
 
+test_that("error when input file does not exist", {
+  expect_error({
+    .C(
+      "PeakSegFPOP_interface",
+      bedGraph.file = "foo/bar/sars", 
+      penalty = "10.5",
+      PACKAGE = "PeakSegDisk")
+  }, "unable to open input file for reading")
+})
+
 r <- function(chrom, chromStart, chromEnd, coverage){
   data.frame(chrom, chromStart, chromEnd, coverage)
 }
@@ -39,27 +49,3 @@ test_that("error for numeric penalty", {
   }, "pen.str must be a character string that can be converted to a non-negative numeric scalar")
 })
 
-data(Mono27ac, envir=environment())
-data.dir <- file.path(
-  tempfile(),
-  "H3K27ac-H3K4me3_TDHAM_BP",
-  "samples",
-  "Mono1_H3K27ac",
-  "S001YW_NCMLS",
-  "problems",
-  "chr11:60000-580000")
-dir.create(data.dir, recursive=TRUE, showWarnings=FALSE)
-write.table(
-  Mono27ac$coverage, file.path(data.dir, "coverage.bedGraph"),
-  col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t")
-pen.str <- "1952.6"
-lock.src <- system.file("extdata", "__db.lock.file", package="PeakSegDisk", mustWork=TRUE)
-lock.dest <- file.path(data.dir, paste0("__db.coverage.bedGraph_penalty=", pen.str, ".db"))
-file.copy(lock.src, lock.dest)
-coverage.bedGraph <- file.path(data.dir, "coverage.bedGraph")
-
-test_that("error for lock file", {
-  expect_error({
-    PeakSegFPOP_disk(coverage.bedGraph, pen.str)
-  }, lock.dest, fixed=TRUE)
-})
