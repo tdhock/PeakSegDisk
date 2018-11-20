@@ -2,6 +2,16 @@ library(testthat)
 context("PeakSegFPOP_disk")
 library(PeakSegDisk)
 
+test_that("error when input file does not exist", {
+  expect_error({
+    .C(
+      "PeakSegFPOP_interface",
+      bedGraph.file = "foo/bar/sars", 
+      penalty = "10.5",
+      PACKAGE = "PeakSegDisk")
+  }, "unable to open input file for reading")
+})
+
 r <- function(chrom, chromStart, chromEnd, coverage){
   data.frame(chrom, chromStart, chromEnd, coverage)
 }

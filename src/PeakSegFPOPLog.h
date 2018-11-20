@@ -9,6 +9,7 @@
 #define ERROR_WRITING_COST_FUNCTIONS 7
 #define ERROR_WRITING_LOSS_OUTPUT 8
 #define ERROR_NO_DATA 9
+#define ERROR_OPENING_DATABASE 10
 
 int PeakSegFPOP_disk(char *, char *);
 
