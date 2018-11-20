@@ -152,7 +152,12 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   //Berkeley DB filesystem Backend:
   DbEnv *env = NULL;
   std::string db_file_name = penalty_prefix + ".db";
-  Db *db = dbstl::open_db(env, db_file_name.c_str(), DB_RECNO, DB_CREATE, 0);
+  Db *db;
+  try{
+    db = dbstl::open_db(env, db_file_name.c_str(), DB_RECNO, DB_CREATE, 0);
+  }catch(const DbException& e){
+    return ERROR_OPENING_DATABASE;
+  }
   dbstl::db_vector<PiecewisePoissonLossLog> cost_model_mat(db, env);
 
   //Berkeley DB in-memory backend:

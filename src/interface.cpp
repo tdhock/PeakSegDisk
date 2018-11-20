@@ -38,6 +38,11 @@ void PeakSegFPOP_interface
   if(status==ERROR_NO_DATA){
     error("input file %s contains no data", bedGraph);
   }
+  if(status==ERROR_OPENING_DATABASE){
+    error
+      ("database locked; delete lock file __db.*.db to unlock",
+       bedGraph, penalty);
+  }
   if(status != 0){
     error("error code %d", status);
   }
