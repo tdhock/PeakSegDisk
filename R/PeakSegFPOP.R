@@ -220,6 +220,8 @@ problem.PeakSegFPOP <- structure(function
   if(!already.computed){
     penalty.db <- paste0(pre, ".db")
     unlink(penalty.db)#in case interrupted previously.
+    lock.file <- paste0("__db.", penalty.db)
+    unlink(lock.file)
     seconds <- system.time({
       PeakSegFPOP_disk(prob.cov.bedGraph, penalty.str)
     })[["elapsed"]]
