@@ -2,6 +2,7 @@
 
 #include <iomanip> //for setprecision.
 #include <fstream> //for ifstream etc.
+#include <exception>
 //#include <vector>
 // http://docs.oracle.com/cd/E17076_05/html/programmer_reference/arch_apis.html
 //#include <dbstl_vector.h>
@@ -44,14 +45,82 @@ void PiecewiseFunRestore(PiecewisePoissonLossLog&fun, const void *src){
   }
 }
 
+class UndefinedReadException : public std::exception {
+  const char * what() const throw(){
+    return "Attempt to read from undefined position";
+  }
+};
+
+class AlreadyWrittenException : public std::exception {
+  const char * what() const throw(){
+    return "Attempt to write from already defined position";
+  }
+};
+
 class DiskVector {
 public:
   std::fstream db;
-  DiskVector(const char *filename, int n_entries){
+  std::streampos beginning;
+  int n_entries;
+  DiskVector(const char *filename, int N){
+    n_entries = N;
     db.open(filename, std::ios::binary|std::ios::in|std::ios::out|std::ios::trunc);
+    // reserve the first n_entries for streampos objects that will
+    // tell us where to look for the data.
+    beginning = db.tellp();
+    for(int i=0; i<n_entries;i++){
+      db.write((char*)&beginning, sizeof(std::streampos));
+    }
   }
   ~DiskVector(){
     db.close();
+  }
+  void seek_element(int element){
+    db.seekp(sizeof(std::streampos)*element, std::ios::beg);
+  }
+  void seek_end(){
+    db.seekp(0, std::ios::end);
+  }
+  std::streampos get_element_position(int element){
+    seek_element(element);
+    std::streampos pos;
+    db.read((char*)&pos, sizeof(std::streampos));
+    return pos;
+  }
+  PiecewisePoissonLossLog read(int element){
+    std::streampos pos = get_element_position(element);
+    if(pos == beginning){
+      throw UndefinedReadException();
+    }
+    db.seekp(pos);
+    int size;
+    db.read((char*)&size, sizeof(int));
+    void * buffer = malloc(size);
+    db.read((char*)buffer, size);
+    PiecewisePoissonLossLog fun;
+    PiecewiseFunRestore(fun, buffer);
+    free(buffer);
+    return fun;
+  }
+  void write(int element, PiecewisePoissonLossLog fun){
+    std::streampos pos = get_element_position(element);
+    if(pos != beginning){
+      throw AlreadyWrittenException();
+    }
+    // serialize at end of file.
+    seek_end();
+    pos = db.tellp();//save pos for later.
+    // first write size of fun.
+    int size = PiecewiseFunSize(fun);
+    db.write((char*)&size, sizeof(int));
+    // then write the data itself.
+    void * buffer = malloc(size);
+    PiecewiseFunCopy(buffer, fun);
+    db.write((char*)buffer, size);
+    free(buffer);
+    // write position.
+    seek_element(element);
+    db.write((char*)&pos, sizeof(std::streampos));
   }
 };
 
@@ -315,8 +384,10 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
     up_cost.chromEnd = chromEnd;
     down_cost.chromEnd = chromEnd;
     //try{
-      cost_model_mat[data_i] = up_cost;
-      cost_model_mat[data_i + data_count] = down_cost;
+    //cost_model_mat[data_i] = up_cost;
+    //cost_model_mat[data_i + data_count] = down_cost;
+    cost_model_mat.write(data_i, up_cost);
+    cost_model_mat.write(data_i + data_count, down_cost);
     // }catch(const DbException& e){
     //   //Rprintf("Db ERror: %d\n", e.get_errno());
     //   // need to close the database file, otherwise it takes up disk space
@@ -332,7 +403,8 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   int prev_seg_offset = 0;
   // last segment is down (offset N) so the second to last segment is
   // up (offset 0).
-  down_cost = cost_model_mat[data_count*2-1];
+  //down_cost = cost_model_mat[data_count*2-1];
+  down_cost = cost_model_mat.read(data_count*2-1);
   down_cost.Minimize
     (&best_cost, &best_log_mean,
      &prev_seg_end, &prev_log_mean);
@@ -345,7 +417,8 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   while(0 <= prev_seg_end){
     line_i++;
     // up_cost is actually either an up or down cost.
-    up_cost = cost_model_mat[prev_seg_offset + prev_seg_end];
+    //up_cost = cost_model_mat[prev_seg_offset + prev_seg_end];
+    up_cost = cost_model_mat.read(prev_seg_offset + prev_seg_end);
     //Rprintf("decoding prev_seg_end=%d prev_seg_offset=%d\n", prev_seg_end, prev_seg_offset);
     segments_file << chrom << "\t" << up_cost.chromEnd << "\t" << prev_chromEnd << "\t";
     // change prev_seg_offset for next iteration.
