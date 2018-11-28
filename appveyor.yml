@@ -31,6 +31,7 @@ environment:
   #- R_VERSION: devel
 
 build_script:
+  - rm tests/testthat/test-TRAVIS-*.R
   - set _R_CHECK_FORCE_SUGGESTS_=false
   - travis-tool.sh install_deps
 

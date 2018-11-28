@@ -2,7 +2,7 @@
 
 #include <iomanip> //for setprecision.
 #include <fstream> //for ifstream etc.
-#include <vector>
+//#include <vector>
 // http://docs.oracle.com/cd/E17076_05/html/programmer_reference/arch_apis.html
 //#include <dbstl_vector.h>
 #include <R.h>
@@ -43,6 +43,17 @@ void PiecewiseFunRestore(PiecewisePoissonLossLog&fun, const void *src){
     fun.piece_list.push_back(piece);
   }
 }
+
+class DiskVector {
+public:
+  std::fstream db;
+  DiskVector(const char *filename, int n_entries){
+    db.open(filename, std::ios::binary|std::ios::in|std::ios::out|std::ios::trunc);
+  }
+  ~DiskVector(){
+    db.close();
+  }
+};
 
 int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   double penalty = atof(penalty_str);
@@ -152,7 +163,7 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
 
   // //Berkeley DB filesystem Backend:
   // DbEnv *env = NULL;
-  // std::string db_file_name = penalty_prefix + ".db";
+  std::string db_file_name = penalty_prefix + ".db";
   // Db *db = dbstl::open_db(env, db_file_name.c_str(), DB_RECNO, DB_CREATE, 0);
   // dbstl::db_vector<PiecewisePoissonLossLog> cost_model_mat(db, env);
 
@@ -160,14 +171,17 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   //dbstl::db_vector<PiecewisePoissonLossLog> cost_model_mat;
 
   //STL in-memory backend:
-  std::vector<PiecewisePoissonLossLog> cost_model_mat;
+  //std::vector<PiecewisePoissonLossLog> cost_model_mat;
 
   //Initialization of empty function pieces.
-  PiecewisePoissonLossLog empty_fun;
-  for(int i=0; i<data_count*2; i++){
-    cost_model_mat.push_back(empty_fun);
-  }
+  // PiecewisePoissonLossLog empty_fun;
+  // for(int i=0; i<data_count*2; i++){
+  //   cost_model_mat.push_back(empty_fun);
+  // }
   
+  //DiskVector on-disk backend:
+  DiskVector cost_model_mat(db_file_name.c_str(), data_count*2);
+
   PiecewisePoissonLossLog up_cost, down_cost, up_cost_prev, down_cost_prev;
   PiecewisePoissonLossLog min_prev_cost;
   int verbose=0;
