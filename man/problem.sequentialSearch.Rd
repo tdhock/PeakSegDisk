@@ -46,7 +46,7 @@ supp <- rbind(
   r("chr1", 4, 5, 20),
   r("chr1", 5, 6, 2)
 )
-data.dir <- file.path(tempfile(), "chr1:0-6")
+data.dir <- file.path(tempfile(), "chr1-0-6")
 dir.create(data.dir, recursive=TRUE)
 write.table(
   supp, file.path(data.dir, "coverage.bedGraph"),

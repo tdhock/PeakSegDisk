@@ -1,3 +1,5 @@
+appveyor.yml
+config.log
 build.sh
 .travis.yml
 README.org

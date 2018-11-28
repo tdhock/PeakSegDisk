@@ -98,6 +98,10 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
       max_log_mean = log_data;
     }
   }
+  int data_count = line_i;
+  if(data_count==0){
+    return ERROR_NO_DATA;
+  }
   double best_cost, best_log_mean, prev_log_mean;
   // open segments file for writing.
   std::string penalty_prefix = bedGraph_file_name;
@@ -110,7 +114,6 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   std::string loss_file_name = penalty_prefix + "_loss.tsv";
   std::ofstream loss_file;
   loss_file.open(loss_file_name.c_str());
-  int data_count = line_i;
   if(penalty == INFINITY){
     if(cum_weighted_count != 0){
       best_cost = cum_weighted_count *

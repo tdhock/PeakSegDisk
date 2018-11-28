@@ -202,6 +202,9 @@ problem.PeakSegFPOP <- structure(function
     first.cov.line <- fread.first(prob.cov.bedGraph, col.name.list$coverage)
     last.cov.line <- fread.last(prob.cov.bedGraph, col.name.list$coverage)
     penalty.loss <- fread(penalty_loss.tsv, col.names=col.name.list$loss)
+    nrow.ok <- nrow(timing)==1 && nrow(penalty.loss)==1 &&
+      nrow(first.seg.line)==1 && nrow(last.seg.line)==1 &&
+      nrow(first.cov.line)==1 && nrow(last.cov.line)==1
     loss.segments.consistent <-
       first.seg.line$chromEnd-last.seg.line$chromStart == penalty.loss$bases
     ## segments files are written by decoding/backtracking after
@@ -210,13 +213,17 @@ problem.PeakSegFPOP <- structure(function
     ## on the chromosome.
     start.ok <- first.cov.line$chromStart == last.seg.line$chromStart
     end.ok <- last.cov.line$chromEnd == first.seg.line$chromEnd
-    loss.segments.consistent && start.ok && end.ok
+    nrow.ok && loss.segments.consistent && start.ok && end.ok
   }, error=function(e){
     FALSE
   })
   if(!already.computed){
     penalty.db <- paste0(pre, ".db")
     unlink(penalty.db)#in case interrupted previously.
+    base.db <- basename(penalty.db)
+    base.lock <- paste0("__db.", base.db)
+    path.lock <- file.path(problem.dir, base.lock)
+    unlink(path.lock)
     seconds <- system.time({
       PeakSegFPOP_disk(prob.cov.bedGraph, penalty.str)
     })[["elapsed"]]
@@ -449,7 +456,7 @@ problem.sequentialSearch <- structure(function
     r("chr1", 4, 5, 20),
     r("chr1", 5, 6, 2)
   )
-  data.dir <- file.path(tempfile(), "chr1:0-6")
+  data.dir <- file.path(tempfile(), "chr1-0-6")
   dir.create(data.dir, recursive=TRUE)
   write.table(
     supp, file.path(data.dir, "coverage.bedGraph"),

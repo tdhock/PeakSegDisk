@@ -44,9 +44,22 @@ setkey(segs.dt, segStart1, segEnd)
 over.dt <- foverlaps(cov.dt, segs.dt, nomatch=0L)
 sprintf("%.12f", over.dt[, PeakSegDP::PoissonLoss(count, mean, chromEnd-chromStart)])
 
-2018.11.28
+2018.11.28 PR#2
 
 Remove dependency on Berkeley DB.
+
+2018.11.20 PR#3
+
+problem.PeakSegFPOP deletes lock file before running algo.
+
+PeakSegFPOP_disk errors (instead of crashing R) if there is a lock
+file.
+
+2018.11.14
+
+export fread.first/last
+
+check for empty loss/timing files
 
 2018.10.31
 
