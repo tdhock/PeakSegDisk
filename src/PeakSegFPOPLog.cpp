@@ -2,14 +2,16 @@
 
 #include <iomanip> //for setprecision.
 #include <fstream> //for ifstream etc.
+#include <exception>
+//#include <vector>
 // http://docs.oracle.com/cd/E17076_05/html/programmer_reference/arch_apis.html
-#include <dbstl_vector.h>
+//#include <dbstl_vector.h>
 #include <R.h>
 
 #include "funPieceListLog.h"
 #include "PeakSegFPOPLog.h"
 
-u_int32_t PiecewiseFunSize(const PiecewisePoissonLossLog&fun){
+int PiecewiseFunSize(const PiecewisePoissonLossLog&fun){
   return sizeof(PoissonLossPieceLog)*fun.piece_list.size() +
     sizeof(int)*2;
 }
@@ -42,6 +44,94 @@ void PiecewiseFunRestore(PiecewisePoissonLossLog&fun, const void *src){
     fun.piece_list.push_back(piece);
   }
 }
+
+class UndefinedReadException : public std::exception {
+  const char * what() const throw(){
+    return "Attempt to read from undefined position";
+  }
+};
+
+class AlreadyWrittenException : public std::exception {
+  const char * what() const throw(){
+    return "Attempt to write from already defined position";
+  }
+};
+
+class WriteFailedException : public std::exception {
+  const char * what() const throw(){
+    return "Attempt to write to file failed";
+  }
+};
+
+class DiskVector {
+public:
+  std::fstream db;
+  std::streampos beginning;
+  int n_entries;
+  void init(const char *filename, int N){
+    n_entries = N;
+    db.open(filename, std::ios::binary|std::ios::in|std::ios::out|std::ios::trunc);
+    // reserve the first n_entries for streampos objects that will
+    // tell us where to look for the data.
+    beginning = db.tellp();
+    for(int i=0; i<n_entries;i++){
+      write_or_exception((char*)&beginning, sizeof(std::streampos));
+    }
+  }
+  void write_or_exception(char * p, int size){
+    db.write(p, size);
+    if(db.fail()){
+      throw WriteFailedException();
+    }
+  }
+  ~DiskVector(){
+    db.close();
+  }
+  void seek_element(int element){
+    db.seekp(sizeof(std::streampos)*element, std::ios::beg);
+  }
+  std::streampos get_element_position(int element){
+    seek_element(element);
+    std::streampos pos;
+    db.read((char*)&pos, sizeof(std::streampos));
+    return pos;
+  }
+  PiecewisePoissonLossLog read(int element){
+    std::streampos pos = get_element_position(element);
+    if(pos == beginning){
+      throw UndefinedReadException();
+    }
+    db.seekp(pos);
+    int size;
+    db.read((char*)&size, sizeof(int));
+    void * buffer = malloc(size);
+    db.read((char*)buffer, size);
+    PiecewisePoissonLossLog fun;
+    PiecewiseFunRestore(fun, buffer);
+    free(buffer);
+    return fun;
+  }
+  void write(int element, PiecewisePoissonLossLog fun){
+    std::streampos pos = get_element_position(element);
+    if(pos != beginning){
+      throw AlreadyWrittenException();
+    }
+    // serialize at end of file.
+    db.seekp(0, std::ios::end);
+    pos = db.tellp();//save pos for later.
+    // first write size of fun.
+    int size = PiecewiseFunSize(fun);
+    write_or_exception((char*)&size, sizeof(int));
+    // then write the data itself.
+    void * buffer = malloc(size);
+    PiecewiseFunCopy(buffer, fun);
+    write_or_exception((char*)buffer, size);
+    free(buffer);
+    // write position.
+    seek_element(element);
+    write_or_exception((char*)&pos, sizeof(std::streampos));
+  }
+};
 
 int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   double penalty = atof(penalty_str);
@@ -141,24 +231,19 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   bedGraph_file.clear();
   bedGraph_file.seekg(0, std::ios::beg);
 
-  // Both Berkeley DB Backends need to know how to serialize
-  // the FPOP solver classes:
-  dbstl::DbstlElemTraits<PiecewisePoissonLossLog> *funTraits =
-    dbstl::DbstlElemTraits<PiecewisePoissonLossLog>::instance();
-  funTraits->set_size_function(PiecewiseFunSize);
-  funTraits->set_copy_function(PiecewiseFunCopy);
-  funTraits->set_restore_function(PiecewiseFunRestore);
+  // // Both Berkeley DB Backends need to know how to serialize
+  // // the FPOP solver classes:
+  // dbstl::DbstlElemTraits<PiecewisePoissonLossLog> *funTraits =
+  //   dbstl::DbstlElemTraits<PiecewisePoissonLossLog>::instance();
+  // funTraits->set_size_function(PiecewiseFunSize);
+  // funTraits->set_copy_function(PiecewiseFunCopy);
+  // funTraits->set_restore_function(PiecewiseFunRestore);
 
-  //Berkeley DB filesystem Backend:
-  DbEnv *env = NULL;
+  // //Berkeley DB filesystem Backend:
+  // DbEnv *env = NULL;
   std::string db_file_name = penalty_prefix + ".db";
-  Db *db;
-  try{
-    db = dbstl::open_db(env, db_file_name.c_str(), DB_RECNO, DB_CREATE, 0);
-  }catch(const DbException& e){
-    return ERROR_OPENING_DATABASE;
-  }
-  dbstl::db_vector<PiecewisePoissonLossLog> cost_model_mat(db, env);
+  // Db *db = dbstl::open_db(env, db_file_name.c_str(), DB_RECNO, DB_CREATE, 0);
+  // dbstl::db_vector<PiecewisePoissonLossLog> cost_model_mat(db, env);
 
   //Berkeley DB in-memory backend:
   //dbstl::db_vector<PiecewisePoissonLossLog> cost_model_mat;
@@ -167,11 +252,19 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   //std::vector<PiecewisePoissonLossLog> cost_model_mat;
 
   //Initialization of empty function pieces.
-  PiecewisePoissonLossLog empty_fun;
-  for(int i=0; i<data_count*2; i++){
-    cost_model_mat.push_back(empty_fun);
-  }
+  // PiecewisePoissonLossLog empty_fun;
+  // for(int i=0; i<data_count*2; i++){
+  //   cost_model_mat.push_back(empty_fun);
+  // }
   
+  //DiskVector on-disk backend:
+  DiskVector cost_model_mat;
+  try{
+    cost_model_mat.init(db_file_name.c_str(), data_count*2);
+  }catch(WriteFailedException& e){
+    return ERROR_WRITING_COST_FUNCTIONS;
+  }
+
   PiecewisePoissonLossLog up_cost, down_cost, up_cost_prev, down_cost_prev;
   PiecewisePoissonLossLog min_prev_cost;
   int verbose=0;
@@ -304,16 +397,22 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
     //Rprintf("data_i=%d data_i+data_count=%d\n", data_i, data_i+data_count);
     up_cost.chromEnd = chromEnd;
     down_cost.chromEnd = chromEnd;
+    //try{
+    //cost_model_mat[data_i] = up_cost;
+    //cost_model_mat[data_i + data_count] = down_cost;
     try{
-      cost_model_mat[data_i] = up_cost;
-      cost_model_mat[data_i + data_count] = down_cost;
-    }catch(const DbException& e){
-      //Rprintf("Db ERror: %d\n", e.get_errno());
-      // need to close the database file, otherwise it takes up disk space
-      // until R exists.
-      db->close(0);
+      cost_model_mat.write(data_i, up_cost);
+      cost_model_mat.write(data_i + data_count, down_cost);
+    }catch(WriteFailedException& e){
       return ERROR_WRITING_COST_FUNCTIONS;
     }
+    // }catch(const DbException& e){
+    //   //Rprintf("Db ERror: %d\n", e.get_errno());
+    //   // need to close the database file, otherwise it takes up disk space
+    //   // until R exists.
+    //   db->close(0);
+    //   return ERROR_WRITING_COST_FUNCTIONS;
+    // }
     data_i++;
   }
   //Rprintf("AFTER\n");
@@ -322,7 +421,8 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   int prev_seg_offset = 0;
   // last segment is down (offset N) so the second to last segment is
   // up (offset 0).
-  down_cost = cost_model_mat[data_count*2-1];
+  //down_cost = cost_model_mat[data_count*2-1];
+  down_cost = cost_model_mat.read(data_count*2-1);
   down_cost.Minimize
     (&best_cost, &best_log_mean,
      &prev_seg_end, &prev_log_mean);
@@ -335,7 +435,8 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   while(0 <= prev_seg_end){
     line_i++;
     // up_cost is actually either an up or down cost.
-    up_cost = cost_model_mat[prev_seg_offset + prev_seg_end];
+    //up_cost = cost_model_mat[prev_seg_offset + prev_seg_end];
+    up_cost = cost_model_mat.read(prev_seg_offset + prev_seg_end);
     //Rprintf("decoding prev_seg_end=%d prev_seg_offset=%d\n", prev_seg_end, prev_seg_offset);
     segments_file << chrom << "\t" << up_cost.chromEnd << "\t" << prev_chromEnd << "\t";
     // change prev_seg_offset for next iteration.
@@ -362,7 +463,7 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   }//for(data_i
   // need to close the database file, otherwise it takes up disk space
   // until R exists.
-  db->close(0);
+  //db->close(0);
   segments_file << chrom << "\t" << first_chromStart << "\t" << prev_chromEnd << "\tbackground\t" << exp(best_log_mean) << "\n";
   segments_file.close();
   int n_peaks = (line_i-1)/2;

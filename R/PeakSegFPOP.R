@@ -113,9 +113,9 @@ PeakSegFPOP_disk <- structure(function # PeakSegFPOP on disk
   }
   result
 ### A list of input parameters (bedGraph.file, penalty) and result
-### files (segments, db, loss). 
+### files (segments, db, loss).
 }, ex=function(){
-  
+
   library(PeakSegDisk)
   r <- function(chrom, chromStart, chromEnd, coverage){
     data.frame(chrom, chromStart, chromEnd, coverage)
@@ -136,7 +136,7 @@ PeakSegFPOP_disk <- structure(function # PeakSegFPOP on disk
   loss.df <- read.table(names.list$loss)
   names(loss.df) <- col.name.list$loss
   loss.df
-  
+
 })
 
 fread.first <- function
@@ -205,7 +205,7 @@ problem.PeakSegFPOP <- structure(function
     nrow.ok <- nrow(timing)==1 && nrow(penalty.loss)==1 &&
       nrow(first.seg.line)==1 && nrow(last.seg.line)==1 &&
       nrow(first.cov.line)==1 && nrow(last.cov.line)==1
-    loss.segments.consistent <- 
+    loss.segments.consistent <-
       first.seg.line$chromEnd-last.seg.line$chromStart == penalty.loss$bases
     ## segments files are written by decoding/backtracking after
     ## dynamic progamming, so it is normal that the first line of the
@@ -277,7 +277,7 @@ problem.PeakSegFPOP <- structure(function
     "Mono1_H3K27ac",
     "S001YW_NCMLS",
     "problems",
-    "chr11:60000-580000")
+    "chr11-60000-580000")
   dir.create(data.dir, recursive=TRUE, showWarnings=FALSE)
   write.table(
     Mono27ac$coverage, file.path(data.dir, "coverage.bedGraph"),
@@ -285,7 +285,7 @@ problem.PeakSegFPOP <- structure(function
 
   ## Compute one model with penalty=1952.6
   fit <- problem.PeakSegFPOP(data.dir, "1952.6")
-  
+
   ## Visualize that model.
   ann.colors <- c(
     noPeaks="#f6f4bf",
@@ -335,7 +335,7 @@ problem.PeakSegFPOP <- structure(function
 
   gg+
     coord_cartesian(xlim=c(lab.min, lab.max))
-  
+
 })
 
 problem.sequentialSearch <- structure(function
@@ -456,7 +456,7 @@ problem.sequentialSearch <- structure(function
     r("chr1", 4, 5, 20),
     r("chr1", 5, 6, 2)
   )
-  data.dir <- file.path(tempfile(), "chr1:0-6")
+  data.dir <- file.path(tempfile(), "chr1-0-6")
   dir.create(data.dir, recursive=TRUE)
   write.table(
     supp, file.path(data.dir, "coverage.bedGraph"),
@@ -476,5 +476,5 @@ problem.sequentialSearch <- structure(function
       xend=chromEnd+0.5, yend=mean),
       data=fit$segments,
       color="green")
-  
+
 })

@@ -1,3 +1,5 @@
+config.log
+*.dll
 *~
 .Rhistory
 *.so

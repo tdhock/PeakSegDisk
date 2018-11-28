@@ -19,7 +19,7 @@ data.dir <- file.path(
   "Mono1_H3K27ac",
   "S001YW_NCMLS",
   "problems",
-  "chr11:60000-580000")
+  "chr11-60000-580000")
 dir.create(data.dir, recursive=TRUE, showWarnings=FALSE)
 labels.bed <- file.path(data.dir, "labels.bed")
 coverage.bedGraph <- file.path(data.dir, "coverage.bedGraph")
@@ -61,7 +61,7 @@ data.dir <- file.path(
   "Mono1_H3K27ac",
   "S001YW_NCMLS",
   "problems",
-  "chr11:60000-580000")
+  "chr11-60000-580000")
 dir.create(data.dir, recursive=TRUE, showWarnings=FALSE)
 labels.bed <- file.path(data.dir, "labels.bed")
 coverage.bedGraph <- file.path(data.dir, "coverage.bedGraph")
