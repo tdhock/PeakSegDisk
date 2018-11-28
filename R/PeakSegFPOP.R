@@ -113,9 +113,9 @@ PeakSegFPOP_disk <- structure(function # PeakSegFPOP on disk
   }
   result
 ### A list of input parameters (bedGraph.file, penalty) and result
-### files (segments, db, loss). 
+### files (segments, db, loss).
 }, ex=function(){
-  
+
   library(PeakSegDisk)
   r <- function(chrom, chromStart, chromEnd, coverage){
     data.frame(chrom, chromStart, chromEnd, coverage)
@@ -136,7 +136,7 @@ PeakSegFPOP_disk <- structure(function # PeakSegFPOP on disk
   loss.df <- read.table(names.list$loss)
   names(loss.df) <- col.name.list$loss
   loss.df
-  
+
 })
 
 fread.first <- function
@@ -270,7 +270,7 @@ problem.PeakSegFPOP <- structure(function
     "Mono1_H3K27ac",
     "S001YW_NCMLS",
     "problems",
-    "chr11:60000-580000")
+    "chr11-60000-580000")
   dir.create(data.dir, recursive=TRUE, showWarnings=FALSE)
   write.table(
     Mono27ac$coverage, file.path(data.dir, "coverage.bedGraph"),
@@ -278,7 +278,7 @@ problem.PeakSegFPOP <- structure(function
 
   ## Compute one model with penalty=1952.6
   fit <- problem.PeakSegFPOP(data.dir, "1952.6")
-  
+
   ## Visualize that model.
   ann.colors <- c(
     noPeaks="#f6f4bf",
@@ -328,7 +328,7 @@ problem.PeakSegFPOP <- structure(function
 
   gg+
     coord_cartesian(xlim=c(lab.min, lab.max))
-  
+
 })
 
 problem.sequentialSearch <- structure(function
@@ -469,5 +469,5 @@ problem.sequentialSearch <- structure(function
       xend=chromEnd+0.5, yend=mean),
       data=fit$segments,
       color="green")
-  
+
 })

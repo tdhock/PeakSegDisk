@@ -2,14 +2,15 @@
 
 #include <iomanip> //for setprecision.
 #include <fstream> //for ifstream etc.
+#include <vector>
 // http://docs.oracle.com/cd/E17076_05/html/programmer_reference/arch_apis.html
-#include <dbstl_vector.h>
+//#include <dbstl_vector.h>
 #include <R.h>
 
 #include "funPieceListLog.h"
 #include "PeakSegFPOPLog.h"
 
-u_int32_t PiecewiseFunSize(const PiecewisePoissonLossLog&fun){
+int PiecewiseFunSize(const PiecewisePoissonLossLog&fun){
   return sizeof(PoissonLossPieceLog)*fun.piece_list.size() +
     sizeof(int)*2;
 }
@@ -138,25 +139,25 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   bedGraph_file.clear();
   bedGraph_file.seekg(0, std::ios::beg);
 
-  // Both Berkeley DB Backends need to know how to serialize
-  // the FPOP solver classes:
-  dbstl::DbstlElemTraits<PiecewisePoissonLossLog> *funTraits =
-    dbstl::DbstlElemTraits<PiecewisePoissonLossLog>::instance();
-  funTraits->set_size_function(PiecewiseFunSize);
-  funTraits->set_copy_function(PiecewiseFunCopy);
-  funTraits->set_restore_function(PiecewiseFunRestore);
+  // // Both Berkeley DB Backends need to know how to serialize
+  // // the FPOP solver classes:
+  // dbstl::DbstlElemTraits<PiecewisePoissonLossLog> *funTraits =
+  //   dbstl::DbstlElemTraits<PiecewisePoissonLossLog>::instance();
+  // funTraits->set_size_function(PiecewiseFunSize);
+  // funTraits->set_copy_function(PiecewiseFunCopy);
+  // funTraits->set_restore_function(PiecewiseFunRestore);
 
-  //Berkeley DB filesystem Backend:
-  DbEnv *env = NULL;
-  std::string db_file_name = penalty_prefix + ".db";
-  Db *db = dbstl::open_db(env, db_file_name.c_str(), DB_RECNO, DB_CREATE, 0);
-  dbstl::db_vector<PiecewisePoissonLossLog> cost_model_mat(db, env);
+  // //Berkeley DB filesystem Backend:
+  // DbEnv *env = NULL;
+  // std::string db_file_name = penalty_prefix + ".db";
+  // Db *db = dbstl::open_db(env, db_file_name.c_str(), DB_RECNO, DB_CREATE, 0);
+  // dbstl::db_vector<PiecewisePoissonLossLog> cost_model_mat(db, env);
 
   //Berkeley DB in-memory backend:
   //dbstl::db_vector<PiecewisePoissonLossLog> cost_model_mat;
 
   //STL in-memory backend:
-  //std::vector<PiecewisePoissonLossLog> cost_model_mat;
+  std::vector<PiecewisePoissonLossLog> cost_model_mat;
 
   //Initialization of empty function pieces.
   PiecewisePoissonLossLog empty_fun;
@@ -296,16 +297,16 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
     //Rprintf("data_i=%d data_i+data_count=%d\n", data_i, data_i+data_count);
     up_cost.chromEnd = chromEnd;
     down_cost.chromEnd = chromEnd;
-    try{
+    //try{
       cost_model_mat[data_i] = up_cost;
       cost_model_mat[data_i + data_count] = down_cost;
-    }catch(const DbException& e){
-      //Rprintf("Db ERror: %d\n", e.get_errno());
-      // need to close the database file, otherwise it takes up disk space
-      // until R exists.
-      db->close(0);
-      return ERROR_WRITING_COST_FUNCTIONS;
-    }
+    // }catch(const DbException& e){
+    //   //Rprintf("Db ERror: %d\n", e.get_errno());
+    //   // need to close the database file, otherwise it takes up disk space
+    //   // until R exists.
+    //   db->close(0);
+    //   return ERROR_WRITING_COST_FUNCTIONS;
+    // }
     data_i++;
   }
   //Rprintf("AFTER\n");
@@ -354,7 +355,7 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   }//for(data_i
   // need to close the database file, otherwise it takes up disk space
   // until R exists.
-  db->close(0);
+  //db->close(0);
   segments_file << chrom << "\t" << first_chromStart << "\t" << prev_chromEnd << "\tbackground\t" << exp(best_log_mean) << "\n";
   segments_file.close();
   int n_peaks = (line_i-1)/2;

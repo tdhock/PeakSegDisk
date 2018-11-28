@@ -30,19 +30,8 @@ environment:
 
   #- R_VERSION: devel
 
-before_build:
-  - cmd: ECHO no Revision metadata added to DESCRIPTION
-  #translate from unix: - cmd: ECHO "Revision:" $CI_BUILD_REF >> ./DESCRIPTION
-
 build_script:
   - set _R_CHECK_FORCE_SUGGESTS_=false
-# Include the subset of Suggests that test.data.table() has tests for :
-  - curl -OL http://download.oracle.com/berkeley-db/db-6.2.23.NC.tar.gz
-  - tar xf db-6.2.23.NC.tar.gz
-  - cd db-6.2.23.NC\build_unix
-  - sh ..\dist\configure --enable-stl --enable-mingw
-  - make
-  - make install
   - travis-tool.sh install_deps
 
 test_script:

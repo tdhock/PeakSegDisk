@@ -17,7 +17,7 @@ prob.dir <- file.path(
   "samples",
   "sample1",
   "problems",
-  "chr6_dbb_hap3:3491790-3736386")
+  "chr6_dbb_hap3-3491790-3736386")
 dir.create(prob.dir, showWarnings=FALSE, recursive=TRUE)
 fwrite(
   cov.dt,
