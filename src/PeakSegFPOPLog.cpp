@@ -57,19 +57,31 @@ class AlreadyWrittenException : public std::exception {
   }
 };
 
+class WriteFailedException : public std::exception {
+  const char * what() const throw(){
+    return "Attempt to write to file failed";
+  }
+};
+
 class DiskVector {
 public:
   std::fstream db;
   std::streampos beginning;
   int n_entries;
-  DiskVector(const char *filename, int N){
+  void init(const char *filename, int N){
     n_entries = N;
     db.open(filename, std::ios::binary|std::ios::in|std::ios::out|std::ios::trunc);
     // reserve the first n_entries for streampos objects that will
     // tell us where to look for the data.
     beginning = db.tellp();
     for(int i=0; i<n_entries;i++){
-      db.write((char*)&beginning, sizeof(std::streampos));
+      write_or_exception((char*)&beginning, sizeof(std::streampos));
+    }
+  }
+  void write_or_exception(char * p, int size){
+    db.write(p, size);
+    if(db.fail()){
+      throw WriteFailedException();
     }
   }
   ~DiskVector(){
@@ -77,9 +89,6 @@ public:
   }
   void seek_element(int element){
     db.seekp(sizeof(std::streampos)*element, std::ios::beg);
-  }
-  void seek_end(){
-    db.seekp(0, std::ios::end);
   }
   std::streampos get_element_position(int element){
     seek_element(element);
@@ -108,19 +117,19 @@ public:
       throw AlreadyWrittenException();
     }
     // serialize at end of file.
-    seek_end();
+    db.seekp(0, std::ios::end);
     pos = db.tellp();//save pos for later.
     // first write size of fun.
     int size = PiecewiseFunSize(fun);
-    db.write((char*)&size, sizeof(int));
+    write_or_exception((char*)&size, sizeof(int));
     // then write the data itself.
     void * buffer = malloc(size);
     PiecewiseFunCopy(buffer, fun);
-    db.write((char*)buffer, size);
+    write_or_exception((char*)buffer, size);
     free(buffer);
     // write position.
     seek_element(element);
-    db.write((char*)&pos, sizeof(std::streampos));
+    write_or_exception((char*)&pos, sizeof(std::streampos));
   }
 };
 
@@ -249,7 +258,12 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   // }
   
   //DiskVector on-disk backend:
-  DiskVector cost_model_mat(db_file_name.c_str(), data_count*2);
+  DiskVector cost_model_mat;
+  try{
+    cost_model_mat.init(db_file_name.c_str(), data_count*2);
+  }catch(WriteFailedException& e){
+    return ERROR_WRITING_COST_FUNCTIONS;
+  }
 
   PiecewisePoissonLossLog up_cost, down_cost, up_cost_prev, down_cost_prev;
   PiecewisePoissonLossLog min_prev_cost;
@@ -386,8 +400,12 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
     //try{
     //cost_model_mat[data_i] = up_cost;
     //cost_model_mat[data_i + data_count] = down_cost;
-    cost_model_mat.write(data_i, up_cost);
-    cost_model_mat.write(data_i + data_count, down_cost);
+    try{
+      cost_model_mat.write(data_i, up_cost);
+      cost_model_mat.write(data_i + data_count, down_cost);
+    }catch(WriteFailedException& e){
+      return ERROR_WRITING_COST_FUNCTIONS;
+    }
     // }catch(const DbException& e){
     //   //Rprintf("Db ERror: %d\n", e.get_errno());
     //   // need to close the database file, otherwise it takes up disk space
