@@ -44,6 +44,10 @@ setkey(segs.dt, segStart1, segEnd)
 over.dt <- foverlaps(cov.dt, segs.dt, nomatch=0L)
 sprintf("%.12f", over.dt[, PeakSegDP::PoissonLoss(count, mean, chromEnd-chromStart)])
 
+2018.12.11 PR#4
+
+if data all the same then do not run DP.
+
 2018.11.28 PR#2
 
 Remove dependency on Berkeley DB.

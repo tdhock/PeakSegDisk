@@ -70,3 +70,110 @@ test_that("three columns in coverage.bedGraph is an error", {
     problem.PeakSegFPOP(prob.dir, "300")
   }, "should have exactly four columns")
 })
+
+prob.dir <- file.path(
+  tempfile(),
+  "samples",
+  "sample1",
+  "problems",
+  "chr6_dbb_hap3-3491790-3736386")
+dir.create(prob.dir, showWarnings=FALSE, recursive=TRUE)
+coverage.bedGraph <- file.path(prob.dir, "coverage.bedGraph")
+pos <- 1:3
+rep.dt <- data.table(
+  chrom="chr6_dbb_hap3",
+  chromStart=pos,
+  chromEnd=pos+1L,
+  count=0L)
+fwrite(
+  rep.dt,
+  coverage.bedGraph,
+  sep="\t", row.names=FALSE, col.names=FALSE)
+test_that("constant model when data are all 0", {
+  fit <- problem.PeakSegFPOP(prob.dir, "0")
+  expect_equal(fit$loss$peaks, 0)
+  expect_equal(fit$segments$chromStart, 1)
+  expect_equal(fit$segments$chromEnd, 4)
+  expect_equal(fit$segments$mean, 0)
+})
+
+prob.dir <- file.path(
+  tempfile(),
+  "samples",
+  "sample1",
+  "problems",
+  "chr6_dbb_hap3-3491790-3736386")
+dir.create(prob.dir, showWarnings=FALSE, recursive=TRUE)
+coverage.bedGraph <- file.path(prob.dir, "coverage.bedGraph")
+pos <- 1:3
+rep.dt <- data.table(
+  chrom="chr6_dbb_hap3",
+  chromStart=pos,
+  chromEnd=pos+1L,
+  count=5L)
+fwrite(
+  rep.dt,
+  coverage.bedGraph,
+  sep="\t", row.names=FALSE, col.names=FALSE)
+test_that("constant model when data are all 5", {
+  fit <- problem.PeakSegFPOP(prob.dir, "0")
+  expect_equal(fit$loss$peaks, 0)
+  expect_equal(fit$segments$chromStart, 1)
+  expect_equal(fit$segments$chromEnd, 4)
+  expect_equal(fit$segments$mean, 5)
+})
+
+prob.dir <- file.path(
+  tempfile(),
+  "samples",
+  "sample1",
+  "problems",
+  "chr6_dbb_hap3-3491790-3736386")
+dir.create(prob.dir, showWarnings=FALSE, recursive=TRUE)
+coverage.bedGraph <- file.path(prob.dir, "coverage.bedGraph")
+pos <- 1:3
+rep.dt <- data.table(
+  chrom="chr6_dbb_hap3",
+  chromStart=pos,
+  chromEnd=pos+1L,
+  count=c(0L, 0L, 5L))
+fwrite(
+  rep.dt,
+  coverage.bedGraph,
+  sep="\t", row.names=FALSE, col.names=FALSE)
+test_that("repeated 0 is OK", {
+  fit <- problem.PeakSegFPOP(prob.dir, "0")
+  expect_equal(fit$loss$peaks, 1)
+  expect_equal(fit$segments$chromStart, rev(pos))
+  expect_equal(fit$segments$chromEnd, rev(pos+1))
+  expect_equal(fit$segments$mean, rev(c(0, 2.5, 2.5)))
+  fit <- problem.PeakSegFPOP(prob.dir, "10000")
+  expect_equal(fit$loss$peaks, 0)
+  expect_equal(fit$segments$chromStart, 1)
+  expect_equal(fit$segments$chromEnd, 4)
+  expect_equal(fit$segments$mean, 5/3, tolerance=1e-4)
+})
+
+prob.dir <- file.path(
+  tempfile(),
+  "samples",
+  "sample1",
+  "problems",
+  "chr6_dbb_hap3-3491790-3736386")
+dir.create(prob.dir, showWarnings=FALSE, recursive=TRUE)
+coverage.bedGraph <- file.path(prob.dir, "coverage.bedGraph")
+pos <- 1:3
+rep.dt <- data.table(
+  chrom="chr6_dbb_hap3",
+  chromStart=rev(pos),
+  chromEnd=rev(pos+1L),
+  count=c(0L, 0L, 5L))
+fwrite(
+  rep.dt,
+  coverage.bedGraph,
+  sep="\t", row.names=FALSE, col.names=FALSE)
+test_that("error for reverse data", {
+  expect_error({
+    problem.PeakSegFPOP(prob.dir, "0")
+  }, "there should be no gaps")
+})
