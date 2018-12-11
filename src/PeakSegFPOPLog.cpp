@@ -203,7 +203,7 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   std::string loss_file_name = penalty_prefix + "_loss.tsv";
   std::ofstream loss_file;
   loss_file.open(loss_file_name.c_str());
-  if(penalty == INFINITY){
+  if(penalty == INFINITY || min_log_mean == max_log_mean){
     if(cum_weighted_count != 0){
       best_cost = cum_weighted_count *
 	(1 - log(cum_weighted_count) + log(cum_weight_i)); 
