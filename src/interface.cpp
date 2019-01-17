@@ -4,6 +4,15 @@
 #include <R.h>
 #include <R_ext/Rdynload.h>
 
+#include "eigen.h"
+
+void Eigen_interface(double *X, int *nrow, int *ncol){
+  int status = testEigen(X, *nrow, *ncol);
+  if(status != 0){
+    error("testEigen returned error ", status);
+  }
+}
+
 void PeakSegFPOP_interface
 (char **file_vec, char **pen_vec){
   char *bedGraph = file_vec[0];
@@ -51,6 +60,10 @@ void PeakSegFPOP_interface
 R_CMethodDef cMethods[] = {
   {"PeakSegFPOP_interface",
    (DL_FUNC) &PeakSegFPOP_interface, 2
+   //,{REALSXP, REALSXP, INTSXP, INTSXP, REALSXP}
+  },
+  {"Eigen_interface",
+   (DL_FUNC) &Eigen_interface, 3
    //,{REALSXP, REALSXP, INTSXP, INTSXP, REALSXP}
   },
   {NULL, NULL, 0}
