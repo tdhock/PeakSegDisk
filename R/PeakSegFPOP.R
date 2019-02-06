@@ -78,7 +78,9 @@ PeakSegFPOP_disk <- structure(function # PeakSegFPOP on disk
     length(bedGraph.file)==1 &&
     file.exists(bedGraph.file)
   )){
-    stop("bedGraph.file must be the name of a data file to segment")
+    stop(
+      "bedGraph.file=", bedGraph.file,
+      " must be the name of a data file to segment")
   }
   if(!is.character(pen.str)){
     stop(paste(
@@ -184,8 +186,14 @@ problem.PeakSegFPOP <- structure(function
 ### peaks, "Inf" means no peaks. Needs to be a character because that
 ### is used to create files which cache/store the optimal solution.
  ){
-  stopifnot(is.character(problem.dir))
-  stopifnot(length(problem.dir)==1)
+   if(!(
+     is.character(problem.dir) && 
+     length(problem.dir)==1 &&
+     dir.exists(problem.dir))){
+     stop(
+       "problem.dir=", problem.dir,
+       " must be the name of a directory containing a file named coverage.bedGraph")
+   }
   stopifnot(is.character(penalty.str))
   stopifnot(length(penalty.str)==1)
   prob.cov.bedGraph <- file.path(problem.dir, "coverage.bedGraph")
