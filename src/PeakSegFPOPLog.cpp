@@ -134,8 +134,9 @@ public:
 };
 
 int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
+  bool penalty_is_finite = strcmp(penalty_str, "Inf") != 0;
   double penalty = atof(penalty_str);
-  if(penalty == INFINITY){
+  if(!penalty_is_finite){
     //ok but maybe we should special case this, no need to run PDPA.
   }else if(!std::isfinite(penalty)){
     return ERROR_PENALTY_NOT_FINITE;
@@ -203,7 +204,7 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   std::string loss_file_name = penalty_prefix + "_loss.tsv";
   std::ofstream loss_file;
   loss_file.open(loss_file_name.c_str());
-  if(penalty == INFINITY || min_log_mean == max_log_mean){
+  if(!penalty_is_finite || min_log_mean == max_log_mean){
     if(cum_weighted_count != 0){
       best_cost = cum_weighted_count *
 	(1 - log(cum_weighted_count) + log(cum_weight_i)); 
