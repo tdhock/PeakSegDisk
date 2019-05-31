@@ -134,10 +134,11 @@ public:
 };
 
 int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
-  bool penalty_is_finite = strcmp(penalty_str, "Inf") != 0;
+  bool penalty_is_Inf = strcmp(penalty_str, "Inf") == 0;
   double penalty = atof(penalty_str);
-  if(!penalty_is_finite){
-    //ok but maybe we should special case this, no need to run PDPA.
+  // Handle penalty error cases before opening files.
+  if(penalty_is_Inf){
+    //ok, will run special case later, no need to run PDPA.
   }else if(!std::isfinite(penalty)){
     return ERROR_PENALTY_NOT_FINITE;
   }else if(penalty < 0){
@@ -199,20 +200,20 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   penalty_prefix += penalty_str;
   std::string segments_file_name = penalty_prefix + "_segments.bed";
   std::ofstream segments_file;
-  segments_file.open(segments_file_name.c_str());
   // Also write loss file.
   std::string loss_file_name = penalty_prefix + "_loss.tsv";
   std::ofstream loss_file;
-  loss_file.open(loss_file_name.c_str());
-  if(!penalty_is_finite || min_log_mean == max_log_mean){
+  if(penalty_is_Inf || min_log_mean == max_log_mean){
     if(cum_weighted_count != 0){
       best_cost = cum_weighted_count *
 	(1 - log(cum_weighted_count) + log(cum_weight_i)); 
     } else {
       best_cost = 0;
     }
+    segments_file.open(segments_file_name.c_str());
     segments_file << chrom << "\t" << first_chromStart << "\t" << chromEnd << "\tbackground\t" << cum_weighted_count/cum_weight_i << "\n";
     segments_file.close();
+    loss_file.open(loss_file_name.c_str());
     loss_file << std::setprecision(20) << penalty_str << //penalty constant
       "\t" << 1 << //segments
       "\t" << 0 << //peaks
@@ -433,6 +434,7 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   // end_vec[0] = prev_seg_end;
   int n_equality_constraints = 0;
   line_i=1;
+  segments_file.open(segments_file_name.c_str());
   while(0 <= prev_seg_end){
     line_i++;
     // up_cost is actually either an up or down cost.
@@ -468,6 +470,7 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   segments_file << chrom << "\t" << first_chromStart << "\t" << prev_chromEnd << "\tbackground\t" << exp(best_log_mean) << "\n";
   segments_file.close();
   int n_peaks = (line_i-1)/2;
+  loss_file.open(loss_file_name.c_str());
   loss_file << std::setprecision(20) << penalty << //penalty constant
     "\t" << line_i << //segments
     "\t" << n_peaks << //peaks
