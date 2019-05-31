@@ -4,12 +4,12 @@ library(PeakSegDisk)
 library(data.table)
 data(Mono27ac)
 
-## This test relies on the existence of this very small 256K
-## filesystem mounted on /tmp/tmp256K
-tmp.dir <- "/tmp/tmp256K"
+## This test relies on the existence of this very small 200K
+## filesystem mounted on /tmp/tmp200K
+tmp.dir <- "/tmp/tmp200K"
 if(!dir.exists(tmp.dir)){
   dir.create(tmp.dir)
-  system("sudo mount -t tmpfs -o size=256K tmpfs /tmp/tmp256K")
+  system("sudo mount -t tmpfs -o size=200K tmpfs /tmp/tmp200K")
 }
 unlink(file.path(tmp.dir, "*"), recursive=TRUE)
 data.dir <- file.path(
@@ -29,8 +29,9 @@ fwrite(
 fwrite(
   Mono27ac$coverage, coverage.bedGraph,
   col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t")
-du.dt <- fread(paste("du -bs", file.path(data.dir, "*")))
-sum(du.dt$V1)
+(du.dt <- fread(
+  paste("du -bs", file.path(data.dir, "*")),
+  col.names=c("bytes", "file")))
 system(paste("du -bs", tmp.dir))
 
 test_that("problem.PeakSegFPOP error writing cost function database", {
@@ -39,7 +40,7 @@ test_that("problem.PeakSegFPOP error writing cost function database", {
   }, "unable to write to cost function database file")
 })
 
-size <- "160000"
+size <- sum(du.dt$bytes)*1.5
 tmp.dir <- paste0("/tmp/tmp", size)
 if(!file.exists(tmp.dir)){
   cmd <- paste0(
@@ -71,13 +72,27 @@ fwrite(
 fwrite(
   Mono27ac$coverage, coverage.bedGraph,
   col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t")
+getbytes <- function(){
+  fread(
+    paste("du -bs", data.dir),
+    col.names=c("bytes", "file"))$bytes
+}
+old.bytes <- 0
+while(old.bytes != (new.bytes <- getbytes())){
+  old.bytes <- new.bytes
+  fwrite(
+    Mono27ac$coverage, file.path(data.dir, "filler"),
+    col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t")
+}
 
-test_that("problem.PeakSegFPOP error writing loss output", {
+test_that("PeakSegFPOP_disk error writing loss output", {
   expect_error({
-    L <- PeakSegFPOP_disk(file.path(data.dir, "coverage.bedGraph"), "Inf")
+    L <- PeakSegFPOP_disk(
+      file.path(data.dir, "coverage.bedGraph"),
+      "Inf")#Inf does not write a cost function db.
   }, "unable to write to loss output file")
 })
 
-du.dt <- fread(paste("du -bs", file.path(data.dir, "*")))
-setnames(du.dt, c("bytes", "file"))
-du.dt[, list(bytes, file=sub(".*/", "", file))]
+new.du.dt <- fread(paste("du -bs", file.path(data.dir, "*")))
+setnames(new.du.dt, c("bytes", "file"))
+new.du.dt[, list(bytes, file=sub(".*/", "", file))]
