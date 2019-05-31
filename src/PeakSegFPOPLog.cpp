@@ -65,7 +65,7 @@ class WriteFailedException : public std::exception {
 
 class DiskVector {
 public:
-  std::fstream db;
+  std::fstream db; //fstream supports both input and output.
   std::streampos beginning;
   int n_entries;
   void init(const char *filename, int N){
@@ -83,9 +83,6 @@ public:
     if(db.fail()){
       throw WriteFailedException();
     }
-  }
-  ~DiskVector(){
-    db.close();
   }
   void seek_element(int element){
     db.seekp(sizeof(std::streampos)*element, std::ios::beg);
@@ -194,15 +191,19 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
     return ERROR_NO_DATA;
   }
   double best_cost, best_log_mean, prev_log_mean;
-  // open segments file for writing.
+  // open segments and loss files for writing.
   std::string penalty_prefix = bedGraph_file_name;
   penalty_prefix += "_penalty=";
   penalty_prefix += penalty_str;
   std::string segments_file_name = penalty_prefix + "_segments.bed";
-  std::ofstream segments_file;
-  // Also write loss file.
   std::string loss_file_name = penalty_prefix + "_loss.tsv";
-  std::ofstream loss_file;
+  std::ofstream segments_file, loss_file; // ofstream supports output only.
+  // Opening both files here is fine even if we error exit, because
+  // "any open file is automatically closed when the ofstream object
+  // is destroyed."
+  // http://www.cplusplus.com/reference/fstream/ofstream/close/
+  loss_file.open(loss_file_name.c_str());
+  segments_file.open(segments_file_name.c_str());
   if(penalty_is_Inf || min_log_mean == max_log_mean){
     if(cum_weighted_count != 0){
       best_cost = cum_weighted_count *
@@ -210,10 +211,7 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
     } else {
       best_cost = 0;
     }
-    segments_file.open(segments_file_name.c_str());
     segments_file << chrom << "\t" << first_chromStart << "\t" << chromEnd << "\tbackground\t" << cum_weighted_count/cum_weight_i << "\n";
-    segments_file.close();
-    loss_file.open(loss_file_name.c_str());
     loss_file << std::setprecision(20) << penalty_str << //penalty constant
       "\t" << 1 << //segments
       "\t" << 0 << //peaks
@@ -225,7 +223,6 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
       "\t" << 0 << //mean intervals
       "\t" << 0 << //max intervals
       "\n";
-    loss_file.close();
     return 0;
   }
   //Rprintf("data_count=%d min_log_mean=%f max_log_mean=%f\n", data_count, min_log_mean, max_log_mean);
@@ -408,13 +405,6 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
     }catch(WriteFailedException& e){
       return ERROR_WRITING_COST_FUNCTIONS;
     }
-    // }catch(const DbException& e){
-    //   //Rprintf("Db ERror: %d\n", e.get_errno());
-    //   // need to close the database file, otherwise it takes up disk space
-    //   // until R exists.
-    //   db->close(0);
-    //   return ERROR_WRITING_COST_FUNCTIONS;
-    // }
     data_i++;
   }
   //Rprintf("AFTER\n");
@@ -434,7 +424,6 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   // end_vec[0] = prev_seg_end;
   int n_equality_constraints = 0;
   line_i=1;
-  segments_file.open(segments_file_name.c_str());
   while(0 <= prev_seg_end){
     line_i++;
     // up_cost is actually either an up or down cost.
@@ -464,13 +453,8 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
       (best_log_mean, &prev_seg_end, &prev_log_mean);
     //Rprintf("mean=%f end=%d chromEnd=%d\n", exp(best_log_mean), prev_seg_end, up_cost.chromEnd);
   }//for(data_i
-  // need to close the database file, otherwise it takes up disk space
-  // until R exists.
-  //db->close(0);
   segments_file << chrom << "\t" << first_chromStart << "\t" << prev_chromEnd << "\tbackground\t" << exp(best_log_mean) << "\n";
-  segments_file.close();
   int n_peaks = (line_i-1)/2;
-  loss_file.open(loss_file_name.c_str());
   loss_file << std::setprecision(20) << penalty << //penalty constant
     "\t" << line_i << //segments
     "\t" << n_peaks << //peaks
@@ -482,7 +466,6 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
     "\t" << total_intervals/(data_count*2) <<
     "\t" << max_intervals <<
     "\n";
-  loss_file.close();
   return 0;
 }
 
