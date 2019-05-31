@@ -1,9 +1,12 @@
 /* -*- compile-command: "R CMD INSTALL .." -*- */
 
 #include "PeakSegFPOPLog.h"
-#include <R.h>
-#include <R_ext/Rdynload.h>
+#include <R.h>//for error
+#include <R_ext/Rdynload.h>//for registering routines.
+#include <Rinternals.h>//for STRSXP
 
+static int PeakSegFPOP_nargs = 2;
+static R_NativePrimitiveArgType PeakSegFPOP_types[] = {STRSXP, STRSXP};
 void PeakSegFPOP_interface
 (char **file_vec, char **pen_vec){
   char *bedGraph = file_vec[0];
@@ -35,13 +38,17 @@ void PeakSegFPOP_interface
     error("unable to write to loss output file %s_penalty=%s_loss.tsv",
 	  bedGraph, penalty);
   }
+  if(status==ERROR_WRITING_SEGMENTS_OUTPUT){
+    error("unable to write to segments output file %s_penalty=%s_segments.bed",
+	  bedGraph, penalty);
+  }
   if(status==ERROR_NO_DATA){
     error("input file %s contains no data", bedGraph);
   }
-  if(status==ERROR_OPENING_DATABASE){
+  if(status==ERROR_PENALTY_NOT_NUMERIC){
     error
-      ("database locked; delete lock file __db.*.db to unlock",
-       bedGraph, penalty);
+      ("penalty string '%s' is not numeric; it should be convertible to double",
+       penalty);
   }
   if(status != 0){
     error("error code %d", status);
@@ -50,10 +57,9 @@ void PeakSegFPOP_interface
   
 R_CMethodDef cMethods[] = {
   {"PeakSegFPOP_interface",
-   (DL_FUNC) &PeakSegFPOP_interface, 2
-   //,{REALSXP, REALSXP, INTSXP, INTSXP, REALSXP}
+   (DL_FUNC) &PeakSegFPOP_interface, PeakSegFPOP_nargs, PeakSegFPOP_types
   },
-  {NULL, NULL, 0}
+  {NULL, NULL, 0, NULL}
 };
 
 extern "C" {
