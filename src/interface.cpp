@@ -5,7 +5,7 @@
 #include <R_ext/Rdynload.h>//for registering routines.
 #include <Rinternals.h>//for STRSXP
 
-static int PeakSegFPOP_nargs = 1;
+static int PeakSegFPOP_nargs = 2;
 static R_NativePrimitiveArgType PeakSegFPOP_types[] = {STRSXP, STRSXP};
 void PeakSegFPOP_interface
 (char **file_vec, char **pen_vec){
