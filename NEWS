@@ -44,6 +44,10 @@ setkey(segs.dt, segStart1, segEnd)
 over.dt <- foverlaps(cov.dt, segs.dt, nomatch=0L)
 sprintf("%.12f", over.dt[, PeakSegDP::PoissonLoss(count, mean, chromEnd-chromStart)])
 
+2019.6.5
+
+do not write first up cost, which is undefined.
+
 2019.5.24 PR#5
 
 check Inf string for windows.
