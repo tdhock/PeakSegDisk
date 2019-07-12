@@ -45,11 +45,12 @@ PeakSegFPOP_df <- structure(function
     base.dir,
     with(count.df, sprintf(
       "%s-%d-%d", chrom[1], min(chromStart), max(chromEnd))))
+  unlink(data.dir, recursive=TRUE)
   dir.create(data.dir, showWarnings=FALSE, recursive=TRUE)
   coverage.bedGraph <- file.path(data.dir, "coverage.bedGraph")
   write.table(
     count.df, coverage.bedGraph,
-    sep="\t", row.names=FALSE, col.names=FALSE)
+    quote=FALSE, sep="\t", row.names=FALSE, col.names=FALSE)
   problem.PeakSegFPOP(data.dir, paste(pen.num))
 ### List of solver results, same as problem.PeakSegFPOP.
 }, ex=function(){
