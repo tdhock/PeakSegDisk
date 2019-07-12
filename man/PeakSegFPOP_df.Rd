@@ -2,11 +2,12 @@
 \alias{PeakSegFPOP_df}
 \title{PeakSegFPOP df}
 \description{Write data frame to disk then run PeakSegFPOP solver.}
-\usage{PeakSegFPOP_df(count.df, pen.num, base.dir = "~/foo/bar")}
+\usage{PeakSegFPOP_df(count.df, pen.num, base.dir = tempdir())}
 \arguments{
   \item{count.df}{data.frame with columns count, chromStart, chromEnd.}
   \item{pen.num}{Non-negative numeric scalar.}
-  \item{base.dir}{something}
+  \item{base.dir}{
+}
 }
 
 \value{List of solver results, same as problem.PeakSegFPOP.}

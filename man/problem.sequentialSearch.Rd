@@ -6,7 +6,10 @@ peaks given by peaks.int. This function repeated calls
 problem.PeakSegFPOP with different penalty values, until either
 (1) it finds the peaks.int model, or (2) it concludes that there
 is no peaks.int model, in which case it returns the next simplest
-model (with fewer peaks than peaks.int).}
+model (with fewer peaks than peaks.int).
+The first pair of penalty values (0, Inf) is run in parallel
+via the user-specified future plan,
+if the future.apply package is available.}
 \usage{problem.sequentialSearch(problem.dir, peaks.int, verbose = 0)}
 \arguments{
   \item{problem.dir}{problemID directory in which coverage.bedGraph has already been

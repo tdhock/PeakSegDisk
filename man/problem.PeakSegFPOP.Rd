@@ -6,7 +6,7 @@ directory, and read the result files into R. Actually, this
 function will first check if the result files are already present
 (and consistent), and if so, it will simply read them into R
 (without running PeakSegFPOP_disk) -- this is a caching mechanism
-that can save a lot of time.}
+that can save a lot of time. }
 \usage{problem.PeakSegFPOP(problem.dir, penalty.str)}
 \arguments{
   \item{problem.dir}{Path to a directory like sampleID/problems/problemID which
