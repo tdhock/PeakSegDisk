@@ -8,17 +8,6 @@ col.name.list <- list(
   segments=c("chrom","chromStart", "chromEnd", "status", "mean"),
   coverage=c("chrom", "chromStart", "chromEnd", "count"))
 
-### mclapply with error checking.
-mclapplyError <- function(...){
-  result.list <- parallel::mclapply(...)
-  is.error <- sapply(result.list, inherits, "try-error")
-  if(any(is.error)){
-    print(result.list[is.error])
-    stop("errors in mclapply")
-  }
-  result.list
-}
-
 PeakSegFPOP_disk <- structure(function # PeakSegFPOP on disk
 ### Run the PeakSeg Functional Pruning Optimal Partitioning algorithm,
 ### using a file on disk (rather than in memory as in
@@ -175,7 +164,7 @@ problem.PeakSegFPOP <- structure(function
 ### function will first check if the result files are already present
 ### (and consistent), and if so, it will simply read them into R
 ### (without running PeakSegFPOP_disk) -- this is a caching mechanism
-### that can save a lot of time.
+### that can save a lot of time. 
 (problem.dir,
 ### Path to a directory like sampleID/problems/problemID which
 ### contains a coverage.bedGraph file with the aligned read counts for
@@ -353,6 +342,9 @@ problem.sequentialSearch <- structure(function
 ### (1) it finds the peaks.int model, or (2) it concludes that there
 ### is no peaks.int model, in which case it returns the next simplest
 ### model (with fewer peaks than peaks.int).
+### The first pair of penalty values (0, Inf) is run in parallel
+### via the user-specified future plan,
+### if the future.apply package is available.
 (problem.dir,
 ### problemID directory in which coverage.bedGraph has already been
 ### computed. If there is a labels.bed file then the number of
@@ -375,6 +367,11 @@ problem.sequentialSearch <- structure(function
   next.pen <- c(0, Inf)
   iteration <- 0
   under <- over <- data.table(peaks=NA)
+  LAPPLY <- if(requireNamespace("future.apply")){
+    future.apply::future_lapply
+  }else{
+    lapply
+  }
   while(length(next.pen)){
     if(verbose)cat(
       "Next =", paste(next.pen, collapse=", "),
@@ -382,7 +379,7 @@ problem.sequentialSearch <- structure(function
       "\n")
     next.str <- paste(next.pen)
     iteration <- iteration+1
-    model.list[next.str] <- mclapplyError(
+    model.list[next.str] <- LAPPLY(
       next.str, function(penalty.str){
         L <- problem.PeakSegFPOP(problem.dir, penalty.str)
         L$loss$iteration <- iteration
