@@ -1,5 +1,7 @@
 useDynLib(PeakSegDisk)
 export(PeakSegFPOP_disk)
+export(PeakSegFPOP_df)
+export(PeakSegFPOP_vec)
 export(problem.PeakSegFPOP)
 export(problem.sequentialSearch)
 export(fread.first)
