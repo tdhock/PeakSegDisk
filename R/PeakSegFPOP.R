@@ -375,7 +375,6 @@ problem.sequentialSearch <- structure(function
   while(length(next.pen)){
     if(verbose)cat(
       "Next =", paste(next.pen, collapse=", "),
-      "mc.cores=", getOption("mc.cores"),
       "\n")
     next.str <- paste(next.pen)
     iteration <- iteration+1
