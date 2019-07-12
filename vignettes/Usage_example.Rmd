@@ -12,8 +12,8 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  fig.width = 3,
-  fig.height = 7,
+  fig.width = 7,
+  fig.height = 3,
   fig.align = "center",
   comment = "#>"
 )
@@ -114,8 +114,8 @@ row that reports the model meta-data. Of interest are:
 Note in particular that `PeakSegFPOP_vec` internally uses `rle` to
 construct a run-length encoding, which is passed to the solver to save
 time/storage. In this case the repetitive integer data vector contains
-r`fit$loss$bases` elements but the coverage.bedGraph data file
-contains only r`fit$loss$bedGraph.lines` lines. In real genomic data
+`r fit$loss$bases` elements but the coverage.bedGraph data file
+contains only `r fit$loss$bedGraph.lines` lines. In real genomic data
 sets the difference is typically much larger.
 
 ```{r}
@@ -139,7 +139,7 @@ which does not perform run-length encoding for you:
 ```
 
 Note how `bedGraph.lines` is now the same size as `bases`,
-r`fit.df$loss$bedGraph.lines`. The time/storage complexity is
+`r fit.df$loss$bedGraph.lines`. The time/storage complexity is
 log-linear in the number of `bedGraph.lines`, so it is more efficient
 to use the run-length encoding. This can be easily done in R:
 
@@ -246,11 +246,11 @@ optimal model with a certain number of peaks. The `other` component of
 the model list above shows that
 
 * the search starts with penalty values 0 and Inf, which result in models
-  with r`fit.search$others[penalty==0, peaks]` and 0 peaks, respectively.
-* the next penalty evaluated is r`sprintf("%.2f", fit.search$others[iteration==2, penalty])`, 
-  which results in r`fit.search$others[iteration==2, peaks]` peaks.
-* the final penalty evaluated is r`sprintf("%.2f", fit.search$others[iteration==3, penalty])`, 
-  which results in r`fit.search$others[iteration==3, peaks]` peaks.
+  with `r fit.search$others[penalty==0, peaks]` and 0 peaks, respectively.
+* the next penalty evaluated is `r sprintf("%.2f", fit.search$others[iteration==2, penalty])`, 
+  which results in `r fit.search$others[iteration==2, peaks]` peaks.
+* the final penalty evaluated is `r sprintf("%.2f", fit.search$others[iteration==3, penalty])`, 
+  which results in `r fit.search$others[iteration==3, peaks]` peaks.
   
 At each step (except the first) the new penalties are computed based
 on the loss values found in the previous step.
