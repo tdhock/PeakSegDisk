@@ -348,14 +348,14 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
 	    down_cost.print();
 	    throw status;
 	  }
-	}
+	}//if(data_i==1) else
 	down_cost.multiply(cum_weight_prev_i);
 	down_cost.add
 	  (weight,
 	   -coverage*weight,
 	   0.0);
 	down_cost.multiply(1/cum_weight_i);
-      }//if(data_i initialization else update
+      }//if(data_i==0) initialization else update
       cum_weight_prev_i = cum_weight_i;
       total_intervals += up_cost.piece_list.size() + down_cost.piece_list.size();
       if(max_intervals < up_cost.piece_list.size()){
@@ -373,13 +373,14 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
       //cost_model_mat[data_i] = up_cost;
       //cost_model_mat[data_i + data_count] = down_cost;
       try{
-	cost_model_mat.write(data_i, up_cost);
+	// up_cost is undefined for the first data point.
+	if(0<data_i)cost_model_mat.write(data_i, up_cost);
 	cost_model_mat.write(data_i + data_count, down_cost);
       }catch(WriteFailedException& e){
 	return ERROR_WRITING_COST_FUNCTIONS;
       }
       data_i++;
-    }
+    }//while(can read line in text file)
     //Rprintf("AFTER\n");
     // Decoding the cost_model_vec, and writing to the output matrices.
     int prev_seg_end;
