@@ -44,7 +44,11 @@ setkey(segs.dt, segStart1, segEnd)
 over.dt <- foverlaps(cov.dt, segs.dt, nomatch=0L)
 sprintf("%.12f", over.dt[, PeakSegDP::PoissonLoss(count, mean, chromEnd-chromStart)])
 
-2019.7.12 PR#6
+2019.7.13 PR#6
+
+problem.PeakSegFPOP -> PeakSegFPOP_dir
+
+problem.sequentialSearch -> sequentialSearch_dir
 
 future.apply::future_lapply instead of parallel::mclapply.
 
