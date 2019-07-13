@@ -16,6 +16,11 @@ A list of 2 data.tables: coverage has 4 columns (chrom, chromStart,
 chromEnd, count=number of aligned reads at each position on
 chrom:chromStart-chromEnd); labels has 4 columns (chrom, chromStart,
 chromEnd, annotation=label at chrom:chromStart-chromEnd).
+chrom refers to the chromosome on whcih the data were gathered (chr11),
+chromStart is the 0-based position before the first base of the
+data/label, chromEnd is the 1-based position which is the last base of
+the data/label.
+Therefore, each chromEnd on each row should be equal to the chromStart of the next row.
 }
 \source{
   https://github.com/tdhock/feature-learning-benchmark, prob.dir=

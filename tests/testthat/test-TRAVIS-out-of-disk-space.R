@@ -34,9 +34,9 @@ fwrite(
   col.names=c("bytes", "file")))
 system(paste("du -bs", tmp.dir))
 
-test_that("problem.PeakSegFPOP error writing cost function database", {
+test_that("PeakSegFPOP_dir error writing cost function database", {
   expect_error({
-    problem.PeakSegFPOP(data.dir, "0")
+    PeakSegFPOP_dir(data.dir, "0")
   }, "unable to write to cost function database file")
 })
 
@@ -85,9 +85,9 @@ while(old.bytes != (new.bytes <- getbytes())){
     col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t")
 }
 
-test_that("PeakSegFPOP_disk error writing loss output", {
+test_that("PeakSegFPOP_file error writing loss output", {
   expect_error({
-    L <- PeakSegFPOP_disk(
+    L <- PeakSegFPOP_file(
       file.path(data.dir, "coverage.bedGraph"),
       "Inf")#Inf does not write a cost function db.
   }, "unable to write to loss output file")

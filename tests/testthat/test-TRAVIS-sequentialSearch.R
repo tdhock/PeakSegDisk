@@ -1,5 +1,5 @@
 library(testthat)
-context("problem.sequentialSearch")
+context("travis sequentialSearch")
 library(PeakSegDisk)
 library(data.table)
 data(Mono27ac)

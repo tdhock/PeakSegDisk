@@ -24,6 +24,8 @@ detection in very large sequence count data.
 
 ### Simulate a noisy integer vector with changes
 
+TODO type optimization problems.
+
 The first example we will treat is detecting peaks in a vector of
 integer data, with possibly the same values at adjacent
 positions. This is an inefficient representation for large genomic
@@ -195,16 +197,16 @@ In this section we introduce the most efficient way of using PeakSegDisk, which 
 
 * creating a "problem" directory for each segmentation problem,
 * saving the data to `coverage.bedGraph` in that directory,
-* and then running `problem.PeakSegFPOP`.
+* and then running `PeakSegFPOP_dir`.
 
 The reason why this method is recommended for large data is because
-`problem.PeakSegFPOP` saves its results to the "problem" directory. So
+`PeakSegFPOP_dir` saves its results to the "problem" directory. So
 if a certain result has already been computed, these result files are
 used as a cache, and are read instead of doing computations, which
 saves a lot of time. The file system is used as the interface in
 order to support very large data sets with very little memory usage.
 
-To use `problem.PeakSegFPOP` the data should be saved to a
+To use `PeakSegFPOP_dir` the data should be saved to a
 chrXX-start-end/coverage.bedGraph file, where the problem directory
 "chrXX-start-end" should be named using a genome postion string:
 
@@ -227,18 +229,18 @@ write.table(
 The next step is to run the main solver, 
 
 ```{r}
-(fit.prob <- PeakSegDisk::problem.PeakSegFPOP(data.dir, "10.5"))
+(fit.prob <- PeakSegDisk::PeakSegFPOP_dir(data.dir, "10.5"))
 ```
 
 Again note the results above are the same as in previous computations.
 
 ### Computing the model with a given number of peaks
 
-The `problem.sequentialSearch` function can be used to compute the
+The `sequentialSearch_dir` function can be used to compute the
 optimal model with a certain number of peaks:
 
 ```{r}
-(fit.search <- PeakSegDisk::problem.sequentialSearch(data.dir, 2L, verbose=1))
+(fit.search <- PeakSegDisk::sequentialSearch_dir(data.dir, 2L, verbose=1))
 ```
 
 The algorithm must evaluate several penalty values to compute the

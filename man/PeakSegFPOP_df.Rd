@@ -10,7 +10,7 @@
 }
 }
 
-\value{List of solver results, same as problem.PeakSegFPOP.}
+\value{List of solver results, same as PeakSegFPOP_dir.}
 
 \author{Toby Dylan Hocking}
 

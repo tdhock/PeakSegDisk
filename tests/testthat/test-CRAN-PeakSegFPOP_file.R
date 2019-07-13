@@ -1,5 +1,5 @@
 library(testthat)
-context("PeakSegFPOP_disk")
+context("PeakSegFPOP_file")
 library(PeakSegDisk)
 
 test_that("error when input file does not exist", {
@@ -25,7 +25,7 @@ write.table(
   sep="\t", row.names=FALSE, col.names=FALSE)
 
 test_that("character penalty works", {
-  names.list <- PeakSegFPOP_disk(tmp, "10.5")
+  names.list <- PeakSegFPOP_file(tmp, "10.5")
   unlink(names.list$db)
   seg.df <- read.table(names.list$segments)
   names(seg.df) <- c("chrom", "chromStart", "chromEnd", "status", "mean")
@@ -45,7 +45,7 @@ test_that("character penalty works", {
 
 test_that("error for numeric penalty", {
   expect_error({
-    PeakSegFPOP_disk(tmp, 10.5)
+    PeakSegFPOP_file(tmp, 10.5)
   }, "pen.str must be a character string that can be converted to a non-negative numeric scalar")
 })
 

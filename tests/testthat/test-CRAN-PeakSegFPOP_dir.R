@@ -1,5 +1,5 @@
 library(testthat)
-context("problem.PeakSegFPOP")
+context("PeakSegFPOP_dir")
 library(PeakSegDisk)
 
 library(data.table)
@@ -26,48 +26,48 @@ fwrite(
   sep="\t", row.names=FALSE, col.names=FALSE)
 
 test_that("large penalty should not crash solver", {
-  fit <- problem.PeakSegFPOP(prob.dir, "866939314852865280")
+  fit <- PeakSegFPOP_dir(prob.dir, "866939314852865280")
   expect_identical(fit$loss$peaks, 0L)
 })
 
 loss.tsv <- file.path(prob.dir, "coverage.bedGraph_penalty=10_loss.tsv")
 cat("", file=loss.tsv)
 test_that("empty loss.tsv is fine", {
-  fit <- problem.PeakSegFPOP(prob.dir, "10")
+  fit <- PeakSegFPOP_dir(prob.dir, "10")
   expect_is(fit, "list")
 })
 
 segments.tsv <- file.path(prob.dir, "coverage.bedGraph_penalty=5_segments.tsv")
 cat("", file=segments.tsv)
 test_that("empty segments.tsv is fine", {
-  fit <- problem.PeakSegFPOP(prob.dir, "5")
+  fit <- PeakSegFPOP_dir(prob.dir, "5")
   expect_is(fit, "list")
 })
 
 timing.tsv <- file.path(prob.dir, "coverage.bedGraph_penalty=300_timing.tsv")
 cat("", file=timing.tsv)
 test_that("empty timing.tsv is fine", {
-  fit <- problem.PeakSegFPOP(prob.dir, "300")
+  fit <- PeakSegFPOP_dir(prob.dir, "300")
   expect_is(fit, "list")
 })
 
 cat("", file=coverage.bedGraph)
 test_that("empty coverage.bedGraph is an error", {
   expect_error({
-    problem.PeakSegFPOP(prob.dir, "300")
+    PeakSegFPOP_dir(prob.dir, "300")
   }, "contains no data")
 })
 
 cat("chr1 0 1 5", file=coverage.bedGraph)
 test_that("one line coverage.bedGraph is fine", {
-  fit <- problem.PeakSegFPOP(prob.dir, "300")
+  fit <- PeakSegFPOP_dir(prob.dir, "300")
   expect_is(fit, "list")
 })
 
 cat("0 1 5", file=coverage.bedGraph)
 test_that("three columns in coverage.bedGraph is an error", {
   expect_error({
-    problem.PeakSegFPOP(prob.dir, "300")
+    PeakSegFPOP_dir(prob.dir, "300")
   }, "should have exactly four columns")
 })
 
@@ -90,7 +90,7 @@ fwrite(
   coverage.bedGraph,
   sep="\t", row.names=FALSE, col.names=FALSE)
 test_that("constant model when data are all 0", {
-  fit <- problem.PeakSegFPOP(prob.dir, "0")
+  fit <- PeakSegFPOP_dir(prob.dir, "0")
   expect_equal(fit$loss$peaks, 0)
   expect_equal(fit$segments$chromStart, 1)
   expect_equal(fit$segments$chromEnd, 4)
@@ -116,7 +116,7 @@ fwrite(
   coverage.bedGraph,
   sep="\t", row.names=FALSE, col.names=FALSE)
 test_that("constant model when data are all 5", {
-  fit <- problem.PeakSegFPOP(prob.dir, "0")
+  fit <- PeakSegFPOP_dir(prob.dir, "0")
   expect_equal(fit$loss$peaks, 0)
   expect_equal(fit$segments$chromStart, 1)
   expect_equal(fit$segments$chromEnd, 4)
@@ -142,12 +142,12 @@ fwrite(
   coverage.bedGraph,
   sep="\t", row.names=FALSE, col.names=FALSE)
 test_that("repeated 0 is OK", {
-  fit <- problem.PeakSegFPOP(prob.dir, "0")
+  fit <- PeakSegFPOP_dir(prob.dir, "0")
   expect_equal(fit$loss$peaks, 1)
   expect_equal(fit$segments$chromStart, rev(pos))
   expect_equal(fit$segments$chromEnd, rev(pos+1))
   expect_equal(fit$segments$mean, rev(c(0, 2.5, 2.5)))
-  fit <- problem.PeakSegFPOP(prob.dir, "10000")
+  fit <- PeakSegFPOP_dir(prob.dir, "10000")
   expect_equal(fit$loss$peaks, 0)
   expect_equal(fit$segments$chromStart, 1)
   expect_equal(fit$segments$chromEnd, 4)
@@ -174,6 +174,6 @@ fwrite(
   sep="\t", row.names=FALSE, col.names=FALSE)
 test_that("error for reverse data", {
   expect_error({
-    problem.PeakSegFPOP(prob.dir, "0")
+    PeakSegFPOP_dir(prob.dir, "0")
   }, "there should be no gaps")
 })
