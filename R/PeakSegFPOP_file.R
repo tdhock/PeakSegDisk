@@ -76,12 +76,19 @@ PeakSegFPOP_file <- structure(function # PeakSegFPOP on disk
   write.table(
     four, tmp <- tempfile(),
     sep="\t", row.names=FALSE, col.names=FALSE)
-  names.list <- PeakSegFPOP_file(tmp, "10.5")
-  unlink(names.list$db)
-  seg.df <- read.table(names.list$segments)
+  pstr <- "10.5"
+  PeakSegFPOP_file(tmp, pstr)
+
+  outf <- function(suffix){
+    paste0(tmp, "_penalty=", pstr, "_", suffix)
+  }
+  segments.bed <- outf("segments.bed")
+  seg.df <- read.table(segments.bed)
   names(seg.df) <- col.name.list$segments
   seg.df
-  loss.df <- read.table(names.list$loss)
+
+  loss.tsv <- outf("loss.tsv")
+  loss.df <- read.table(loss.tsv)
   names(loss.df) <- col.name.list$loss
   loss.df
 
