@@ -36,7 +36,7 @@ system(paste("du -bs", tmp.dir))
 
 test_that("PeakSegFPOP_dir error writing cost function database", {
   expect_error({
-    PeakSegFPOP_dir(data.dir, "0")
+    PeakSegFPOP_dir(data.dir, 0)
   }, "unable to write to cost function database file")
 })
 

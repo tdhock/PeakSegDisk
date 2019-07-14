@@ -9,22 +9,60 @@ PeakSegFPOP_dir <- structure(function
 ### Path to a directory like sampleID/problems/problemID which
 ### contains a coverage.bedGraph file with the aligned read counts for
 ### one genomic segmentation problem.
- penalty.str
-### character which can be interpreted as a non-negative numeric
-### penalty parameter (larger values for fewer peaks). "0" means max
-### peaks, "Inf" means no peaks. Needs to be a character because that
-### is used to create files which cache/store the optimal solution.
- ){
-   if(!(
-     is.character(problem.dir) && 
-     length(problem.dir)==1 &&
-     dir.exists(problem.dir))){
-     stop(
-       "problem.dir=", problem.dir,
-       " must be the name of a directory containing a file named coverage.bedGraph")
-   }
-  stopifnot(is.character(penalty.str))
-  stopifnot(length(penalty.str)==1)
+ penalty.param
+### non-negative numeric penalty parameter (larger values for fewer
+### peaks), or character scalar which can be interpreted as such. 0
+### means max peaks, Inf means no peaks. 
+){
+  ##details<<
+  ## Finds the optimal change-points using the Poisson loss and the
+  ## PeakSeg constraint. For N data points, the functional pruning
+  ## algorithm is O(N log N) time and disk space, and O(log N) memory.
+  ## It computes the exact
+  ## solution to the following optimization problem. Let Z be an
+  ## N-vector of count data, typically the coverage, number of aligned
+  ## DNA sequence reads in part of the genome
+  ## (the fourth column of bedGraph.file, non-negative integers). Let W
+  ## be an N-vector of positive weights
+  ## (number of bases with the given amount of count/coverage,
+  ## chromEnd - chromStart,
+  ## third column of bedGraph.file - second column). Let penalty
+  ## be a non-negative real number
+  ## (larger for fewer peaks, smaller for more peaks).
+  ## Find the N-vector M of real numbers
+  ## (segment means) and (N-1)-vector C of change-point indicators in
+  ## {-1,0,1} which minimize the penalized Poisson Loss,
+  ## penalty*sum_{i=1}^{N_1} I(c_i=1) + sum_{i=1}^N
+  ## w_i*[m_i-z_i*log(m_i)], subject to constraints: (1) the first
+  ## change is up and the next change is down, etc (sum_{i=1}^t c_i in
+  ## {0,1} for all t<N-1), and (2) the last change is down
+  ## 0=sum_{i=1}^{N-1}c_i, and (3) Every zero-valued change-point
+  ## variable has an equal segment mean after: c_i=0 implies
+  ## m_i=m_{i+1}, (4) every positive-valued change-point variable may
+  ## have an up change after: c_i=1 implies m_i<=m_{i+1}, (5) every
+  ## negative-valued change-point variable may have a down change
+  ## after: c_i=-1 implies m_i>=m_{i+1}. Note that when the equality
+  ## constraints are active for non-zero change-point variables, the
+  ## recovered model is not feasible for the strict inequality
+  ## constraints of the PeakSeg problem, and the optimum of the PeakSeg
+  ## problem is undefined.
+  if(!(
+    is.character(problem.dir) && 
+    length(problem.dir)==1 &&
+    dir.exists(problem.dir))){
+    stop(
+      "problem.dir=", problem.dir,
+      " must be the name of a directory",
+      " containing a file named coverage.bedGraph")
+  }
+  if(!(
+    (is.numeric(penalty.param) || is.character(penalty.param)) &&
+    length(penalty.param)==1 &&
+    (!is.na(penalty.param))
+  )){
+    stop("penalty.param must be numeric or character, length 1, not missing") 
+  }
+  penalty.str <- paste(penalty.param)
   prob.cov.bedGraph <- file.path(problem.dir, "coverage.bedGraph")
   pre <- paste0(prob.cov.bedGraph, "_penalty=", penalty.str)
   penalty_segments.bed <- paste0(pre, "_segments.bed")
@@ -121,7 +159,7 @@ PeakSegFPOP_dir <- structure(function
     col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t")
 
   ## Compute one model with penalty=1952.6
-  fit <- PeakSegFPOP_dir(data.dir, "1952.6")
+  fit <- PeakSegFPOP_dir(data.dir, 1952.6)
 
   ## Visualize that model.
   ann.colors <- c(

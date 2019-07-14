@@ -87,8 +87,11 @@ gg.change
 
 ### Segment a vector of integers
 
-The code below runs the peak detection algorithm on this count data
-vector, using the penalty parameter $\lambda = 0.5$:
+To run the peak detection algorithm a numeric penalty parameter must
+be specified by the user. The smallest value is 0 which yields max
+peaks, and the largest value is Inf which yields no peaks. The code
+below runs the peak detection algorithm on this count data vector,
+using the penalty parameter $\lambda = 10.5$:
 
 ```{r}
 (fit <- PeakSegDisk::PeakSegFPOP_vec(z.rep.vec, 10.5))
@@ -203,7 +206,8 @@ The reason why this method is recommended for large data is because
 `PeakSegFPOP_dir` saves its results to the "problem" directory. So
 if a certain result has already been computed, these result files are
 used as a cache, and are read instead of doing computations, which
-saves a lot of time. The file system is used as the interface in
+saves a lot of time. 
+The file system is used as the interface in
 order to support very large data sets with very little memory usage.
 
 To use `PeakSegFPOP_dir` the data should be saved to a
@@ -213,6 +217,14 @@ chrXX-start-end/coverage.bedGraph file, where the problem directory
 * chrXX is the chromosome (which is irrelevant to the algorithm),
 * start is the 0-based first position of the region to segment (the smallest possible value is 0),
 * end is the 1-based end position (the smallest possible value is 1).
+
+The underlying C++ code
+creates penalty-specific files such as
+`chrXX-start-end/coverage.bedGraph_penalty=0.1_loss.tsv` which
+are used to store/cache the results. 
+If the files already exist (and
+are consistent) then `PeakSegFPOP_dir` just reads them; otherwise it
+runs the dynamic programming C++ code in order to create those files.
 
 ```{r}
 data.dir <- file.path(
@@ -229,20 +241,10 @@ write.table(
 The next step is to run the main solver, 
 
 ```{r}
-(fit.prob <- PeakSegDisk::PeakSegFPOP_dir(data.dir, "10.5"))
+(fit.prob <- PeakSegDisk::PeakSegFPOP_dir(data.dir, 10.5))
 ```
 
 Again the results above are the same as in previous computations.
-Note that the second argument must be a character string that
-represents a penalty value (non-negative real number, larger penalties
-yield fewer peaks). The smallest value is "0" which yields max peaks,
-and the largest value is "Inf" which yields no peaks. It must be an R
-character string (not a real number) because that string is used to
-create files such as
-sampleID/problems/c:0-6/coverage.bedGraph_penalty=0.1_loss.tsv which
-are used to store/cache the results. If the files already exist (and
-are consistent) then PeakSegFPOP_dir just reads them; otherwise it
-runs the dynamic programming C++ code in order to create those files.
 
 ### Computing the model with a given number of peaks
 
