@@ -375,6 +375,7 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
       try{
 	// up_cost is undefined for the first data point.
 	if(0<data_i)cost_model_mat.write(data_i, up_cost);
+	//Rprintf("data_i=%d up=%d down=%d\n", data_i, up_cost.piece_list.size(), down_cost.piece_list.size());
 	cost_model_mat.write(data_i + data_count, down_cost);
       }catch(WriteFailedException& e){
 	return ERROR_WRITING_COST_FUNCTIONS;
