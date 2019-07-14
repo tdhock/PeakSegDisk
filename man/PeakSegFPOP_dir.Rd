@@ -1,12 +1,19 @@
 \name{PeakSegFPOP_dir}
 \alias{PeakSegFPOP_dir}
+\alias{PeakSegDisk}
 \title{PeakSegFPOP dir}
-\description{Run PeakSegFPOP_file on one genomic segmentation problem
+\description{Main function/interface for the PeakSegDisk package.
+Run the low-level solver, PeakSegFPOP_file,
+on one genomic segmentation problem
 directory, and read the result files into R. Actually, this
 function will first check if the result files are already present
 (and consistent), and if so, it will simply read them into R
 (without running PeakSegFPOP_file) -- this is a caching mechanism
-that can save a lot of time. }
+that can save a lot of time.
+To run the algo on an integer vector, use PeakSegFPOP_vec;
+for a data.frame, use PeakSegFPOP_df.
+To compute the optimal model for a given number of peaks,
+use sequentialSearch_dir.}
 \usage{PeakSegFPOP_dir(problem.dir, penalty.param)}
 \arguments{
   \item{problem.dir}{Path to a directory like sampleID/problems/problemID which

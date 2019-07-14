@@ -1,10 +1,16 @@
 PeakSegFPOP_dir <- structure(function
-### Run PeakSegFPOP_file on one genomic segmentation problem
+### Main function/interface for the PeakSegDisk package.
+### Run the low-level solver, PeakSegFPOP_file,
+### on one genomic segmentation problem
 ### directory, and read the result files into R. Actually, this
 ### function will first check if the result files are already present
 ### (and consistent), and if so, it will simply read them into R
 ### (without running PeakSegFPOP_file) -- this is a caching mechanism
-### that can save a lot of time. 
+### that can save a lot of time.
+### To run the algo on an integer vector, use PeakSegFPOP_vec;
+### for a data.frame, use PeakSegFPOP_df.
+### To compute the optimal model for a given number of peaks,
+### use sequentialSearch_dir.
 (problem.dir,
 ### Path to a directory like sampleID/problems/problemID which
 ### contains a coverage.bedGraph file with the aligned read counts for
@@ -55,6 +61,7 @@ PeakSegFPOP_dir <- structure(function
       " must be the name of a directory",
       " containing a file named coverage.bedGraph")
   }
+  ##alias<< PeakSegDisk
   if(!(
     (is.numeric(penalty.param) || is.character(penalty.param)) &&
     length(penalty.param)==1 &&
@@ -95,10 +102,6 @@ PeakSegFPOP_dir <- structure(function
   if(!already.computed){
     penalty.db <- paste0(pre, ".db")
     unlink(penalty.db)#in case interrupted previously.
-    base.db <- basename(penalty.db)
-    base.lock <- paste0("__db.", base.db)
-    path.lock <- file.path(problem.dir, base.lock)
-    unlink(path.lock)
     seconds <- system.time({
       PeakSegFPOP_file(prob.cov.bedGraph, penalty.str)
     })[["elapsed"]]
