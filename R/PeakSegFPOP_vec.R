@@ -1,10 +1,10 @@
 PeakSegFPOP_vec <- structure(function
-### Convert rle to integer vector, write to disk, then run PeakSegFPOP solver.
+### Convert integer data vector to run-length encoding,
+### then run PeakSegFPOP_df.
 (count.vec, 
-### data.frame with columns count, chromStart, chromEnd.
-  pen.num,
+### integer vector, noisy non-negatve count data to segment.
+  pen.num
 ### Non-negative numeric scalar.
-  base.dir=tempdir()
 ){
   if(!(
     is.numeric(pen.num) &&
@@ -23,7 +23,7 @@ PeakSegFPOP_vec <- structure(function
     chromEnd,
     count=z.rle.vec$values)
   PeakSegFPOP_df(coverage.df, 10.5)
-### List of solver results, same as problem.PeakSegFPOP.
+### List of solver results, same as PeakSegFPOP_dir.
 }, ex=function(){
 
   library(PeakSegDisk)

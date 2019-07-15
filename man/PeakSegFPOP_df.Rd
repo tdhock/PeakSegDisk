@@ -1,13 +1,14 @@
 \name{PeakSegFPOP_df}
 \alias{PeakSegFPOP_df}
 \title{PeakSegFPOP df}
-\description{Write data frame to disk then run PeakSegFPOP solver.}
+\description{Write data frame to disk then run PeakSegFPOP_dir solver.}
 \usage{PeakSegFPOP_df(count.df, pen.num, base.dir = tempdir())}
 \arguments{
   \item{count.df}{data.frame with columns count, chromStart, chromEnd.}
   \item{pen.num}{Non-negative numeric scalar.}
-  \item{base.dir}{
-}
+  \item{base.dir}{base.dir/chrXX-start-end/coverage.bedGraph will be written, where
+chrXX is the chrom column, start is the first chromStart position,
+and end is the last chromEnd position.}
 }
 
 \value{List of solver results, same as PeakSegFPOP_dir.}

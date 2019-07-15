@@ -1,16 +1,15 @@
 \name{PeakSegFPOP_vec}
 \alias{PeakSegFPOP_vec}
 \title{PeakSegFPOP vec}
-\description{Convert rle to integer vector, write to disk, then run PeakSegFPOP solver.}
-\usage{PeakSegFPOP_vec(count.vec, pen.num, base.dir = tempdir())}
+\description{Convert integer data vector to run-length encoding,
+then run PeakSegFPOP_df.}
+\usage{PeakSegFPOP_vec(count.vec, pen.num)}
 \arguments{
-  \item{count.vec}{data.frame with columns count, chromStart, chromEnd.}
+  \item{count.vec}{integer vector, noisy non-negatve count data to segment.}
   \item{pen.num}{Non-negative numeric scalar.}
-  \item{base.dir}{
-}
 }
 
-\value{List of solver results, same as problem.PeakSegFPOP.}
+\value{List of solver results, same as PeakSegFPOP_dir.}
 
 \author{Toby Dylan Hocking}
 

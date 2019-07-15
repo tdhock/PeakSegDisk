@@ -1,10 +1,13 @@
 PeakSegFPOP_df <- structure(function
-### Write data frame to disk then run PeakSegFPOP solver.
+### Write data frame to disk then run PeakSegFPOP_dir solver.
 (count.df, 
 ### data.frame with columns count, chromStart, chromEnd.
   pen.num,
 ### Non-negative numeric scalar.
   base.dir=tempdir()
+### base.dir/chrXX-start-end/coverage.bedGraph will be written, where
+### chrXX is the chrom column, start is the first chromStart position,
+### and end is the last chromEnd position.
 ){
   if(!(
     is.numeric(pen.num) &&
