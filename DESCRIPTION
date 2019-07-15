@@ -13,5 +13,5 @@ License: GPL-3
 Depends: R (>= 2.10)
 Imports: data.table (>= 1.9.8)
 Suggests: testthat, ggplot2, future.apply,
- penaltyLearning, knitr, rmarkdown
+ penaltyLearning, knitr
 VignetteBuilder: knitr

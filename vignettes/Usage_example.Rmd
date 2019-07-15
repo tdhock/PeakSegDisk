@@ -1,13 +1,7 @@
----
-title: "Usage example"
-author: "Toby Dylan Hocking"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Usage example}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
+<!--
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{Usage example}
+-->
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
