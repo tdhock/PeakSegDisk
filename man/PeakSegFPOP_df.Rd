@@ -72,4 +72,7 @@ gg.rle+
     color="green",
     data=fit$segments)
 
+## plot method.
+plot(fit)
+
 }

@@ -94,7 +94,7 @@ write.table(
   col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t")
 
 ## Compute one model with penalty=1952.6
-fit <- PeakSegFPOP_dir(data.dir, 1952.6)
+(fit <- PeakSegFPOP_dir(data.dir, 1952.6))
 
 ## Visualize that model.
 ann.colors <- c(
@@ -105,45 +105,49 @@ ann.colors <- c(
 library(ggplot2)
 lab.min <- Mono27ac$labels[1, chromStart]
 lab.max <- Mono27ac$labels[.N, chromEnd]
-changes <- fit$segments[, list(
-  constraint=ifelse(diff(mean)==0, "equality", "inequality"),
-  chromStart=chromEnd[-1],
-  chromEnd=chromEnd[-1])]
-gg <- ggplot()+theme_bw()
-if(require(penaltyLearning)){
-  gg <- gg+
-    penaltyLearning::geom_tallrect(aes(
-      xmin=chromStart, xmax=chromEnd,
-      fill=annotation),
-      color="grey",
-      data=Mono27ac$labels)+
-    scale_fill_manual("label", values=ann.colors)
-}
-gg <- gg+
+
+plist <- coef(fit)
+gg <- ggplot()+
+  theme_bw()+
+  geom_rect(aes(
+    xmin=chromStart/1e3, xmax=chromEnd/1e3,
+    ymin=-Inf, ymax=Inf,
+    fill=annotation),
+    color="grey",
+    alpha=0.5,
+    data=Mono27ac$labels)+
+  scale_fill_manual("label", values=ann.colors)+
   geom_step(aes(
-    chromStart, count),
+    chromStart/1e3, count),
     color="grey50",
     data=Mono27ac$coverage)+
   geom_segment(aes(
-    chromStart, mean,
-    xend=chromEnd, yend=mean),
+    chromStart/1e3, mean,
+    xend=chromEnd/1e3, yend=mean),
     color="green",
     size=1,
-    data=fit$segments)+
-  geom_segment(aes(
-    chromStart, mean,
-    xend=chromEnd, yend=mean),
-    color="green",
-    size=1,
-    data=fit$segments)+
+    data=plist$segments)+
   geom_vline(aes(
-    xintercept=chromEnd, linetype=constraint),
+    xintercept=chromEnd/1e3, linetype=constraint),
     color="green",
-    data=changes)+
-  scale_linetype_manual(values=c(inequality="dotted", equality="solid"))
+    data=plist$changes)+
+  scale_linetype_manual(
+    values=c(
+      inequality="dotted",
+      equality="solid"))
 gg
 
 gg+
-  coord_cartesian(xlim=c(lab.min, lab.max))
+  coord_cartesian(xlim=c(lab.min, lab.max)/1e3, ylim=c(0, 10))
 
+## Default plotting method only shows model.
+(gg <- plot(fit))
+
+## Data can be added on top of model.
+gg+
+  geom_step(aes(
+    chromStart, count),
+    color="grey50",
+    data=Mono27ac$coverage)
+  
 }

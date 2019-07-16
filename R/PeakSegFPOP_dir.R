@@ -123,11 +123,13 @@ PeakSegFPOP_dir <- structure(function
     penalty.loss <- fread(penalty_loss.tsv, col.names=col.name.list$loss)
   }
   penalty.segs <- fread(penalty_segments.bed, col.names=col.name.list$segments)
-  list(
+  L <- list(
     segments=penalty.segs,
     loss=data.table(
       penalty.loss,
       timing[, list(megabytes, seconds)]))
+  class(L) <- c("PeakSegFPOP_dir", "list")
+  L
 ### Named list of two data.tables: segments has one row for every
 ### segment in the optimal model, and loss has one row and contains
 ### the following columns. penalty=same as input, segments=number of
@@ -162,7 +164,7 @@ PeakSegFPOP_dir <- structure(function
     col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t")
 
   ## Compute one model with penalty=1952.6
-  fit <- PeakSegFPOP_dir(data.dir, 1952.6)
+  (fit <- PeakSegFPOP_dir(data.dir, 1952.6))
 
   ## Visualize that model.
   ann.colors <- c(
@@ -173,46 +175,113 @@ PeakSegFPOP_dir <- structure(function
   library(ggplot2)
   lab.min <- Mono27ac$labels[1, chromStart]
   lab.max <- Mono27ac$labels[.N, chromEnd]
-  changes <- fit$segments[, list(
-    constraint=ifelse(diff(mean)==0, "equality", "inequality"),
-    chromStart=chromEnd[-1],
-    chromEnd=chromEnd[-1])]
-  gg <- ggplot()+theme_bw()
-  if(require(penaltyLearning)){
-    gg <- gg+
-      penaltyLearning::geom_tallrect(aes(
-        xmin=chromStart, xmax=chromEnd,
-        fill=annotation),
-        color="grey",
-        data=Mono27ac$labels)+
-      scale_fill_manual("label", values=ann.colors)
-  }
-  gg <- gg+
+
+  plist <- coef(fit)
+  gg <- ggplot()+
+    theme_bw()+
+    geom_rect(aes(
+      xmin=chromStart/1e3, xmax=chromEnd/1e3,
+      ymin=-Inf, ymax=Inf,
+      fill=annotation),
+      color="grey",
+      alpha=0.5,
+      data=Mono27ac$labels)+
+    scale_fill_manual("label", values=ann.colors)+
     geom_step(aes(
-      chromStart, count),
+      chromStart/1e3, count),
       color="grey50",
       data=Mono27ac$coverage)+
     geom_segment(aes(
-      chromStart, mean,
-      xend=chromEnd, yend=mean),
+      chromStart/1e3, mean,
+      xend=chromEnd/1e3, yend=mean),
       color="green",
       size=1,
-      data=fit$segments)+
-    geom_segment(aes(
-      chromStart, mean,
-      xend=chromEnd, yend=mean),
-      color="green",
-      size=1,
-      data=fit$segments)+
+      data=plist$segments)+
     geom_vline(aes(
-      xintercept=chromEnd, linetype=constraint),
+      xintercept=chromEnd/1e3, linetype=constraint),
       color="green",
-      data=changes)+
-    scale_linetype_manual(values=c(inequality="dotted", equality="solid"))
+      data=plist$changes)+
+    scale_linetype_manual(
+      values=c(
+        inequality="dotted",
+        equality="solid"))
   gg
 
   gg+
-    coord_cartesian(xlim=c(lab.min, lab.max))
+    coord_cartesian(xlim=c(lab.min, lab.max)/1e3, ylim=c(0, 10))
 
+  ## Default plotting method only shows model.
+  (gg <- plot(fit))
+
+  ## Data can be added on top of model.
+  gg+
+    geom_step(aes(
+      chromStart, count),
+      color="grey50",
+      data=Mono27ac$coverage)
+    
 })
+
+### Compute changes and peaks to display/plot.
+coef.PeakSegFPOP_dir <- function(object, ...){
+  chromEnd <- status <- NULL
+  ## above to avoid CRAN check NOTE.
+  object$changes <- object$segments[, list(
+    type="segmentation",
+    constraint=ifelse(
+      diff(mean)==0, "equality", "inequality"),
+    chromEnd=chromEnd[-1])]
+  object$peaks <- data.table(
+    type="peaks",
+    object$segments[status=="peak"])
+  object$segments <- data.table(type="segmentation", object$segments)
+  object
+### model list with additional named elements peaks and changes.
+}
+  
+### Plot a PeakSeg model with attached data.
+plot.PeakSegFPOP_dir <- function(x, ...){
+  chromStart <- type <- chromEnd <- constraint <- NULL
+  ## above to avoid CRAN check NOTE.
+  if(!requireNamespace("ggplot2")){
+    stop("install ggplot2 for plotting functionality")
+  }
+  L <- coef(x)
+  ggplot2::ggplot()+
+    ggplot2::theme_bw()+
+    ggplot2::scale_color_manual(values=c(
+      data="grey50",
+      peaks="deepskyblue",
+      segmentation="green"
+    ))+
+    ggplot2::geom_segment(ggplot2::aes(
+      chromStart+0.5, mean,
+      color=type,
+      xend=chromEnd+0.5, yend=mean),
+      size=1,
+      data=L$segments)+
+    ggplot2::geom_segment(ggplot2::aes(
+      chromStart+0.5, Inf,
+      color=type,
+      xend=chromEnd+0.5, yend=Inf),
+      size=2,
+      data=L$peaks)+
+    ggplot2::geom_point(ggplot2::aes(
+      chromStart+0.5, Inf,
+      color=type),
+      shape=1,
+      size=2,
+      data=L$peaks)+
+    ggplot2::geom_vline(ggplot2::aes(
+      xintercept=chromEnd+0.5,
+      color=type,
+      linetype=constraint),
+      data=L$changes)+
+    ggplot2::scale_linetype_manual(
+      values=c(
+        inequality="dotted",
+        equality="solid"))+
+    ggplot2::xlab("position")
+### a ggplot.
+}
 

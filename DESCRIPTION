@@ -12,6 +12,8 @@ Description: Disk-based implementation of
 License: GPL-3
 Depends: R (>= 2.10)
 Imports: data.table (>= 1.9.8)
-Suggests: testthat, ggplot2, future.apply,
- penaltyLearning, knitr
-VignetteBuilder: knitr
+Suggests: testthat, ggplot2,
+ future.apply, future,
+ knitr
+
+

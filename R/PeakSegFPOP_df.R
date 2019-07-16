@@ -54,7 +54,10 @@ PeakSegFPOP_df <- structure(function
   write.table(
     count.df, coverage.bedGraph,
     quote=FALSE, sep="\t", row.names=FALSE, col.names=FALSE)
-  PeakSegFPOP_dir(data.dir, paste(pen.num))
+  L <- PeakSegFPOP_dir(data.dir, paste(pen.num))
+  L$data <- data.table(count.df)
+  class(L) <- c("PeakSegFPOP_df", class(L))
+  L
 ### List of solver results, same as PeakSegFPOP_dir.
 }, ex=function(){
 
@@ -109,6 +112,34 @@ PeakSegFPOP_df <- structure(function
       chromStart+0.5, mean, xend=chromEnd+0.5, yend=mean),
       color="green",
       data=fit$segments)
+
+  ## plot method.
+  plot(fit)
   
 })
+
+### Create a list of data tables describing PeakSegFPOP model and
+### data.
+coef.PeakSegFPOP_df <- function(object, ...){
+  L <- NextMethod()
+  L$data <- data.table(type="data", L$data)
+  L
+### list of data tables with named elements segments, loss, data,
+### changes, peaks.
+}
   
+### Plot a PeakSeg model with attached data.
+plot.PeakSegFPOP_df <- function(x, ...){
+  chromStart <- count <- type <- NULL
+  ## above to avoid CRAN check NOTE.
+  if(!requireNamespace("ggplot2")){
+    stop("install ggplot2 for plotting functionality")
+  }
+  L <- coef(x)
+  NextMethod()+
+    ggplot2::geom_step(ggplot2::aes(
+      chromStart+0.5, count, color=type),
+      data=L$data)
+### a ggplot.
+}
+
