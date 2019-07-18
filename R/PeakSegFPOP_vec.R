@@ -1,4 +1,4 @@
-PeakSegFPOP_vec <- structure(function
+PeakSegFPOP_vec <- structure(function # PeakSeg penalized solver for integer vector
 ### Convert integer data vector to run-length encoding,
 ### then run PeakSegFPOP_df.
 (count.vec, 

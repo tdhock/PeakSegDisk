@@ -1,4 +1,4 @@
-PeakSegFPOP_file <- structure(function # PeakSegFPOP on disk
+PeakSegFPOP_file <- structure(function # PeakSegFPOP using disk storage
 ### Run the PeakSeg Functional Pruning Optimal Partitioning algorithm,
 ### using a file on disk (rather than in memory as in
 ### PeakSegOptimal::PeakSegFPOP) to store the O(N) function piece lists,

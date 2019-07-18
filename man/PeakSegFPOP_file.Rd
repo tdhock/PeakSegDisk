@@ -1,6 +1,6 @@
 \name{PeakSegFPOP_file}
 \alias{PeakSegFPOP_file}
-\title{PeakSegFPOP on disk}
+\title{PeakSegFPOP using disk storage}
 \description{Run the PeakSeg Functional Pruning Optimal Partitioning algorithm,
 using a file on disk (rather than in memory as in
 PeakSegOptimal::PeakSegFPOP) to store the O(N) function piece lists,

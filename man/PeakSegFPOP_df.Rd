@@ -1,6 +1,6 @@
 \name{PeakSegFPOP_df}
 \alias{PeakSegFPOP_df}
-\title{PeakSegFPOP df}
+\title{PeakSeg penalized solver for data.frame}
 \description{Write data frame to disk then run PeakSegFPOP_dir solver.}
 \usage{PeakSegFPOP_df(count.df, pen.num, base.dir = tempdir())}
 \arguments{

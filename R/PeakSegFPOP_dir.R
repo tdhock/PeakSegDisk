@@ -1,4 +1,4 @@
-PeakSegFPOP_dir <- structure(function
+PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
 ### Main function/interface for the PeakSegDisk package.
 ### Run the low-level solver, PeakSegFPOP_file,
 ### on one genomic segmentation problem
@@ -12,9 +12,12 @@ PeakSegFPOP_dir <- structure(function
 ### To compute the optimal model for a given number of peaks,
 ### use sequentialSearch_dir.
 (problem.dir,
-### Path to a directory like sampleID/problems/problemID which
+### Path to a directory like sampleID/problems/chrXX-start-end which
 ### contains a coverage.bedGraph file with the aligned read counts for
-### one genomic segmentation problem.
+### one genomic segmentation problem. Note that the standard
+### coverage.bedGraph file name is required; for full flexibility the
+### user can run the algo on an arbitrarily named file via
+### PeakSegFPOP_file.
  penalty.param
 ### non-negative numeric penalty parameter (larger values for fewer
 ### peaks), or character scalar which can be interpreted as such. 0

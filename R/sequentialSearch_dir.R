@@ -1,4 +1,4 @@
-sequentialSearch_dir <- structure(function
+sequentialSearch_dir <- structure(function # Compute PeakSeg model with given number of peaks
 ### Compute the most likely peak model with at most the number of
 ### peaks given by peaks.int. This function repeated calls
 ### PeakSegFPOP_dir with different penalty values, until either

@@ -1,4 +1,4 @@
-PeakSegFPOP_df <- structure(function
+PeakSegFPOP_df <- structure(function # PeakSeg penalized solver for data.frame
 ### Write data frame to disk then run PeakSegFPOP_dir solver.
 (count.df, 
 ### data.frame with columns count, chromStart, chromEnd.

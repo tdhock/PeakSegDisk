@@ -1,7 +1,7 @@
 \name{PeakSegFPOP_dir}
 \alias{PeakSegFPOP_dir}
 \alias{PeakSegDisk}
-\title{PeakSegFPOP dir}
+\title{PeakSeg penalized solver with caching}
 \description{Main function/interface for the PeakSegDisk package.
 Run the low-level solver, PeakSegFPOP_file,
 on one genomic segmentation problem
@@ -16,9 +16,12 @@ To compute the optimal model for a given number of peaks,
 use sequentialSearch_dir.}
 \usage{PeakSegFPOP_dir(problem.dir, penalty.param)}
 \arguments{
-  \item{problem.dir}{Path to a directory like sampleID/problems/problemID which
+  \item{problem.dir}{Path to a directory like sampleID/problems/chrXX-start-end which
 contains a coverage.bedGraph file with the aligned read counts for
-one genomic segmentation problem.}
+one genomic segmentation problem. Note that the standard
+coverage.bedGraph file name is required; for full flexibility the
+user can run the algo on an arbitrarily named file via
+PeakSegFPOP_file.}
   \item{penalty.param}{non-negative numeric penalty parameter (larger values for fewer
 peaks), or character scalar which can be interpreted as such. 0
 means max peaks, Inf means no peaks. }

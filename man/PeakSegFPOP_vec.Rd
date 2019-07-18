@@ -1,6 +1,6 @@
 \name{PeakSegFPOP_vec}
 \alias{PeakSegFPOP_vec}
-\title{PeakSegFPOP vec}
+\title{PeakSeg penalized solver for integer vector}
 \description{Convert integer data vector to run-length encoding,
 then run PeakSegFPOP_df.}
 \usage{PeakSegFPOP_vec(count.vec, pen.num)}

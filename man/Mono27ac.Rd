@@ -8,7 +8,14 @@
   The data come from an H3K27ac ChIP-seq experiment which was aligned to
   the human reference genome (hg19), aligned read counts were used to
   produce the coverage data; looking at these data in a genome browser
-  was used to produce the labels.
+  was used to produce the labels. ChIP-seq means Chromatin
+  Immunoprecipitation followed by high-throughput DNA sequencing; it is
+  an assay used to characterize genome-wide DNA-protein interactions. In
+  this experiment the protein of interest is histone H3, with the
+  specific modification K27ac (hence the name H3K27ac). Large counts (peaks)
+  therefore indicate regions of the reference genome with high
+  likelihood of interaction between DNA and that specific protein, in
+  the specific Monocyte sample tested.
 }
 \usage{data("Mono27ac")}
 \format{
@@ -23,7 +30,10 @@ the data/label.
 Therefore, each chromEnd on each row should be equal to the chromStart of the next row.
 }
 \source{
-  https://github.com/tdhock/feature-learning-benchmark, prob.dir=
+  UCI Machine Learning Repository, chipseq data set, problem directory
   H3K27ac-H3K4me3_TDHAM_BP/samples/Mono1_H3K27ac/S001YW_NCMLS/problems/chr11:60000-580000
+  Links: https://archive.ics.uci.edu/ml/datasets/chipseq for the
+  UCI web page; https://github.com/tdhock/feature-learning-benchmark for
+  a more detailed explanation.
 }
 \keyword{datasets}

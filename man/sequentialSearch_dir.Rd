@@ -1,6 +1,6 @@
 \name{sequentialSearch_dir}
 \alias{sequentialSearch_dir}
-\title{sequentialSearch dir}
+\title{Compute PeakSeg model with given number of peaks}
 \description{Compute the most likely peak model with at most the number of
 peaks given by peaks.int. This function repeated calls
 PeakSegFPOP_dir with different penalty values, until either
