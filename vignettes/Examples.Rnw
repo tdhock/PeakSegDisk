@@ -2,6 +2,7 @@
 %\VignetteBuilder{knitr::knit2pdf}
 \documentclass[12pt]{article}
 \usepackage[cm]{fullpage}
+\usepackage{hyperref}
 \usepackage{amssymb,amsmath}
 \DeclareMathOperator*{\minimize}{minimize}
 
@@ -23,6 +24,47 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 @ 
+
+\section{Related work}
+
+The PeakSeg R packages contain algorithms for inferring optimal
+segmentation models subject to the constraint that up changes must be
+followed by down changes, and vice versa. This ensures that the model
+can be interpreted in terms of peaks (after up changes) and background
+(after down changes). 
+
+\begin{description}
+\item[PeakSegDP], the historically first PeakSeg package,
+  \url{https://CRAN.R-project.org/package=PeakSegDP} provides a
+  heuristic quadratic time algorithm for computing models from 1 to S
+  segments for a single sample. This was the original algorithm
+  described in our ICML'15 paper,
+  \url{http://jmlr.org/proceedings/papers/v37/hocking15.html}, but it
+  is neither fast nor optimal, so in practice we recommend to use our
+  newer packages below instead.
+\item[PeakSegOptimal],
+  \url{https://CRAN.R-project.org/package=PeakSegOptimal} provides
+  log-linear time algorithms for computing optimal models with
+  multiple peaks for a single sample. The algorithms are faster and
+  more accurate than PeakSegDP, \url{https://arxiv.org/abs/1703.03352}
+\item[PeakSegDisk], \url{https://github.com/tdhock/PeakSegDisk}
+  provides an on-disk implementation of optimal log-linear algorithms
+  for computing multiple peaks in a single sample. Computes same
+  models as PeakSegOptimal but works for much larger data sets because
+  disk is used for storage instead of memory.
+  \url{https://arxiv.org/abs/1810.00117}
+\item[PeakSegJoint], \url{https://CRAN.R-project.org/package=PeakSegJoint}
+  provides a fast heuristic algorithm for computing models with a single
+  common peak in $0,...,S$
+  samples. \url{https://arxiv.org/abs/1506.01286}
+\item[PeakSegPipeline],
+  \url{https://github.com/tdhock/PeakSegPipeline} provides a pipeline
+  for genome-wide peak calling using the other PeakSeg packages. (work
+  in progress)
+\end{description}
+
+The remainder of this vignette is dedicated to an explanation of how
+to use PeakSegDisk.
 
 \section{Simulate a noisy integer vector with changes}
 
