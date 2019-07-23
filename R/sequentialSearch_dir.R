@@ -112,6 +112,7 @@ sequentialSearch_dir <- structure(function # Compute PeakSeg model with given nu
   ## Create simple 6 point data set discussed in supplementary
   ## materials. GFPOP/GPDPA computes up-down model with 2 peaks, but
   ## neither CDPA (PeakSegDP::cDPA) nor PDPA (jointseg)
+  library(PeakSegDisk)
   r <- function(chrom, chromStart, chromEnd, coverage){
     data.frame(chrom, chromStart, chromEnd, coverage)
   }
@@ -143,5 +144,42 @@ sequentialSearch_dir <- structure(function # Compute PeakSeg model with given nu
       xend=chromEnd+0.5, yend=mean),
       data=fit$segments,
       color="green")
+
+  data(ChIPreads, envir=environment())
+  end.counts <- ChIPreads[, list(
+    count=.N #ignores dup reads, sum(count) would not.
+  ), by=list(experiment, chrom, chromEnd)]
+
+  aligned.dt <- rbind(
+    ChIPreads[, .(
+      data.type="each", experiment, chrom, chromStart=chromStart, chromEnd,
+      count=1)], #ignore duplicate reads.
+    end.counts[, .(
+      data.type="end", experiment, chrom,
+      chromStart=chromEnd-1L, chromEnd, count)])
+  seq.dt <- aligned.dt[, {
+    event.dt <- rbind(
+      data.table(count, pos=chromStart+1L),
+      data.table(count=-count, pos=chromEnd+1L))
+    total.dt <- event.dt[, .(
+      count=sum(count)
+      ), by=list(pos)][order(pos)]
+    total.dt[, cum := cumsum(count)]
+    ## it is somewhat confusing because total.dt pos is the first base
+    ## with cum, and cum goes all the way up to but not including the
+    ## pos of the next row.
+    total.dt[, data.table(
+      chromStart=pos[-.N]-1L,
+      chromEnd=pos[-1]-1L,
+      count=cum[-.N])]
+  }, by=list(data.type, experiment, chrom)]
+
+  ggplot()+
+    theme_bw()+
+    theme(panel.margin=grid::unit(0, "lines"))+
+    facet_grid(data.type ~ experiment, scales="free")+
+    geom_step(aes(
+      chromEnd, count),
+      data=seq.dt)
 
 })
