@@ -15,35 +15,6 @@ PeakSegFPOP_df <- structure(function # PeakSeg penalized solver for data.frame
     0 <= pen.num)){
     stop("pen.num must be non-negative numeric scalar")
   }
-  if(!is.data.frame(count.df)){
-    stop("count.df must be data.frame")
-  }
-  exp.names <- c("chrom", "chromStart", "chromEnd", "count")
-  if(!identical(names(count.df), exp.names)){
-    stop("count.df must have names ", paste(exp.names, collapse=", "))
-  }
-  n.data <- nrow(count.df)
-  if(n.data < 3){
-    stop("must have at least three rows in count.df")
-  }
-  if(!is.integer(count.df$chromStart)){
-    stop("count.df$chromStart must be integer")
-  }
-  if(!is.integer(count.df$chromEnd)){
-    stop("count.df$chromEnd must be integer")
-  }
-  if(!is.integer(count.df$count)){
-    stop("count.df$count must be integer")
-  }
-  if(!all(count.df$chromStart < count.df$chromEnd)){
-    stop("chromStart must be less than chromEnd for all rows of count.df")
-  }
-  if(any(count.df$chromStart < 0)){
-    stop("count.df$chromStart must always be non-negative")
-  }
-  if(any(count.df$count < 0)){
-    stop("count.df$count must always be non-negative")
-  }
   data.dir <- file.path(
     base.dir,
     with(count.df, sprintf(
@@ -51,9 +22,7 @@ PeakSegFPOP_df <- structure(function # PeakSeg penalized solver for data.frame
   unlink(data.dir, recursive=TRUE)
   dir.create(data.dir, showWarnings=FALSE, recursive=TRUE)
   coverage.bedGraph <- file.path(data.dir, "coverage.bedGraph")
-  write.table(
-    count.df, coverage.bedGraph,
-    quote=FALSE, sep="\t", row.names=FALSE, col.names=FALSE)
+  writeBedGraph(count.df, coverage.bedGraph)
   L <- PeakSegFPOP_dir(data.dir, paste(pen.num))
   L$data <- data.table(count.df)
   class(L) <- c("PeakSegFPOP_df", class(L))
@@ -114,7 +83,13 @@ PeakSegFPOP_df <- structure(function # PeakSeg penalized solver for data.frame
       data=fit$segments)
 
   ## plot method.
-  plot(fit)
+  (gg <- plot(fit))
+  gg+
+    geom_point(aes(
+      position, count),
+      color="grey",
+      shape=1,
+      data=count.df)
   
 })
 

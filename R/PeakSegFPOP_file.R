@@ -1,7 +1,6 @@
 PeakSegFPOP_file <- structure(function # PeakSegFPOP using disk storage
 ### Run the PeakSeg Functional Pruning Optimal Partitioning algorithm,
-### using a file on disk (rather than in memory as in
-### PeakSegOptimal::PeakSegFPOP) to store the O(N) function piece lists,
+### using a file on disk to store the O(N) function piece lists,
 ### each of size O(log N).
 ### This is a low-level function that just runs the algo
 ### and produces the result files (without reading them into R),
@@ -63,7 +62,7 @@ PeakSegFPOP_file <- structure(function # PeakSegFPOP using disk storage
 ### A list of input parameters (bedGraph.file, penalty) and result
 ### files (segments, db, loss).
 }, ex=function(){
-
+  
   library(PeakSegDisk)
   r <- function(chrom, chromStart, chromEnd, coverage){
     data.frame(chrom, chromStart, chromEnd, coverage)
@@ -78,7 +77,7 @@ PeakSegFPOP_file <- structure(function # PeakSegFPOP using disk storage
     sep="\t", row.names=FALSE, col.names=FALSE)
   pstr <- "10.5"
   PeakSegFPOP_file(tmp, pstr)
-
+  
   outf <- function(suffix){
     paste0(tmp, "_penalty=", pstr, "_", suffix)
   }
@@ -86,11 +85,11 @@ PeakSegFPOP_file <- structure(function # PeakSegFPOP using disk storage
   seg.df <- read.table(segments.bed)
   names(seg.df) <- col.name.list$segments
   seg.df
-
+  
   loss.tsv <- outf("loss.tsv")
   loss.df <- read.table(loss.tsv)
   names(loss.df) <- col.name.list$loss
   loss.df
-
+  
 })
 

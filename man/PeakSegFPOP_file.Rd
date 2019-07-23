@@ -2,8 +2,7 @@
 \alias{PeakSegFPOP_file}
 \title{PeakSegFPOP using disk storage}
 \description{Run the PeakSeg Functional Pruning Optimal Partitioning algorithm,
-using a file on disk (rather than in memory as in
-PeakSegOptimal::PeakSegFPOP) to store the O(N) function piece lists,
+using a file on disk to store the O(N) function piece lists,
 each of size O(log N).
 This is a low-level function that just runs the algo
 and produces the result files (without reading them into R),

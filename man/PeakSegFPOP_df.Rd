@@ -73,6 +73,12 @@ gg.rle+
     data=fit$segments)
 
 ## plot method.
-plot(fit)
+(gg <- plot(fit))
+gg+
+  geom_point(aes(
+    position, count),
+    color="grey",
+    shape=1,
+    data=count.df)
 
 }
