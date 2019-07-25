@@ -353,11 +353,11 @@ the model list above shows that
 
 \begin{itemize}
 \item the search starts with penalty values 0 and Inf, which result in models
-  with \Sexpr{fit.search$others[penalty==0, peaks]} and 0 peaks, respectively.
-\item the next penalty evaluated is \Sexpr{sprintf("%.2f", fit.search$others[iteration==2, penalty])}, 
-  which results in \Sexpr{fit.search$others[iteration==2, peaks]} peaks.
-\item the final penalty evaluated is \Sexpr{sprintf("%.2f", fit.search$others[iteration==3, penalty])}, 
-  which results in \Sexpr{fit.search$others[iteration==3, peaks]} peaks.
+  with \Sexpr{fit$search$others[penalty==0, peaks]} and 0 peaks, respectively.
+\item the next penalty evaluated is \Sexpr{sprintf("%.2f", fit$search$others[iteration==2, penalty])}, 
+  which results in \Sexpr{fit$search$others[iteration==2, peaks]} peaks.
+\item the final penalty evaluated is \Sexpr{sprintf("%.2f", fit$search$others[iteration==3, penalty])}, 
+  which results in \Sexpr{fit$search$others[iteration==3, peaks]} peaks.
 \end{itemize}
   
 At each step (except the first) the new penalties are computed based
