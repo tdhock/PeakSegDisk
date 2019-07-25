@@ -151,8 +151,7 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
 ### *.db file, seconds=timing of PeakSegFPOP_file.
 }, ex=function(){
 
-  library(PeakSegDisk)
-  data(Mono27ac, envir=environment())
+  data(Mono27ac, package="PeakSegDisk", envir=environment())
   data.dir <- file.path(
     tempfile(),
     "H3K27ac-H3K4me3_TDHAM_BP",
@@ -167,7 +166,7 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
     col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t")
 
   ## Compute one model with penalty=1952.6
-  (fit <- PeakSegFPOP_dir(data.dir, 1952.6))
+  (fit <- PeakSegDisk::PeakSegFPOP_dir(data.dir, 1952.6))
 
   ## Visualize that model.
   ann.colors <- c(

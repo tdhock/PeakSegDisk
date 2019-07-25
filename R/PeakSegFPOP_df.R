@@ -30,7 +30,7 @@ PeakSegFPOP_df <- structure(function # PeakSeg penalized solver for data.frame
 ### List of solver results, same as PeakSegFPOP_dir.
 }, ex=function(){
 
-  library(PeakSegDisk)
+  ## Simulate a sequence of Poisson count data.
   sim.seg <- function(seg.mean, size.mean=15){
     seg.size <- rpois(1, size.mean)
     rpois(seg.size, seg.mean)
@@ -39,6 +39,8 @@ PeakSegFPOP_df <- structure(function # PeakSeg penalized solver for data.frame
   seg.mean.vec <- c(1.5, 3.5, 0.5, 4.5, 2.5)
   z.list <- lapply(seg.mean.vec, sim.seg)
   z.rep.vec <- unlist(z.list)
+
+  ## Plot the simulated data sequence.
   library(ggplot2)
   count.df <- data.frame(
     position=seq_along(z.rep.vec),
@@ -49,7 +51,8 @@ PeakSegFPOP_df <- structure(function # PeakSeg penalized solver for data.frame
       shape=1,
       data=count.df)
   gg.count
-  
+
+  ## Plot the true changes.
   n.segs <- length(seg.mean.vec)
   seg.size.vec <- sapply(z.list, length)
   seg.end.vec <- cumsum(seg.size.vec)
@@ -61,7 +64,8 @@ PeakSegFPOP_df <- structure(function # PeakSeg penalized solver for data.frame
       xintercept=changepoint),
       data=change.df)
   gg.change
-  
+
+  ## Plot the run-length encoding of the same data.
   z.rle.vec <- rle(z.rep.vec)
   chromEnd <- cumsum(z.rle.vec$lengths)
   coverage.df <- data.frame(
@@ -74,16 +78,19 @@ PeakSegFPOP_df <- structure(function # PeakSeg penalized solver for data.frame
       chromStart+0.5, count, xend=chromEnd+0.5, yend=count),
       data=coverage.df)
   gg.rle
-  
-  fit <- PeakSegFPOP_df(coverage.df, 10.5)
+
+  ## Fit a peak model and plot the segment means.
+  fit <- PeakSegDisk::PeakSegFPOP_df(coverage.df, 10.5)
   gg.rle+
     geom_segment(aes(
       chromStart+0.5, mean, xend=chromEnd+0.5, yend=mean),
       color="green",
       data=fit$segments)
 
-  ## plot method.
+  ## Default plot method shows data as geom_step.
   (gg <- plot(fit))
+
+  ## Plot data as points to verify the step representation.
   gg+
     geom_point(aes(
       position, count),

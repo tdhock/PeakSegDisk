@@ -26,7 +26,7 @@ PeakSegFPOP_vec <- structure(function # PeakSeg penalized solver for integer vec
 ### List of solver results, same as PeakSegFPOP_dir.
 }, ex=function(){
 
-  library(PeakSegDisk)
+  ## Simulate a sequence of Poisson data.
   sim.seg <- function(seg.mean, size.mean=15){
     seg.size <- rpois(1, size.mean)
     rpois(seg.size, seg.mean)
@@ -35,6 +35,8 @@ PeakSegFPOP_vec <- structure(function # PeakSeg penalized solver for integer vec
   seg.mean.vec <- c(1.5, 3.5, 0.5, 4.5, 2.5)
   z.list <- lapply(seg.mean.vec, sim.seg)
   z.rep.vec <- unlist(z.list)
+
+  ## Plot the simulated data.
   library(ggplot2)
   count.df <- data.frame(
     position=seq_along(z.rep.vec),
@@ -45,7 +47,8 @@ PeakSegFPOP_vec <- structure(function # PeakSeg penalized solver for integer vec
       shape=1,
       data=count.df)
   gg.count
-  
+
+  ## Plot the true changepoints.
   n.segs <- length(seg.mean.vec)
   seg.size.vec <- sapply(z.list, length)
   seg.end.vec <- cumsum(seg.size.vec)
@@ -57,13 +60,19 @@ PeakSegFPOP_vec <- structure(function # PeakSeg penalized solver for integer vec
       xintercept=changepoint),
       data=change.df)
   gg.change
-  
-  fit <- PeakSegFPOP_vec(z.rep.vec, 10.5)
+
+  ## Fit a peak model and plot it.
+  fit <- PeakSegDisk::PeakSegFPOP_vec(z.rep.vec, 10.5)
   gg.change+
     geom_segment(aes(
       chromStart+0.5, mean, xend=chromEnd+0.5, yend=mean),
       color="green",
       data=fit$segments)
+
+  ## A pathological data set.
+  z.slow.vec <- 1:length(z.rep.vec)
+  fit.slow <- PeakSegDisk::PeakSegFPOP_vec(z.slow.vec, 10.5)
+  rbind(fit.slow$loss, fit$loss)
   
 })
   
