@@ -154,7 +154,7 @@ Next we compute the optimal segmentation model with 2 peaks for each
 data set.
 
 ```{r}
-future::plan("multiprocess")
+if(requireNamespace("future"))future::plan("multiprocess")
 segs.dt <- seq.dt[, {
   data.dir <- file.path(tempdir(), bases.counted, experiment)
   dir.create(data.dir, showWarnings=FALSE, recursive=TRUE)

@@ -57,7 +57,7 @@ write.table(
 
 ## register a parallel future plan to compute the first two
 ## penalties in parallel during the sequential search.
-future::plan("multiprocess")
+if(requireNamespace("future"))future::plan("multiprocess")
 
 ## Compute optimal up-down model with 2 peaks via sequential search.
 fit <- PeakSegDisk::sequentialSearch_dir(data.dir, 2L)
