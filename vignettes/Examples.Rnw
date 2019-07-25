@@ -35,7 +35,7 @@ can be interpreted in terms of peaks (after up changes) and background
 (after down changes). 
 
 \begin{description}
-\item[PeakSegDP], the historically first PeakSeg package,
+\item[PeakSegDP] the historically first PeakSeg package,
   \url{https://CRAN.R-project.org/package=PeakSegDP} provides a
   heuristic quadratic time algorithm for computing models from 1 to S
   segments for a single sample. This was the original algorithm
@@ -43,25 +43,24 @@ can be interpreted in terms of peaks (after up changes) and background
   \url{http://jmlr.org/proceedings/papers/v37/hocking15.html}, but it
   is neither fast nor optimal, so in practice we recommend to use our
   newer packages below instead.
-\item[PeakSegOptimal],
+\item[PeakSegOptimal]
   \url{https://CRAN.R-project.org/package=PeakSegOptimal} provides
   log-linear time algorithms for computing optimal models with
   multiple peaks for a single sample. The algorithms are faster and
   more accurate than PeakSegDP, \url{https://arxiv.org/abs/1703.03352}
-\item[PeakSegDisk], \url{https://github.com/tdhock/PeakSegDisk}
+\item[PeakSegDisk] \url{https://github.com/tdhock/PeakSegDisk}
   provides an on-disk implementation of optimal log-linear algorithms
   for computing multiple peaks in a single sample. Computes same
   models as PeakSegOptimal but works for much larger data sets because
   disk is used for storage instead of memory.
   \url{https://arxiv.org/abs/1810.00117}
-\item[PeakSegJoint], \url{https://CRAN.R-project.org/package=PeakSegJoint}
+\item[PeakSegJoint] \url{https://CRAN.R-project.org/package=PeakSegJoint}
   provides a fast heuristic algorithm for computing models with a single
   common peak in $0,...,S$
   samples. \url{https://arxiv.org/abs/1506.01286}
-\item[PeakSegPipeline],
+\item[PeakSegPipeline]
   \url{https://github.com/tdhock/PeakSegPipeline} provides a pipeline
-  for genome-wide peak calling using the other PeakSeg packages. (work
-  in progress)
+  for genome-wide peak calling using the other PeakSeg packages. 
 \end{description}
 
 The remainder of this vignette is dedicated to an explanation of how
@@ -143,16 +142,18 @@ solution to the following optimization problem:
 }
     } &\ \ 
   \sum_{i=1}^n w_i \ell(m_i, z_i) + \lambda \sum_{i=1}^{n-1} I(c_i = 1) \\
-  \text{subject to\ \ } &\ \text{no change: }c_t = 0 \Rightarrow m_t = m_{t+1}\text{ and }s_t=s_{t+1}
+  \text{subject to\ \ } &\ \text{no change: }c_i = 0 \Rightarrow m_i = m_{i+1}\text{ and }s_i=s_{i+1}
   \nonumber\\
-&\ \text{go up: }c_t = 1 \Rightarrow m_t \leq m_{t+1}\text{ and }(s_t,s_{t+1})=(0,1),
+&\ \text{go up: }c_i = 1 \Rightarrow m_i \leq m_{i+1}\text{ and }(s_i,s_{i+1})=(0,1),
   \nonumber\\
-&\ \text{go down: } c_t = -1 \Rightarrow m_t \geq m_{t+1}\text{ and }(s_t,s_{t+1})=(1,0),
+&\ \text{go down: } c_i = -1 \Rightarrow m_i \geq m_{i+1}\text{ and }(s_i,s_{i+1})=(1,0),\\
   & \ \text{start and end down: } s_1=s_n=0.\nonumber
 \end{align*}
-where $\ell(m, z)= m - z\log m$ is the Poisson loss. The penalty term
-measures the number of changepoint variables $c_t$ which are equal to
-1 (which is the same as the number of peaks in the resulting model).
+where $\ell(m, z)= m - z\log m$ is the Poisson loss. The optimization
+variables are $m_i$ for the segment mean, $s_i$ for hidden state, and
+$c_i$ for type of changepoint. The penalty term is proportional to the number of
+changepoint variables $c_t$ which are equal to 1 (which is the same as
+the number of peaks in the resulting model).
 
 To run the peak detection algorithm a numeric penalty parameter
 $\lambda\geq 0$ must be specified by the user. The smallest value is 0
@@ -161,12 +162,13 @@ peaks.  The code below runs the peak detection algorithm on this count
 data vector, using the penalty parameter $\lambda = 10.5$:
 
 <<>>=
-(fit <- PeakSegDisk::PeakSegFPOP_vec(z.rep.vec, 10.5))
+fit <- list()
+(fit$vec <- PeakSegDisk::PeakSegFPOP_vec(z.rep.vec, 10.5))
 @
 
 
-The model output list above includes \verb|fit$segments|, a data table with
-one row for each segment mean, and \verb|fit$loss|, a data table with one
+The model output list above includes \verb|segments|, a data table with
+one row for each segment mean, and \verb|loss|, a data table with one
 row that reports the model meta-data. Of interest are:
 
 \begin{itemize}
@@ -188,19 +190,25 @@ row that reports the model meta-data. Of interest are:
 Note in particular that \verb|PeakSegFPOP_vec| internally uses \verb|rle| to
 construct a run-length encoding, which is passed to the solver to save
 time/storage. In this case the repetitive integer data vector contains
-\Sexpr{fit$loss$bases} elements but the coverage.bedGraph data file
-contains only \Sexpr{fit$loss$bedGraph.lines} lines. In real genomic data
+\Sexpr{fit$vec$loss$bases} elements but the coverage.bedGraph data file
+contains only \Sexpr{fit$vec$loss$bedGraph.lines} lines. In real genomic data
 sets the difference is typically much larger.
 
 <<>>=
 gg.change+
   geom_segment(aes(
     chromStart+0.5, mean, xend=chromEnd+0.5, yend=mean, color=model),
-    data=data.frame(fit$segments, model="fitted"))
+    data=data.frame(fit$vec$segments, model="fitted"))
 @
 
 It is clear from the plot above that the first three changepoints are
 estimated exactly and the last one is a bit over-estimated.
+
+Also note that a default plot method is defined for these objects:
+
+<<>>=
+plot(fit$vec)
+@ 
 
 \section{Segment a data frame}
 
@@ -214,11 +222,11 @@ before. Note that this function does not perform run-length encoding
 for you:
 
 <<>>=
-(fit.df <- PeakSegDisk::PeakSegFPOP_df(count.df, 10.5))
+(fit$df <- PeakSegDisk::PeakSegFPOP_df(count.df, 10.5))
 @
 
 Note how \verb|bedGraph.lines| is now the same size as \verb|bases|,
-\Sexpr{fit.df$loss$bedGraph.lines}. The time/storage complexity is
+\Sexpr{fit$df$loss$bedGraph.lines}. The time/storage complexity is
 log-linear in the number of \verb|bedGraph.lines|, so it is more efficient
 to use the run-length encoding. This can be easily done in R:
 
@@ -254,15 +262,12 @@ for the last position in each run, and a \verb|geom_segment| extending left
 to the first position. These data can be segmented as above:
 
 <<>>=
-(fit.rle <- PeakSegDisk::PeakSegFPOP_df(rle.df, 10.5))
+(fit$rle <- PeakSegDisk::PeakSegFPOP_df(rle.df, 10.5))
 gg.rle+
   geom_segment(aes(
     chromStart+0.5, mean, xend=chromEnd+0.5, yend=mean, color=model),
-    data=data.frame(fit$segments, model="fitted"))
+    data=data.frame(fit$rle$segments, model="fitted"))
 @
-
-Note how the segments and loss of this model are the same as the other
-models computed above.
 
 \section{Write the file yourself}
 
@@ -273,7 +278,8 @@ are not recommended for large data.
 In this section we introduce the most efficient way of using PeakSegDisk, which involves:
 
 \begin{itemize}
-\item creating a ``problem'' directory for each segmentation problem,
+\item creating a ``problem'' directory for each segmentation problem
+  (sample and genome subset),
 \item saving the data to \verb|coverage.bedGraph| in that directory,
 \item and then running \verb|PeakSegFPOP_dir|.
 \end{itemize}
@@ -311,10 +317,10 @@ write.table(
 The next step is to run the main solver, 
 
 <<>>=
-(fit.prob <- PeakSegDisk::PeakSegFPOP_dir(data.dir, 10.5))
+(fit$dir <- PeakSegDisk::PeakSegFPOP_dir(data.dir, 10.5))
 @
 
-Again the results above are the same as in previous computations.  The
+The
 underlying C++ code
 creates penalty-specific files such as
 \verb|chrXX-start-end/coverage.bedGraph_penalty=0.1_loss.tsv| which
@@ -330,8 +336,16 @@ optimal model with a certain number of peaks:
 
 <<>>=
 if(requireNamespace("future"))future::plan("multiprocess")
-(fit.search <- PeakSegDisk::sequentialSearch_dir(data.dir, 2L, verbose=1))
+(fit$search <- PeakSegDisk::sequentialSearch_dir(data.dir, 2L, verbose=1))
 @
+
+Note how the number of peaks and \verb|total.loss| of this model is
+the same as the other models computed above,
+
+<<>>=
+lossDF <- function(L)data.frame(L$loss)[, names(fit$dir$loss)]
+do.call(rbind, lapply(fit, lossDF))
+@ 
 
 The algorithm must evaluate several penalty values to compute the
 optimal model with a certain number of peaks. The \verb|others| component of
