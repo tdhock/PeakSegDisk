@@ -8,6 +8,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+options(width=100)
 ```
 
 The time complexity of the algorithm depends on the number of
@@ -19,13 +20,6 @@ count data which are always increasing.
 data(Mono27ac, package="PeakSegDisk", envir=environment())
 library(data.table)
 loss.list <- list()
-type.colors <- c(
-  "Theoretical\nworst case"="grey",
-  "Increasing"="red",
-  "Mono27ac"="black")
-dfac <- function(x){
-  factor(x, names(type.colors))
-}
 N.data.vec <- 10^seq(1, 3)
 for(penalty in c(0, 1e2, 1e4, 1e6)){
   for(N.data in N.data.vec){
@@ -33,19 +27,22 @@ for(penalty in c(0, 1e2, 1e4, 1e6)){
     some.inc <- data.table(some.cov)
     some.inc[, count := 1:.N]
     data.list <- list(
-      Mono27ac=some.cov,
-      Increasing=some.inc)
-    for(data.type in names(data.list)){
-      df <- data.list[[data.type]]
+      real=some.cov,
+      synthetic=some.inc)
+    for(short.type in names(data.list)){
+      df <- data.list[[short.type]]
       fit <- PeakSegDisk::PeakSegFPOP_df(df, penalty)
-      loss.list[[paste(penalty, N.data, data.type)]] <- data.table(
+      loss.list[[paste(penalty, N.data, short.type)]] <- data.table(
         N.data,
-        data.type=dfac(data.type),
+        short.type,
         fit$loss)
     }
   }
 }
-(loss <- do.call(rbind, loss.list))
+(loss <- do.call(rbind, loss.list))[, .(
+  penalty, short.type, N.data, 
+  mean.intervals, max.intervals,
+  megabytes, seconds)][order(penalty, short.type, N.data)]
 ```
 
 Theoretically the most intervals that could be stored is $O(i)$ for
@@ -58,7 +55,7 @@ via `sum(1:N)/N` = `(N+1)/2`.
 (worst.dt <- data.table(
   N.data=N.data.vec,
   mean.intervals=(N.data.vec+1)/2,
-  data.type=dfac("Theoretical\nworst case")))
+  short.type="theoretical"))
 ```
 
 The plot below shows that the algorithm achieves the theoretical
@@ -66,20 +63,37 @@ worst case time complexity for the synthetic increasing data,
 when the penalty is large. But the number of intervals is always
 much smaller for real Mono27ac ChIP-seq data.
   
-```{r}
+```{r, fig.height=3}
+library(ggplot2)
+one <- function(short.type, data.type, color){
+  data.table(short.type, data.type, color)
+}
+type.dt <- rbind(
+  one("theoretical", "Theoretical\nworst case", "grey"),
+  one("synthetic", "Synthetic\nIncreasing", "red"),
+  one("real", "Real ChIP-seq", "black"))
+loss.types <- type.dt[loss, on=list(short.type)]
+worst.types <- type.dt[worst.dt, on=list(short.type)]
+(type.colors <- type.dt[, structure(color, names=data.type)])
 ggplot()+
+  guides(
+    color=guide_legend(keyheight=3)
+  )+
+  geom_blank(aes(
+    N.data, 1),
+    data=data.table(N.data=c(5, 2000)))+
   theme_bw()+
-  theme(panel.margin=grid::unit(0, "lines"))+
+  theme(panel.spacing=grid::unit(0, "lines"))+
   facet_grid(. ~ penalty, labeller=label_both)+
   geom_line(aes(
     N.data, mean.intervals, color=data.type),
-    data=worst.dt)+
+    data=worst.types)+
   scale_color_manual(
     values=type.colors,
     breaks=names(type.colors))+
   geom_line(aes(
     bedGraph.lines, mean.intervals, color=data.type),
-    data=loss)+
-  scale_x_log10()+
-  scale_y_log10()
+    data=loss.types)+
+  scale_x_log10("N data")+
+  scale_y_log10("Mean intervals (candidate changepoints)")
 ```

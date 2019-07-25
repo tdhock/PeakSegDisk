@@ -15,5 +15,5 @@ Imports: data.table (>= 1.9.8)
 Suggests: testthat, ggplot2,
  future.apply, future,
  knitr
-
+VignetteBuilder: knitr
 
