@@ -253,8 +253,8 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
       if(data_i==0){
 	// initialization Cdown_1(m)=gamma_1(m)/w_1
 	down_cost.piece_list.emplace_back
-	  (1.0, -coverage, 0.0,
-	   min_log_mean, max_log_mean, -1, false);
+	  (1.0, (double)-coverage, 0.0,
+	   min_log_mean, max_log_mean, -1, -5.0);
       }else{
 	// if data_i is up, it could have come from down_cost_prev.
 	min_prev_cost.set_to_min_less_of(&down_cost_prev, verbose);
