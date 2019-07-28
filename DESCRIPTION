@@ -10,7 +10,7 @@ Description: Disk-based implementation of
  (independently for each sample and genomic problem),
  can handle huge data sets (10^7 or more).
 License: GPL-3
-Depends: R (>= 3.5)
+Depends: R (>= 2.10)
 Imports: data.table (>= 1.9.8)
 Suggests: testthat, ggplot2,
  future.apply, future,
