@@ -44,13 +44,14 @@ setkey(segs.dt, segStart1, segEnd)
 over.dt <- foverlaps(cov.dt, segs.dt, nomatch=0L)
 sprintf("%.12f", over.dt[, PeakSegDP::PoissonLoss(count, mean, chromEnd-chromStart)])
 
-2019.7.25 PR#6
+2019.7.29 PR#6
+
+Valgrind write(buf) points to uninitialised byte(s) fixed by not
+serializing the entire PoissonLossPieceLog struct (of which there were
+4 un-initialized bytes). Now we instead serialize only the members
+which are necessary for decoding: max_log_mean, data_i, prev_log_mean.
 
 ChIPreads data set.
-
-Vignette showing worst case asymptotic complexity.
-
-Vignette 
 
 numeric penalty value allowed for PeakSegFPOP_dir
 
@@ -60,7 +61,11 @@ problem.sequentialSearch -> sequentialSearch_dir
 
 future.apply::future_lapply instead of parallel::mclapply.
 
-Usage_example vignette.
+Vignette: examples.
+
+Vignette showing worst case asymptotic complexity.
+
+Vignette showing spatial correlation.
 
 2019.6.5
 

@@ -10,8 +10,9 @@
 #include "PeakSegFPOPLog.h"
 
 int PiecewiseFunSize(const PiecewisePoissonLossLog&fun){
-  return sizeof(PoissonLossPieceLog)*fun.piece_list.size() +
-    sizeof(int)*2;
+  int sizeof_piece = 2*sizeof(double) + sizeof(int);
+  return sizeof_piece*fun.piece_list.size() +
+    sizeof(int)*2; // n_pieces and chromEnd.
 }
 
 void PiecewiseFunCopy(void *dest, const PiecewisePoissonLossLog&fun){
@@ -23,8 +24,12 @@ void PiecewiseFunCopy(void *dest, const PiecewisePoissonLossLog&fun){
   p += sizeof(int);
   for(PoissonLossPieceListLog::const_iterator it = fun.piece_list.begin();
       it != fun.piece_list.end(); it++){
-    memcpy(p, &(*it), sizeof(PoissonLossPieceLog));
-    p += sizeof(PoissonLossPieceLog);
+    memcpy(p, &(it->max_log_mean), sizeof(double));
+    p += sizeof(double);
+    memcpy(p, &(it->data_i), sizeof(int));
+    p += sizeof(int);
+    memcpy(p, &(it->prev_log_mean), sizeof(double));
+    p += sizeof(double);
   }
 }
 
@@ -36,10 +41,17 @@ void PiecewiseFunRestore(PiecewisePoissonLossLog&fun, const void *src){
   p += sizeof(int);
   memcpy(&(fun.chromEnd), p, sizeof(int));
   p += sizeof(int);
+  double min_log_mean = -INFINITY;
   for(int piece_i=0; piece_i < n_pieces; piece_i++){
-    memcpy(&piece, p, sizeof(PoissonLossPieceLog));
-    p += sizeof(PoissonLossPieceLog);
+    piece.min_log_mean = min_log_mean;
+    memcpy(&(piece.max_log_mean), p, sizeof(double));
+    p += sizeof(double);
+    memcpy(&(piece.data_i), p, sizeof(int));
+    p += sizeof(int);
+    memcpy(&(piece.prev_log_mean), p, sizeof(double));
+    p += sizeof(double);
     fun.piece_list.push_back(piece);
+    min_log_mean = piece.max_log_mean;
   }
 }
 
@@ -374,9 +386,9 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
       //cost_model_mat[data_i + data_count] = down_cost;
       try{
 	// up_cost is undefined for the first data point.
-	if(0<data_i)cost_model_mat.write(data_i, up_cost);
 	//Rprintf("data_i=%d up=%d down=%d\n", data_i, up_cost.piece_list.size(), down_cost.piece_list.size());
 	cost_model_mat.write(data_i + data_count, down_cost);
+	if(0<data_i)cost_model_mat.write(data_i, up_cost);
       }catch(WriteFailedException& e){
 	return ERROR_WRITING_COST_FUNCTIONS;
       }
@@ -388,8 +400,6 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
     int prev_seg_offset = 0;
     // last segment is down (offset N) so the second to last segment is
     // up (offset 0).
-    //down_cost = cost_model_mat[data_count*2-1];
-    down_cost = cost_model_mat.read(data_count*2-1);
     down_cost.Minimize
       (&best_cost, &best_log_mean,
        &prev_seg_end, &prev_log_mean);
