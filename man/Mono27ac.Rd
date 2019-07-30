@@ -32,8 +32,8 @@ Therefore, each chromEnd on each row should be equal to the chromStart of the ne
 \source{
   UCI Machine Learning Repository, chipseq data set, problem directory
   H3K27ac-H3K4me3_TDHAM_BP/samples/Mono1_H3K27ac/S001YW_NCMLS/problems/chr11:60000-580000
-  Links: https://archive.ics.uci.edu/ml/datasets/chipseq for the
-  UCI web page; https://github.com/tdhock/feature-learning-benchmark for
+  Links: \url{https://archive.ics.uci.edu/ml/datasets/chipseq} for the
+  UCI web page; \url{https://github.com/tdhock/feature-learning-benchmark} for
   a more detailed explanation.
 }
 \keyword{datasets}

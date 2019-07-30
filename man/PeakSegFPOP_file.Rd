@@ -33,7 +33,6 @@ files (segments, db, loss).}
 
 \examples{
 
-library(PeakSegDisk)
 r <- function(chrom, chromStart, chromEnd, coverage){
   data.frame(chrom, chromStart, chromEnd, coverage)
 }
@@ -42,23 +41,35 @@ four <- rbind(
   r("chr1", 10, 20, 10),
   r("chr1", 20, 30, 14),
   r("chr1", 30, 40, 13))
+dir.create(prob.dir <- tempfile())
+coverage.bedGraph <- file.path(prob.dir, "coverage.bedGraph")
 write.table(
-  four, tmp <- tempfile(),
+  four, coverage.bedGraph,
   sep="\t", row.names=FALSE, col.names=FALSE)
 pstr <- "10.5"
-PeakSegFPOP_file(tmp, pstr)
+result.list <- PeakSegDisk::PeakSegFPOP_file(coverage.bedGraph, pstr)
+dir(prob.dir)
 
+## segments file can be read to see optimal segment means.
 outf <- function(suffix){
-  paste0(tmp, "_penalty=", pstr, "_", suffix)
+  paste0(coverage.bedGraph, "_penalty=", pstr, suffix)
 }
-segments.bed <- outf("segments.bed")
+segments.bed <- outf("_segments.bed")
 seg.df <- read.table(segments.bed)
 names(seg.df) <- col.name.list$segments
 seg.df
 
-loss.tsv <- outf("loss.tsv")
+## loss file can be read to see optimal Poisson loss, etc.
+loss.tsv <- outf("_loss.tsv")
 loss.df <- read.table(loss.tsv)
 names(loss.df) <- col.name.list$loss
 loss.df
+
+## The temporary db file is used in the underlying C++ code to store
+## the optimal cost function for each candidate changepoint. It can
+## be safely be deleted.
+tmp.db <- outf(".db")
+unlink(tmp.db)
+dir(prob.dir)
 
 }

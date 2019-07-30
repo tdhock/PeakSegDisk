@@ -21,33 +21,41 @@ contains a coverage.bedGraph file with the aligned read counts for
 one genomic segmentation problem. Note that the standard
 coverage.bedGraph file name is required; for full flexibility the
 user can run the algo on an arbitrarily named file via
-\code{\link{PeakSegFPOP_file}}.}
+\code{\link{PeakSegFPOP_file}} (see that man page for an explanation of how
+storage on disk happens).}
   \item{penalty.param}{non-negative numeric penalty parameter (larger values for fewer
 peaks), or character scalar which can be interpreted as such. 0
 means max peaks, Inf means no peaks. }
 }
 \details{Finds the optimal change-points using the Poisson loss
-and the PeakSeg constraint. For \eqn{N} data points, the
-functional pruning algorithm is \eqn{O(N \log N)} time and disk
-space, and \eqn{O(\log N)} memory.  It computes the exact
-solution to the optimization problem in
-\code{vignette("Examples", package="PeakSegDisk")}. }
-\value{Named list of two data.tables: segments has one row for every
-segment in the optimal model, and loss has one row and contains
-the following columns. penalty=same as input, segments=number of
-segments in optimal model, peaks=number of peaks in optimal model,
-bases=number of positions described in bedGraph file,
-bedGraph.lines=number of lines in bedGraph file, total.loss=total
-Poisson loss=sum_i
-m_i-z_i*log(m_i)=mean.pen.cost*bases-penalty*peaks,
-mean.pen.cost=mean penalized
-cost=(total.loss+penalty*peaks)/bases, equality.constraints=number
-of adjacent segment means that have equal values in the optimal
-solution, mean.intervals=mean number of intervals/candidate
+and the PeakSeg constraint (changes in mean alternate between
+non-decreasing and non-increasing). For \eqn{N} data points, the
+functional pruning algorithm is \eqn{O(\log N)} memory. It is
+\eqn{O(N \log N)} time and disk space. It computes the
+exact solution to the optimization problem in
+\code{vignette("Examples", package="PeakSegDisk")}.}
+\value{Named list of two data.tables:
+\item{segments}{has one row for every segment in the optimal model,}
+\item{loss}{has one row and contains the following columns:}
+\describe{
+\item{penalty}{same as input parameter}
+\item{segments}{number of segments in optimal model}
+\item{peaks}{number of peaks in optimal model}
+\item{bases}{number of positions described in bedGraph file}
+\item{bedGraph.lines}{number of lines in bedGraph file}
+\item{total.loss}{total Poisson loss
+= \eqn{\sum_i m_i-z_i*\log(m_i)} =
+mean.pen.cost*bases-penalty*peaks}
+\item{mean.pen.cost}{mean penalized cost = (total.loss+penalty*peaks)/bases}
+\item{equality.constraints}{number of adjacent segment means that have
+equal values in the optimal solution}
+\item{mean.intervals}{mean number of intervals/candidate
 changepoints stored in optimal cost functions -- useful for
-characterizing the computational complexity of the algorithm,
-max.intervals=maximum number of intervals, megabytes=disk usage of
-*.db file, seconds=timing of \code{\link{PeakSegFPOP_file}}.}
+characterizing the computational complexity of the algorithm}
+\item{max.intervals}{maximum number of intervals}
+\item{megabytes}{disk usage of *.db file}
+\item{seconds}{timing of PeakSegFPOP_file}
+}}
 
 \author{Toby Dylan Hocking}
 

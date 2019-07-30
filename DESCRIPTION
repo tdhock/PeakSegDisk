@@ -16,4 +16,5 @@ Suggests: testthat, ggplot2,
  future.apply, future,
  knitr
 VignetteBuilder: knitr
-
+URL: http://github.com/tdhock/PeakSegDisk
+BugReports: http://github.com/tdhock/PeakSegDisk/issues
