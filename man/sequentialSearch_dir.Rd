@@ -2,11 +2,11 @@
 \alias{sequentialSearch_dir}
 \title{Compute PeakSeg model with given number of peaks}
 \description{Compute the most likely peak model with at most the number of
-peaks given by peaks.int. This function repeated calls
+peaks given by \code{peaks.int}. This function repeated calls
 \code{\link{PeakSegFPOP_dir}} with different penalty values, until either
-(1) it finds the peaks.int model, or (2) it concludes that there
-is no peaks.int model, in which case it returns the next simplest
-model (with fewer peaks than peaks.int).
+(1) it finds the \code{peaks.int} model, or (2) it concludes that there
+is no \code{peaks.int} model, in which case it returns the next simplest
+model (with fewer peaks than \code{peaks.int}).
 The first pair of penalty values (0, Inf) is run in parallel
 via the user-specified future plan,
 if the future.apply package is available.}
@@ -22,7 +22,7 @@ interval of minimal error penalty values.}
 
 \value{Same result list from \code{\link{PeakSegFPOP_dir}}, with an additional
 component "others" describing the other models that were computed
-before finding the optimal model with peaks.int (or fewer)
+before finding the optimal model with \code{peaks.int} (or fewer)
 peaks. Additional loss columns are as follows: under=number of
 peaks in smaller model during binary search; over=number of peaks
 in larger model during binary search; iteration=number of times
@@ -57,7 +57,7 @@ write.table(
 
 ## register a parallel future plan to compute the first two
 ## penalties in parallel during the sequential search.
-if(requireNamespace("future"))future::plan("multiprocess")
+if(interactive() && requireNamespace("future"))future::plan("multiprocess")
 
 ## Compute optimal up-down model with 2 peaks via sequential search.
 fit <- PeakSegDisk::sequentialSearch_dir(data.dir, 2L)

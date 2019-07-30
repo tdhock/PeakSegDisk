@@ -18,12 +18,12 @@ that there is disk space available on that device.}
 as.numeric: non-negative penalty. More penalty means fewer
 peaks. "0" and "Inf" are OK. Character is required rather than
 numeric, so that the user can reliably find the results in the
-output files, which are in the same directory as bedGraph.file,
+output files, which are in the same directory as \code{bedGraph.file},
 and named using the penalty value,
 e.g. coverage.bedGraph_penalty=136500650856.439_loss.tsv }
 }
 
-\value{A list of input parameters (bedGraph.file, penalty) and result
+\value{A list of input parameters (\code{bedGraph.file}, penalty) and result
 files (segments, db, loss).}
 
 \author{Toby Dylan Hocking}

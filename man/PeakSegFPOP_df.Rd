@@ -6,7 +6,7 @@
 \arguments{
   \item{count.df}{data.frame with columns count, chromStart, chromEnd.}
   \item{pen.num}{Non-negative numeric scalar.}
-  \item{base.dir}{base.dir/chrXX-start-end/coverage.bedGraph will be written, where
+  \item{base.dir}{\code{base.dir}/chrXX-start-end/coverage.bedGraph will be written, where
 chrXX is the chrom column, start is the first chromStart position,
 and end is the last chromEnd position.}
 }
