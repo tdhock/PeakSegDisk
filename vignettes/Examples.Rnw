@@ -1,6 +1,5 @@
 %\VignetteIndexEntry{Examples}
 %\VignetteEngine{knitr::knitr}
-%\VignetteEncoding{UTF-8}
 \documentclass[12pt]{article}
 \usepackage[cm]{fullpage}
 \usepackage{hyperref}
