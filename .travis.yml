@@ -4,6 +4,7 @@ sudo: required
 
 apt_packages:
   - texlive
+  - ghostscript
   - texlive-fonts-extra
   - texinfo  
 
