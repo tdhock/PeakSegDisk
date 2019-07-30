@@ -3,7 +3,7 @@
 \title{Compute PeakSeg model with given number of peaks}
 \description{Compute the most likely peak model with at most the number of
 peaks given by peaks.int. This function repeated calls
-PeakSegFPOP_dir with different penalty values, until either
+\code{\link{PeakSegFPOP_dir}} with different penalty values, until either
 (1) it finds the peaks.int model, or (2) it concludes that there
 is no peaks.int model, in which case it returns the next simplest
 model (with fewer peaks than peaks.int).
@@ -20,7 +20,7 @@ interval of minimal error penalty values.}
   \item{verbose}{Print messages?}
 }
 
-\value{Same result list from PeakSegFPOP_dir, with an additional
+\value{Same result list from \code{\link{PeakSegFPOP_dir}}, with an additional
 component "others" describing the other models that were computed
 before finding the optimal model with peaks.int (or fewer)
 peaks. Additional loss columns are as follows: under=number of

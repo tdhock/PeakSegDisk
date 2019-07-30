@@ -179,7 +179,16 @@ row that reports the model meta-data. Of interest are:
 \item \verb|bedGraph.lines|, the number of data points in run-length encoding form,
 \item \verb|mean.pen.cost|, the optimal mean loss plus penalty*peaks,
 \item \verb|total.loss|, the optimal total Poisson loss over all data points, 
-\item \verb|equality.constraints|, the number of adjacent segment means that are equal in the optimal solution,
+\item \verb|equality.constraints|, the number of adjacent segment
+  means that are equal in the optimal solution. Note that when this
+  number is greater than 0, then there are some active equality
+  constraints, and the optimal model is therefore not feasible for the
+  strict inequality constraints, which implies that the optimum of the
+  problem with strict inequality constraints is undefined, i.e. for
+  any sub-optimal solution that satisfies the strict inequality
+  constraints, we can find a lower cost solution that satifies the
+  strict inequality constraints (but is still sub-optimal), by getting
+  closer to the solution with active equality constraints.
 \item \verb|megabytes|, the storage space on disk used by the solver,
 \item \verb|seconds|, the amount of time used by the solver,
 \item \verb|mean.intervals|, \verb|max.intervals|, statistics over all intervals

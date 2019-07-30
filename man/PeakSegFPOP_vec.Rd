@@ -2,14 +2,14 @@
 \alias{PeakSegFPOP_vec}
 \title{PeakSeg penalized solver for integer vector}
 \description{Convert integer data vector to run-length encoding,
-then run PeakSegFPOP_df.}
+then run \code{\link{PeakSegFPOP_df}}.}
 \usage{PeakSegFPOP_vec(count.vec, pen.num)}
 \arguments{
   \item{count.vec}{integer vector, noisy non-negatve count data to segment.}
   \item{pen.num}{Non-negative numeric scalar.}
 }
 
-\value{List of solver results, same as PeakSegFPOP_dir.}
+\value{List of solver results, same as \code{\link{PeakSegFPOP_dir}}.}
 
 \author{Toby Dylan Hocking}
 

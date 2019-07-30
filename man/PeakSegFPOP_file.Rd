@@ -6,7 +6,7 @@ using a file on disk to store the O(N) function piece lists,
 each of size O(log N).
 This is a low-level function that just runs the algo
 and produces the result files (without reading them into R),
-so normal users are recommended to instead use PeakSegFPOP_dir,
+so normal users are recommended to instead use \code{\link{PeakSegFPOP_dir}},
 which calls this function then reads the result files into R.}
 \usage{PeakSegFPOP_file(bedGraph.file, pen.str)}
 \arguments{

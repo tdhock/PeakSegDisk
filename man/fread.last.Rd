@@ -4,7 +4,7 @@
 \description{Read the last line of a text file. Useful for quickly checking if
 the coverage.bedGraph_penalty=VALUE_segments.bed file is
 consistent with the coverage.bedGraph_penalty=VALUE_loss.tsv
-file. (used by the PeakSegFPOP_dir caching mechanism)}
+file. (used by the \code{\link{PeakSegFPOP_dir}} caching mechanism)}
 \usage{fread.last(file.name, col.name.vec)}
 \arguments{
   \item{file.name}{Name of file to read.}

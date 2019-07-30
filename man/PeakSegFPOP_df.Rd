@@ -1,7 +1,7 @@
 \name{PeakSegFPOP_df}
 \alias{PeakSegFPOP_df}
 \title{PeakSeg penalized solver for data.frame}
-\description{Write data frame to disk then run PeakSegFPOP_dir solver.}
+\description{Write data frame to disk then run \code{\link{PeakSegFPOP_dir}} solver.}
 \usage{PeakSegFPOP_df(count.df, pen.num, base.dir = tempdir())}
 \arguments{
   \item{count.df}{data.frame with columns count, chromStart, chromEnd.}
@@ -11,7 +11,7 @@ chrXX is the chrom column, start is the first chromStart position,
 and end is the last chromEnd position.}
 }
 
-\value{List of solver results, same as PeakSegFPOP_dir.}
+\value{List of solver results, same as \code{\link{PeakSegFPOP_dir}}.}
 
 \author{Toby Dylan Hocking}
 
