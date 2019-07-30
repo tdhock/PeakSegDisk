@@ -152,7 +152,7 @@ solution to the following optimization problem:
 where $\ell(m, z)= m - z\log m$ is the Poisson loss. The optimization
 variables are $m_i$ for the segment mean, $s_i$ for hidden state, and
 $c_i$ for type of changepoint. The penalty term is proportional to the number of
-changepoint variables $c_t$ which are equal to 1 (which is the same as
+changepoint variables $c_i$ which are equal to 1 (which is the same as
 the number of peaks in the resulting model).
 
 To run the peak detection algorithm a numeric penalty parameter
@@ -323,6 +323,7 @@ The next step is to run the main solver,
 The
 underlying C++ code
 creates penalty-specific files such as
+
 \verb|chrXX-start-end/coverage.bedGraph_penalty=0.1_loss.tsv| which
 are used to store/cache the results.  If the files already exist (and
 are consistent) then \verb|PeakSegFPOP_dir| just reads them; otherwise
@@ -339,14 +340,6 @@ if(requireNamespace("future"))future::plan("multiprocess")
 (fit$search <- PeakSegDisk::sequentialSearch_dir(data.dir, 2L, verbose=1))
 @
 
-Note how the number of peaks and \verb|total.loss| of this model is
-the same as the other models computed above,
-
-<<>>=
-lossDF <- function(L)data.frame(L$loss)[, names(fit$dir$loss)]
-do.call(rbind, lapply(fit, lossDF))
-@ 
-
 The algorithm must evaluate several penalty values to compute the
 optimal model with a certain number of peaks. The \verb|others| component of
 the model list above shows that
@@ -361,10 +354,36 @@ the model list above shows that
 \end{itemize}
   
 At each step (except the first) the new penalties are computed based
-on the loss values found in the previous step.
-
+on the loss values found in the previous step. 
 If present with a registered parallel future plan, 
 the \verb|future.apply| package is used to run the first step 
 (penalties $0,\infty$) in parallel.
+
+Note how the number of peaks and \verb|total.loss| of this model is
+the same as the other models computed above,
+
+<<>>=
+lossDF <- function(L)data.frame(L$loss)[, names(fit$dir$loss)]
+do.call(rbind, lapply(fit, lossDF))
+@ 
+
+Finally we demonstrate how the filesystem caching is especially useful
+for the sequential search. In the code below we ask the sequential
+search algorithm to compute the optimal model with four peaks:
+
+<<>>=
+four.peaks <- PeakSegDisk::sequentialSearch_dir(data.dir, 4L)
+four.peaks$others[, .(iteration, penalty, peaks)]
+@ 
+
+Looking at the output above, we see that the first three iterations of
+the sequential search require computing models with 26, 0, 6, 2
+peaks. Since all of these have been previously computed (and saved to
+disk), the dynamic programming algorithm does not need to be re-run,
+and instead the model results are simply read from the files. After
+that the dynamic programming is run for the subsequent iterations
+4-6. In this particular example the savings in computation time is not
+extraordinary, but in real genomic data, this can result in
+substantial speed-ups.
 
 \end{document}
