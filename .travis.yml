@@ -1,31 +1,23 @@
-language: c
+language: r
 
 sudo: required
+
+apt_packages:
+  - texlive
+  - ghostscript
+  - texlive-fonts-extra
+  - texinfo  
 
 env:
   - TEST_SUITE=CRAN
   - TEST_SUITE=TRAVIS
 
-before_install:
-  - mkdir bin
-  - pushd bin
-  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
-  - chmod 755 *
-  - export PATH=$(pwd):$PATH
-  - popd
-  - travis-tool.sh bootstrap
-  - sudo apt-get install -y libdb5.1++-dev libdb5.1-stl-dev texlive texlive-fonts-extra texinfo
+script:
   - mkdir /tmp/tmp256K
   - sudo mount -t tmpfs -o size=256K tmpfs /tmp/tmp256K
   - mkdir /tmp/tmp160000
   - sudo mount -t tmpfs -o size=160000 tmpfs /tmp/tmp160000
-
-install:
-  - travis-tool.sh r_install devtools
-  - travis-tool.sh install_deps
-  - Rscript -e "devtools::install(dependencies=FALSE)"
-
-script:
+  - R CMD INSTALL .
   - if [ "$TEST_SUITE" == "CRAN" ];then bash build.sh;else Rscript -e "source('tests/testthat.R', chdir = TRUE)";fi
 
 after_failure:

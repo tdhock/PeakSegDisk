@@ -64,16 +64,16 @@ file in a folder with a name that is consistent with the start/end
 positions of the data. In the example above it would be
 =sampleID/problems/c:0-6/coverage.bedGraph=
 
-*** PeakSegDisk::problem.PeakSegFPOP 
+*** PeakSegDisk::PeakSegFPOP_dir 
 
 The first algorithm is Generalized Functional Pruning Optimal
 Partitioning (GFPOP) with up-down (PeakSeg) constraints between
 adjacent segment means. To use this algorithm you must give the folder
-name (not the coverage.bedGraph file name) to the problem.PeakSegFPOP
+name (not the coverage.bedGraph file name) to the PeakSegFPOP_dir
 function:
 
 #+BEGIN_SRC R
-PeakSegDisk::problem.PeakSegFPOP("sampleID/problems/c:0-6", "0.1")
+PeakSegDisk::PeakSegFPOP_dir("sampleID/problems/c:0-6", "0.1")
 #+END_SRC
 
 Note that the second argument must be a character string that
@@ -84,10 +84,10 @@ character string (not a real number) because that string is used to
 create files such as
 sampleID/problems/c:0-6/coverage.bedGraph_penalty=0.1_loss.tsv which
 are used to store/cache the results. If the files already exist (and
-are consistent) then problem.PeakSegFPOP just reads them; otherwise it
+are consistent) then PeakSegFPOP_dir just reads them; otherwise it
 runs the dynamic programming C++ code in order to create those files.
 It returns the model as a named list of data.tables -- see
-=help(problem.PeakSegFPOP)= for details of how to interpret.
+=help(PeakSegFPOP_dir)= for details of how to interpret.
 
 *Computational complexity:* O(N log N) time, O(N log N) disk, O(log N)
 memory. Basically you will never have to worry about running out of
@@ -98,7 +98,7 @@ sampleID/problem/c:0-6/coverage.bedGraph_penalty=0.1.db -- for large
 genomic data sets (e.g. bedGraph file with 10 million lines) the db
 file is about 80GB.
 
-*** PeakSegDisk::problem.sequentialSearch
+*** PeakSegDisk::sequentialSearch_dir
 
 GFPOP can only compute an optimal model for a given penalty value (and
 we can not directly specify the number of peaks). Thus we provide a
@@ -109,7 +109,7 @@ simpler model. The first argument again must specify the folder which
 contains your coverage.bedGraph data file. For example,
 
 #+BEGIN_SRC R
-PeakSegDisk::problem.sequentialSearch("sampleID/problems/c:0-6", 17L)
+PeakSegDisk::sequentialSearch_dir("sampleID/problems/c:0-6", 17L)
 #+END_SRC
 
 computes the most likely model with at most 17 peaks.
@@ -126,10 +126,8 @@ peaks.
 
 [[https://github.com/tdhock/PeakSegOptimal][PeakSegOptimal::PeakSegFPOP]] provides a O(N log N) memory (and no disk
 usage) implementation of the PeakSegFPOP algorithm for separately
-calling peaks for every sample and genomic problem. In contrast
-[[file:R/PeakSegFPOP.R][PeakSegDisk::PeakSegFPOP_disk]] implements the same algorithm using
-O(log N) memory and O(N log N) disk space (which is highly unlikely to
-memory swap, but a constant factor of about 2x slower). The
-[[https://github.com/tdhock/PeakSegFPOP][PeakSegFPOP]] command line program is another on-disk implementation
-which can be used outside of R.
+calling peaks for every sample and genomic problem. In contrast the
+PeakSegDisk package implements the same algorithm using O(log N)
+memory and O(N log N) disk space (which is highly unlikely to memory
+swap, but a constant factor of about 2x slower). 
 

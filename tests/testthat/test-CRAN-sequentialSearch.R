@@ -1,5 +1,5 @@
 library(testthat)
-context("problem.PeakSegFPOP")
+context("sequentialSearch_dir")
 library(PeakSegDisk)
 
 r <- function(chrom, chromStart, chromEnd, coverage){
@@ -21,6 +21,6 @@ write.table(
 
 test_that("sequential search with too many peaks is an error", {
   expect_error({
-    problem.sequentialSearch(data.dir, 5L)
+    sequentialSearch_dir(data.dir, 5L)
   }, "peaks.int=5 but max=2 peaks for N=6 data")
 })
