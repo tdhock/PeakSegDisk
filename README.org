@@ -30,7 +30,7 @@ if(!require(devtools))install.packages("devtools")
 devtools::install_github("tdhock/PeakSegDisk")
 #+END_SRC
 
-** Vignettes
+** Vignettes / example code
 
 - The first thing to read is the [[https://cloud.r-project.org/web/packages/PeakSegDisk/vignettes/Examples.pdf][Examples]] vignette, which describes how to use the main functions with small simulated data.
 - The second is the [[https://cloud.r-project.org/web/packages/PeakSegDisk/vignettes/Spatial_correlation.html][Spatial correlation]] vignette, which shows how to perform peak detection in ChIP-seq data sets.
