@@ -28,14 +28,18 @@ if(!require(devtools))install.packages("devtools")
 devtools::install_github("tdhock/PeakSegDisk")
 #+END_SRC
 
-** R function usage/examples
+** Vignettes
 
-Our paper ([[https://github.com/tdhock/PeakSegFPOP-paper][github source]]) describes two new algorithms which are
-implemented in this R package. Both algorithms read input data from
+- The first thing to read is the [[https://cloud.r-project.org/web/packages/PeakSegDisk/vignettes/Examples.pdf][Examples]] vignette, which describes how to use the main functions with small simulated data.
+- The second is the [[https://cloud.r-project.org/web/packages/PeakSegDisk/vignettes/Spatial_correlation.html][Spatial correlation]] vignette, which shows how to perform peak detection in ChIP-seq data sets.
+- The last vignette explores the [[https://cloud.r-project.org/web/packages/PeakSegDisk/vignettes/Worst_case.html][Worst case]] time complexity of the algorithm, and is mainly of theoretical interest.
+
+** Additional R function usage/examples
+
+PeakSegDisk implements two new algorithms, which both read input data from
 disk (not R objects/memory) in order to handle very large data sets
 while using only O(log N) memory. So you never need to read the entire
-data set into R/memory, and first we describe how to write your data
-set to a file on disk. 
+data set into R/memory, and results are saved/cached on disk for further efficiency.
 
 *** Writing a data set to a coverage.bedGraph file
 
