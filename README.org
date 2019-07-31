@@ -62,7 +62,7 @@ beginning of the data sequence becomes one line with start=0 end=2 at
 the beginning of the bedGraph file). Also it is recommended to put the
 file in a folder with a name that is consistent with the start/end
 positions of the data. In the example above it would be
-=sampleID/problems/c:0-6/coverage.bedGraph=
+=sampleID/problems/c-0-6/coverage.bedGraph=
 
 *** PeakSegDisk::PeakSegFPOP_dir 
 
@@ -73,7 +73,7 @@ name (not the coverage.bedGraph file name) to the PeakSegFPOP_dir
 function:
 
 #+BEGIN_SRC R
-PeakSegDisk::PeakSegFPOP_dir("sampleID/problems/c:0-6", "0.1")
+PeakSegDisk::PeakSegFPOP_dir("sampleID/problems/c-0-6", "0.1")
 #+END_SRC
 
 Note that the second argument must be a character string that
@@ -82,7 +82,7 @@ yield fewer peaks). The smallest value is "0" which yields max peaks,
 and the largest value is "Inf" which yields no peaks. It must be an R
 character string (not a real number) because that string is used to
 create files such as
-sampleID/problems/c:0-6/coverage.bedGraph_penalty=0.1_loss.tsv which
+sampleID/problems/c-0-6/coverage.bedGraph_penalty=0.1_loss.tsv which
 are used to store/cache the results. If the files already exist (and
 are consistent) then PeakSegFPOP_dir just reads them; otherwise it
 runs the dynamic programming C++ code in order to create those files.
@@ -94,7 +94,7 @@ memory. Basically you will never have to worry about running out of
 memory, but make sure you have some free space on the disk where you
 put your bedGraph file. The algorithm stores the optimal cost
 functions in a file named
-sampleID/problem/c:0-6/coverage.bedGraph_penalty=0.1.db -- for large
+sampleID/problem/c-0-6/coverage.bedGraph_penalty=0.1.db -- for large
 genomic data sets (e.g. bedGraph file with 10 million lines) the db
 file is about 80GB.
 
@@ -109,7 +109,7 @@ simpler model. The first argument again must specify the folder which
 contains your coverage.bedGraph data file. For example,
 
 #+BEGIN_SRC R
-PeakSegDisk::sequentialSearch_dir("sampleID/problems/c:0-6", 17L)
+PeakSegDisk::sequentialSearch_dir("sampleID/problems/c-0-6", 17L)
 #+END_SRC
 
 computes the most likely model with at most 17 peaks.
