@@ -24,6 +24,8 @@ detection:
 ** Installation 
 
 #+BEGIN_SRC R
+install.packages("PeakSegDisk")
+## OR:
 if(!require(devtools))install.packages("devtools")
 devtools::install_github("tdhock/PeakSegDisk")
 #+END_SRC
