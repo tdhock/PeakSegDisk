@@ -23,6 +23,58 @@ PoissonLossPieceLog::PoissonLossPieceLog
   prev_log_mean = prev;
 }
 
+void PoissonLossPieceLog::serialize_write(char *p) const {
+  memcpy(p, &max_log_mean, sizeof(double));
+  p += sizeof(double);
+  memcpy(p, &data_i, sizeof(int));
+  p += sizeof(int);
+  memcpy(p, &prev_log_mean, sizeof(double));
+  p += sizeof(double);
+}
+
+void PoissonLossPieceLog::serialize_read(char *p){
+  memcpy(&max_log_mean, p, sizeof(double));
+  p += sizeof(double);
+  memcpy(&data_i, p, sizeof(int));
+  p += sizeof(int);
+  memcpy(&prev_log_mean, p, sizeof(double));
+  p += sizeof(double);
+}
+
+int PiecewisePoissonLossLog::serialize_size() const {
+  int sizeof_piece = 2*sizeof(double) + sizeof(int);
+  return sizeof_piece*piece_list.size() +
+    sizeof(int)*2; // n_pieces and chromEnd.
+}
+
+void PiecewisePoissonLossLog::serialize_write(char *p) const {
+  int n_pieces = piece_list.size();
+  memcpy(p, &n_pieces, sizeof(int));
+  p += sizeof(int);
+  memcpy(p, &chromEnd, sizeof(int));
+  p += sizeof(int);
+  for(PoissonLossPieceListLog::const_iterator it = piece_list.begin();
+      it != piece_list.end(); it++){
+    it->serialize_write(p);
+  }  
+}
+
+void PiecewisePoissonLossLog::serialize_read(char *p){
+  int n_pieces;
+  PoissonLossPieceLog piece;
+  memcpy(&n_pieces, p, sizeof(int));
+  p += sizeof(int);
+  memcpy(&chromEnd, p, sizeof(int));
+  p += sizeof(int);
+  double min_log_mean = -INFINITY;
+  for(int piece_i=0; piece_i < n_pieces; piece_i++){
+    piece.min_log_mean = min_log_mean;
+    piece.serialize_read(p);
+    min_log_mean = piece.max_log_mean;
+    piece_list.push_back(piece);
+  }
+}
+
 PoissonLossPieceLog::PoissonLossPieceLog(){
 }
 

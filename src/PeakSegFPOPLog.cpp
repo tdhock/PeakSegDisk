@@ -10,49 +10,15 @@
 #include "PeakSegFPOPLog.h"
 
 int PiecewiseFunSize(const PiecewisePoissonLossLog&fun){
-  int sizeof_piece = 2*sizeof(double) + sizeof(int);
-  return sizeof_piece*fun.piece_list.size() +
-    sizeof(int)*2; // n_pieces and chromEnd.
+  return fun.serialize_size();
 }
 
 void PiecewiseFunCopy(void *dest, const PiecewisePoissonLossLog&fun){
-  char *p = (char*)dest;
-  int n_pieces = fun.piece_list.size();
-  memcpy(p, &n_pieces, sizeof(int));
-  p += sizeof(int);
-  memcpy(p, &(fun.chromEnd), sizeof(int));
-  p += sizeof(int);
-  for(PoissonLossPieceListLog::const_iterator it = fun.piece_list.begin();
-      it != fun.piece_list.end(); it++){
-    memcpy(p, &(it->max_log_mean), sizeof(double));
-    p += sizeof(double);
-    memcpy(p, &(it->data_i), sizeof(int));
-    p += sizeof(int);
-    memcpy(p, &(it->prev_log_mean), sizeof(double));
-    p += sizeof(double);
-  }
+  fun.serialize_write((char*)dest);
 }
 
 void PiecewiseFunRestore(PiecewisePoissonLossLog&fun, const void *src){
-  int n_pieces;
-  char *p = (char*)src;
-  PoissonLossPieceLog piece;
-  memcpy(&n_pieces, p, sizeof(int));
-  p += sizeof(int);
-  memcpy(&(fun.chromEnd), p, sizeof(int));
-  p += sizeof(int);
-  double min_log_mean = -INFINITY;
-  for(int piece_i=0; piece_i < n_pieces; piece_i++){
-    piece.min_log_mean = min_log_mean;
-    memcpy(&(piece.max_log_mean), p, sizeof(double));
-    p += sizeof(double);
-    memcpy(&(piece.data_i), p, sizeof(int));
-    p += sizeof(int);
-    memcpy(&(piece.prev_log_mean), p, sizeof(double));
-    p += sizeof(double);
-    fun.piece_list.push_back(piece);
-    min_log_mean = piece.max_log_mean;
-  }
+  fun.serialize_read((char*)src);
 }
 
 class UndefinedReadException : public std::exception {
