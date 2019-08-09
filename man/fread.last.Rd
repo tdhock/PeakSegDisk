@@ -1,6 +1,6 @@
 \name{fread.last}
 \alias{fread.last}
-\title{Quickly read last line }
+\title{Quickly read last line}
 \description{Read the last line of a text file. Useful for quickly checking if
 the coverage.bedGraph_penalty=VALUE_segments.bed file is
 consistent with the coverage.bedGraph_penalty=VALUE_loss.tsv

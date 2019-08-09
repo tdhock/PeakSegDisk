@@ -1,4 +1,23 @@
-fread.first <- structure(function # Quickly read first line 
+wc2int <- function
+### Convert wc output to integer number of lines.
+(wc.output
+  ){
+  no.initial.spaces <- sub("^ *", "", wc.output)
+  lines.chr <- sub(" .*", "", no.initial.spaces)
+  result <- as.integer(lines.chr)
+  if(!(
+    is.integer(result) &&
+    length(result)==1 &&
+    is.finite(result)
+  )){
+    print(wc.output)
+    stop("could not extract line count")
+  }
+  result
+### integer
+}
+
+fread.first <- structure(function # Quickly read first line
 ### Read the first line of a text file. Useful for quickly checking if
 ### the coverage.bedGraph_penalty=VALUE_segments.bed file is
 ### consistent with the coverage.bedGraph_penalty=VALUE_loss.tsv
@@ -43,7 +62,7 @@ fread.first <- structure(function # Quickly read first line
 
 })
 
-fread.last <- structure(function # Quickly read last line 
+fread.last <- structure(function # Quickly read last line
 ### Read the last line of a text file. Useful for quickly checking if
 ### the coverage.bedGraph_penalty=VALUE_segments.bed file is
 ### consistent with the coverage.bedGraph_penalty=VALUE_loss.tsv
@@ -55,8 +74,7 @@ fread.last <- structure(function # Quickly read last line
 ){
   wc.cmd <- paste("wc -l", file.name)
   wc.output <- system(wc.cmd, intern=TRUE)
-  lines.chr <- sub(" .*", "", wc.output)
-  lines.int <- as.integer(lines.chr)
+  lines.int <- wc2int(wc.output)
   dt <- fread(file.name, skip=lines.int-1L, col.names=col.name.vec)
   dt
 ### Data table with one row.

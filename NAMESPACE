@@ -1,4 +1,5 @@
 useDynLib(PeakSegDisk)
+export(wc2int)
 export(writeBedGraph)
 export(PeakSegFPOP_file)
 export(PeakSegFPOP_dir)
