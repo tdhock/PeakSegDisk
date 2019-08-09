@@ -1,7 +1,15 @@
 wc2int <- function
 ### Convert wc output to integer number of lines.
 (wc.output
-  ){
+### Character scalar: output from wc.
+){
+  if(!(
+    is.character(wc.output) &&
+      length(wc.output)==1 &&
+      !is.na(wc.output)
+  )){
+    stop("input must be non-missing character scalar")
+  }
   no.initial.spaces <- sub("^ *", "", wc.output)
   lines.chr <- sub(" .*", "", no.initial.spaces)
   result <- as.integer(lines.chr)

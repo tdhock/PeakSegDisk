@@ -4,8 +4,7 @@
 \description{Convert wc output to integer number of lines.}
 \usage{wc2int(wc.output)}
 \arguments{
-  \item{wc.output}{
-}
+  \item{wc.output}{Character scalar: output from wc.}
 }
 
 \value{integer}
