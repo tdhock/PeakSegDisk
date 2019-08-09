@@ -1,6 +1,6 @@
 Package: PeakSegDisk
 Type: Package
-Title: Disk-Based Implementation of PeakSegFPOP
+Title: Disk-Based Constrained Changepoint Detection
 Version: 2019.8.9
 Author: Toby Dylan Hocking
 Maintainer: Toby Dylan Hocking <toby.hocking@r-project.org>
