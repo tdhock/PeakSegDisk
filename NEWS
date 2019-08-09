@@ -48,8 +48,6 @@ sprintf("%.12f", over.dt[, PeakSegDP::PoissonLoss(count, mean, chromEnd-chromSta
 
 bugfix for fread.last on platforms which return initial whitespace.
 
-serialization moved to methods of classes in funPieceListLog.cpp
-
 2019.7.29 PR#6
 
 Valgrind write(buf) points to uninitialised byte(s) fixed by not
