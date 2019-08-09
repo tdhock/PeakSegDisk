@@ -19,9 +19,6 @@ class PoissonLossPieceLog {
   double prev_log_mean;
   bool equality_constraint_active();
   PoissonLossPieceLog();
-  void serialize_read(char*);
-  void serialize_write(char*) const;
-  int serialize_size() const;
   PoissonLossPieceLog
     (double li, double lo, double co, double m, double M, int i, double);
   double argmin();
@@ -47,9 +44,6 @@ class PiecewisePoissonLossLog {
   void set_to_min_env_of
     (PiecewisePoissonLossLog *, PiecewisePoissonLossLog *, int);
   int check_min_of(PiecewisePoissonLossLog *, PiecewisePoissonLossLog *);
-  void serialize_read(char*);
-  void serialize_write(char*) const;
-  int serialize_size() const;
   void push_min_pieces
     (PiecewisePoissonLossLog *, PiecewisePoissonLossLog *,
      PoissonLossPieceListLog::iterator, PoissonLossPieceListLog::iterator, int);
