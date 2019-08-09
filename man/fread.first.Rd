@@ -1,6 +1,6 @@
 \name{fread.first}
 \alias{fread.first}
-\title{Quickly read first line }
+\title{Quickly read first line}
 \description{Read the first line of a text file. Useful for quickly checking if
 the coverage.bedGraph_penalty=VALUE_segments.bed file is
 consistent with the coverage.bedGraph_penalty=VALUE_loss.tsv

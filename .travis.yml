@@ -20,9 +20,6 @@ script:
   - R CMD INSTALL .
   - if [ "$TEST_SUITE" == "CRAN" ];then bash build.sh;else Rscript -e "source('tests/testthat.R', chdir = TRUE)";fi
 
-after_failure:
-  - travis-tool.sh dump_logs
-
 notifications:
   email:
     on_success: change

@@ -44,6 +44,10 @@ setkey(segs.dt, segStart1, segEnd)
 over.dt <- foverlaps(cov.dt, segs.dt, nomatch=0L)
 sprintf("%.12f", over.dt[, PeakSegDP::PoissonLoss(count, mean, chromEnd-chromStart)])
 
+2019.8.9 PR#7
+
+bugfix for fread.last on platforms which return initial whitespace.
+
 2019.7.29 PR#6
 
 Valgrind write(buf) points to uninitialised byte(s) fixed by not

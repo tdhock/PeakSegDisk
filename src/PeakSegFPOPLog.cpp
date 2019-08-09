@@ -177,6 +177,7 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
        chrom, &chromStart, &chromEnd, &coverage, extra);
     //Rprintf("%s %d %d %d%s\n", chrom, chromStart, chromEnd, coverage, extra);
     if(items < 4){
+      Rprintf("problem: %d items on line %d\n", items, line_i);
       return ERROR_NOT_ENOUGH_COLUMNS;
     }
     if(0 < strlen(extra)){
