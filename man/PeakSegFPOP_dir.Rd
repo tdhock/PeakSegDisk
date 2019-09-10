@@ -76,7 +76,7 @@ data.dir <- file.path(
 dir.create(data.dir, recursive=TRUE, showWarnings=FALSE)
 write.table(
   Mono27ac$coverage, file.path(data.dir, "coverage.bedGraph"),
-  col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t")
+  col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\\t")
 
 ## Compute one model with penalty=1952.6
 (fit <- PeakSegDisk::PeakSegFPOP_dir(data.dir, 1952.6))

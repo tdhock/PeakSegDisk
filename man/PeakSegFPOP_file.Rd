@@ -45,7 +45,7 @@ dir.create(prob.dir <- tempfile())
 coverage.bedGraph <- file.path(prob.dir, "coverage.bedGraph")
 write.table(
   four, coverage.bedGraph,
-  sep="\t", row.names=FALSE, col.names=FALSE)
+  sep="\\t", row.names=FALSE, col.names=FALSE)
 pstr <- "10.5"
 result.list <- PeakSegDisk::PeakSegFPOP_file(coverage.bedGraph, pstr)
 dir(prob.dir)

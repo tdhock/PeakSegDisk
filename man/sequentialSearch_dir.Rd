@@ -53,7 +53,7 @@ data.dir <- file.path(tempfile(), "chr1-0-6")
 dir.create(data.dir, recursive=TRUE)
 write.table(
   supp, file.path(data.dir, "coverage.bedGraph"),
-  sep="\t", row.names=FALSE, col.names=FALSE)
+  sep="\\t", row.names=FALSE, col.names=FALSE)
 
 ## register a parallel future plan to compute the first two
 ## penalties in parallel during the sequential search.

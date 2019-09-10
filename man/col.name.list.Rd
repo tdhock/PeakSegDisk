@@ -29,7 +29,7 @@ four <- rbind(
   r("chr1", 30, 40, 13))
 write.table(
   four, tmp <- tempfile(),
-  sep="\t", row.names=FALSE, col.names=FALSE)
+  sep="\\t", row.names=FALSE, col.names=FALSE)
 read.table(
   tmp, col.names=col.name.list$coverage)
 
