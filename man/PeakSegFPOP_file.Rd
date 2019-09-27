@@ -27,8 +27,8 @@ bedGraph file is stored, but this may be useful use tempfile() if
 you don't want to perform the intensive disk i/o elsewhere.}
 }
 
-\value{A list of input parameters (\code{bedGraph.file}, penalty) and result
-files (segments, db, loss).}
+\value{A named list of input parameters cost function database file size
+in megabytes.}
 
 \author{Toby Dylan Hocking}
 
@@ -68,12 +68,5 @@ loss.tsv <- outf("_loss.tsv")
 loss.df <- read.table(loss.tsv)
 names(loss.df) <- col.name.list$loss
 loss.df
-
-## The temporary db file is used in the underlying C++ code to store
-## the optimal cost function for each candidate changepoint. It can
-## be safely be deleted.
-tmp.db <- outf(".db")
-unlink(tmp.db)
-dir(prob.dir)
 
 }

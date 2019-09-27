@@ -19,10 +19,15 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
 ### user can run the algo on an arbitrarily named file via
 ### PeakSegFPOP_file (see that man page for an explanation of how
 ### storage on disk happens).
- penalty.param
+ penalty.param,
 ### non-negative numeric penalty parameter (larger values for fewer
 ### peaks), or character scalar which can be interpreted as such. 0
-### means max peaks, Inf means no peaks. 
+### means max peaks, Inf means no peaks.
+  db.file=NULL
+### character scalar: file for writing temporary cost function
+### database. Default NULL means to write the same disk where the
+### bedGraph file is stored, but this may be useful use tempfile() if
+### you don't want to perform the intensive disk i/o elsewhere.
 ){
   ##details<< Finds the optimal change-points using the Poisson loss
   ## and the PeakSeg constraint (changes in mean alternate between
@@ -79,26 +84,18 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
     FALSE
   })
   if(!already.computed){
-    penalty.db <- paste0(pre, ".db")
-    unlink(penalty.db)#in case interrupted previously.
     seconds <- system.time({
-      PeakSegFPOP_file(prob.cov.bedGraph, penalty.str)
+      result <- PeakSegFPOP_file(prob.cov.bedGraph, penalty.str, db.file)
     })[["elapsed"]]
-    megabytes <- if(file.exists(penalty.db)){
-      file.size(penalty.db)/1024/1024
-    }else{
-      0
-    }
     timing <- data.table(
       penalty=as.numeric(penalty.str),
-      megabytes,
+      megabytes=result$megabytes,
       seconds)
     write.table(
       timing,
       penalty_timing.tsv,
       row.names=FALSE, col.names=FALSE,
       quote=FALSE, sep="\t")
-    unlink(penalty.db)
     penalty.loss <- fread(penalty_loss.tsv, col.names=col.name.list$loss)
   }
   penalty.segs <- fread(penalty_segments.bed, col.names=col.name.list$segments)

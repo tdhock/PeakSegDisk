@@ -30,6 +30,11 @@ test_that("large penalty should not crash solver", {
   expect_identical(fit$loss$peaks, 0L)
 })
 
+test_that("large penalty with temp file", {
+  fit <- PeakSegFPOP_dir(prob.dir, 866939314852865280, tempfile())
+  expect_identical(fit$loss$peaks, 0L)
+})
+
 loss.tsv <- file.path(prob.dir, "coverage.bedGraph_penalty=10_loss.tsv")
 cat("", file=loss.tsv)
 test_that("empty loss.tsv is fine", {

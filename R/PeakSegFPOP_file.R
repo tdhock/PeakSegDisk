@@ -49,8 +49,8 @@ PeakSegFPOP_file <- structure(function # PeakSegFPOP using disk storage
     stop("as.numeric(pen.str)=", penalty, " but it must be a non-negative numeric scalar")
   }
   norm.file <- normalizePath(bedGraph.file, mustWork=TRUE)
-  db.file <- if(is.null(db.file)){
-    sprintf("%s_penalty=%s.db", norm.file, pen.str)
+  if(is.null(db.file)){
+    db.file <- sprintf("%s_penalty=%s.db", norm.file, pen.str)
   }
   if(!(
     is.character(db.file) &&
@@ -60,12 +60,19 @@ PeakSegFPOP_file <- structure(function # PeakSegFPOP using disk storage
       "db.file=", db.file,
       " must be a temporary file name where cost function db can be written")
   }
+  unlink(db.file)
   result <- .C(
     "PeakSegFPOP_interface",
     bedGraph.file=as.character(norm.file),
     penalty=pen.str,
     db.file=db.file,
     PACKAGE="PeakSegDisk")
+  result$megabytes <- if(file.exists(db.file)){
+    file.size(db.file)/1024/1024
+  }else{
+    0
+  }
+  unlink(db.file)
   prefix <- paste0(bedGraph.file, "_penalty=", pen.str)
   loss.tsv <- paste0(prefix, "_loss.tsv")
   if(file.size(loss.tsv)==0){
@@ -76,8 +83,8 @@ PeakSegFPOP_file <- structure(function # PeakSegFPOP using disk storage
     )
   }
   result
-### A list of input parameters (bedGraph.file, penalty) and result
-### files (segments, db, loss).
+### A named list of input parameters cost function database file size
+### in megabytes.
 }, ex=function(){
   
   r <- function(chrom, chromStart, chromEnd, coverage){
@@ -112,12 +119,5 @@ PeakSegFPOP_file <- structure(function # PeakSegFPOP using disk storage
   names(loss.df) <- col.name.list$loss
   loss.df
 
-  ## The temporary db file is used in the underlying C++ code to store
-  ## the optimal cost function for each candidate changepoint. It can
-  ## be safely be deleted.
-  tmp.db <- outf(".db")
-  unlink(tmp.db)
-  dir(prob.dir)
-  
 })
 
