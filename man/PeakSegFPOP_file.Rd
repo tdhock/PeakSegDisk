@@ -8,7 +8,7 @@ This is a low-level function that just runs the algo
 and produces the result files (without reading them into R),
 so normal users are recommended to instead use \code{\link{PeakSegFPOP_dir}},
 which calls this function then reads the result files into R.}
-\usage{PeakSegFPOP_file(bedGraph.file, pen.str)}
+\usage{PeakSegFPOP_file(bedGraph.file, pen.str, db.file = NULL)}
 \arguments{
   \item{bedGraph.file}{character scalar: tab-delimited tabular text file with four
 columns: chrom, chromStart, chromEnd, coverage. The algorithm
@@ -20,7 +20,11 @@ peaks. "0" and "Inf" are OK. Character is required rather than
 numeric, so that the user can reliably find the results in the
 output files, which are in the same directory as \code{bedGraph.file},
 and named using the penalty value,
-e.g. coverage.bedGraph_penalty=136500650856.439_loss.tsv }
+e.g. coverage.bedGraph_penalty=136500650856.439_loss.tsv}
+  \item{db.file}{character scalar: file for writing temporary cost function
+database. Default NULL means to write the same disk where the
+bedGraph file is stored, but this may be useful use tempfile() if
+you don't want to perform the intensive disk i/o elsewhere.}
 }
 
 \value{A list of input parameters (\code{bedGraph.file}, penalty) and result

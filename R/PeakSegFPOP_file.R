@@ -11,14 +11,19 @@ PeakSegFPOP_file <- structure(function # PeakSegFPOP using disk storage
 ### columns: chrom, chromStart, chromEnd, coverage. The algorithm
 ### creates a large temporary file in the same directory, so make sure
 ### that there is disk space available on that device.
-  pen.str
+  pen.str,
 ### character scalar that can be converted to a numeric scalar via
 ### as.numeric: non-negative penalty. More penalty means fewer
 ### peaks. "0" and "Inf" are OK. Character is required rather than
 ### numeric, so that the user can reliably find the results in the
 ### output files, which are in the same directory as bedGraph.file,
 ### and named using the penalty value,
-### e.g. coverage.bedGraph_penalty=136500650856.439_loss.tsv 
+### e.g. coverage.bedGraph_penalty=136500650856.439_loss.tsv
+  db.file=NULL
+### character scalar: file for writing temporary cost function
+### database. Default NULL means to write the same disk where the
+### bedGraph file is stored, but this may be useful use tempfile() if
+### you don't want to perform the intensive disk i/o elsewhere.
 ){
   if(!(
     is.character(bedGraph.file) &&
@@ -44,10 +49,22 @@ PeakSegFPOP_file <- structure(function # PeakSegFPOP using disk storage
     stop("as.numeric(pen.str)=", penalty, " but it must be a non-negative numeric scalar")
   }
   norm.file <- normalizePath(bedGraph.file, mustWork=TRUE)
+  db.file <- if(is.null(db.file)){
+    sprintf("%s_penalty=%s.db", norm.file, pen.str)
+  }
+  if(!(
+    is.character(db.file) &&
+    length(db.file)==1
+  )){
+    stop(
+      "db.file=", db.file,
+      " must be a temporary file name where cost function db can be written")
+  }
   result <- .C(
     "PeakSegFPOP_interface",
     bedGraph.file=as.character(norm.file),
     penalty=pen.str,
+    db.file=db.file,
     PACKAGE="PeakSegDisk")
   prefix <- paste0(bedGraph.file, "_penalty=", pen.str)
   loss.tsv <- paste0(prefix, "_loss.tsv")

@@ -140,7 +140,8 @@ public:
   }
 };
 
-int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
+int PeakSegFPOP_disk
+(char *bedGraph_file_name, char* penalty_str, char *db_file_name){
   bool penalty_is_Inf = strcmp(penalty_str, "Inf") == 0;
   double penalty;
   try{
@@ -243,10 +244,9 @@ int PeakSegFPOP_disk(char *bedGraph_file_name, char* penalty_str){
   }else{// non-trivial model, need to run DP.
     bedGraph_file.clear();
     bedGraph_file.seekg(0, std::ios::beg);
-    std::string db_file_name = penalty_prefix + ".db";
     DiskVector cost_model_mat;
     try{
-      cost_model_mat.init(db_file_name.c_str(), data_count*2);
+      cost_model_mat.init(db_file_name, data_count*2);
     }catch(WriteFailedException& e){
       return ERROR_WRITING_COST_FUNCTIONS;
     }

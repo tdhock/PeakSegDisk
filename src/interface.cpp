@@ -5,13 +5,14 @@
 #include <R_ext/Rdynload.h>//for registering routines.
 #include <Rinternals.h>//for STRSXP
 
-static int PeakSegFPOP_nargs = 2;
-static R_NativePrimitiveArgType PeakSegFPOP_types[] = {STRSXP, STRSXP};
+static int PeakSegFPOP_nargs = 3;
+static R_NativePrimitiveArgType PeakSegFPOP_types[] = {STRSXP, STRSXP, STRSXP};
 void PeakSegFPOP_interface
-(char **file_vec, char **pen_vec){
+(char **file_vec, char **pen_vec, char **temp_vec){
   char *bedGraph = file_vec[0];
   char *penalty = pen_vec[0];
-  int status = PeakSegFPOP_disk(bedGraph, penalty);
+  char *db = temp_vec[0];
+  int status = PeakSegFPOP_disk(bedGraph, penalty, db);
   if(status==ERROR_PENALTY_NOT_FINITE){
     error("penalty=%s but must be finite", penalty);
   }

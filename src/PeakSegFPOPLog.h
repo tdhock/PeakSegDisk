@@ -12,5 +12,5 @@
 #define ERROR_PENALTY_NOT_NUMERIC 10
 #define ERROR_WRITING_SEGMENTS_OUTPUT 11
 
-int PeakSegFPOP_disk(char *, char *);
+int PeakSegFPOP_disk(char *, char *, char *);
 
