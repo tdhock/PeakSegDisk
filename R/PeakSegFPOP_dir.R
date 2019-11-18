@@ -25,10 +25,13 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
 ### means max peaks, Inf means no peaks.
   db.file=NULL
 ### character scalar: file for writing temporary cost function
-### database. Default NULL means to write the same disk where the
-### bedGraph file is stored, but this may be useful use tempfile() if
-### you don't want to perform the intensive disk i/o elsewhere.
+### database -- there will be a lot of disk writing to this
+### file. Default NULL means to write the same disk where the input
+### bedGraph file is stored; another option is tempfile() which may
+### result in speedups if the input bedGraph file is on a slow network
+### disk and the temporary storage is a fast local disk.
 ){
+  megabytes <- NULL
   ##details<< Finds the optimal change-points using the Poisson loss
   ## and the PeakSeg constraint (changes in mean alternate between
   ## non-decreasing and non-increasing). For \eqn{N} data points, the
@@ -37,7 +40,7 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
   ## exact solution to the optimization problem in
   ## \code{vignette("Examples", package="PeakSegDisk")}.
   if(!(
-    is.character(problem.dir) && 
+    is.character(problem.dir) &&
     length(problem.dir)==1 &&
     dir.exists(problem.dir))){
     stop(
@@ -51,7 +54,7 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
     length(penalty.param)==1 &&
     (!is.na(penalty.param))
   )){
-    stop("penalty.param must be numeric or character, length 1, not missing") 
+    stop("penalty.param must be numeric or character, length 1, not missing")
   }
   penalty.str <- paste(penalty.param)
   prob.cov.bedGraph <- file.path(problem.dir, "coverage.bedGraph")
@@ -200,7 +203,7 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
       chromStart, count),
       color="grey50",
       data=Mono27ac$coverage)
-    
+
 })
 
 ### Compute changes and peaks to display/plot.
@@ -219,7 +222,7 @@ coef.PeakSegFPOP_dir <- function(object, ...){
   object
 ### model list with additional named elements peaks and changes.
 }
-  
+
 ### Plot a PeakSeg model with attached data.
 plot.PeakSegFPOP_dir <- function(x, ...){
   chromStart <- type <- chromEnd <- constraint <- NULL

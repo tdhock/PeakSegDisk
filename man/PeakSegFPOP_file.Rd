@@ -22,13 +22,15 @@ output files, which are in the same directory as \code{bedGraph.file},
 and named using the penalty value,
 e.g. coverage.bedGraph_penalty=136500650856.439_loss.tsv}
   \item{db.file}{character scalar: file for writing temporary cost function
-database. Default NULL means to write the same disk where the
-bedGraph file is stored, but this may be useful use tempfile() if
-you don't want to perform the intensive disk i/o elsewhere.}
+database -- there will be a lot of disk writing to this
+file. Default NULL means to write the same disk where the input
+bedGraph file is stored; another option is tempfile() which may
+result in speedups if the input bedGraph file is on a slow network
+disk and the temporary storage is a fast local disk.}
 }
 
-\value{A named list of input parameters cost function database file size
-in megabytes.}
+\value{A named list of input parameters, and the temporary cost function
+database file size in megabytes.}
 
 \author{Toby Dylan Hocking}
 

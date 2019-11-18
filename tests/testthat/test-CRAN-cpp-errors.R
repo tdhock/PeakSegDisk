@@ -180,7 +180,7 @@ test_that("error if first arg non-char", {
   }, "wrong type for argument 1")
 })
 
-test_that("error if first arg non-char", {
+test_that("error if second arg non-char", {
   expect_error({
     .C(
       "PeakSegFPOP_interface",
@@ -189,4 +189,15 @@ test_that("error if first arg non-char", {
       db.file=db.file,
       PACKAGE="PeakSegDisk")
   }, "wrong type for argument 2")
+})
+
+test_that("error if third arg non-char", {
+  expect_error({
+    .C(
+      "PeakSegFPOP_interface",
+      bedGraph.file="foobar",
+      penalty="sars",
+      db.file=0.1,
+      PACKAGE="PeakSegDisk")
+  }, "wrong type for argument 3")
 })

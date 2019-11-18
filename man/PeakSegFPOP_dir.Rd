@@ -27,9 +27,11 @@ storage on disk happens).}
 peaks), or character scalar which can be interpreted as such. 0
 means max peaks, Inf means no peaks.}
   \item{db.file}{character scalar: file for writing temporary cost function
-database. Default NULL means to write the same disk where the
-bedGraph file is stored, but this may be useful use tempfile() if
-you don't want to perform the intensive disk i/o elsewhere.}
+database -- there will be a lot of disk writing to this
+file. Default NULL means to write the same disk where the input
+bedGraph file is stored; another option is tempfile() which may
+result in speedups if the input bedGraph file is on a slow network
+disk and the temporary storage is a fast local disk.}
 }
 \details{Finds the optimal change-points using the Poisson loss
 and the PeakSeg constraint (changes in mean alternate between
@@ -138,5 +140,5 @@ gg+
     chromStart, count),
     color="grey50",
     data=Mono27ac$coverage)
-  
+
 }
