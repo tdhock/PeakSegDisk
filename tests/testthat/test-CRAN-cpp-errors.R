@@ -3,12 +3,14 @@ context("cpp-errors")
 library(PeakSegDisk)
 
 bg.file <- tempfile()
+db.file <- tempfile()
 cat("chr1 0 1 5\nchr1 1 3 3", file=bg.file)
 test_that("finite penalty returns list", {
   L <- .C(
     "PeakSegFPOP_interface",
     bedGraph.file=bg.file,
     penalty="0.1",
+    db.file=db.file,
     PACKAGE="PeakSegDisk")
   expect_is(L, "list")
 })
@@ -18,6 +20,7 @@ test_that("Inf penalty returns list", {
     "PeakSegFPOP_interface",
     bedGraph.file=bg.file,
     penalty="Inf",
+    db.file=db.file,
     PACKAGE="PeakSegDisk")
   expect_is(L, "list")
 })
@@ -28,6 +31,7 @@ test_that("error for non-numeric penalty", {
       "PeakSegFPOP_interface",
       bedGraph.file=bg.file,
       penalty="foobar",
+      db.file=db.file,
       PACKAGE="PeakSegDisk")
   }, "penalty string 'foobar' is not numeric; it should be convertible to double")
 })
@@ -38,6 +42,7 @@ test_that("error for NAN penalty", {
       "PeakSegFPOP_interface",
       bedGraph.file=bg.file,
       penalty="NAN",
+      db.file=db.file,
       PACKAGE="PeakSegDisk")
   }, "penalty=NAN but must be finite")
 })
@@ -48,6 +53,7 @@ test_that("error for negative penalty", {
       "PeakSegFPOP_interface",
       bedGraph.file=bg.file,
       penalty="-0.1",
+      db.file=db.file,
       PACKAGE="PeakSegDisk")
   }, "penalty=-0.1 must be non-negative")
 })
@@ -58,6 +64,7 @@ test_that("error for file that does not exist", {
       "PeakSegFPOP_interface",
       bedGraph.file=tempfile(),
       penalty="0.1",
+      db.file=db.file,
       PACKAGE="PeakSegDisk")
   }, "unable to open input file for reading")
 })
@@ -70,6 +77,7 @@ test_that("error for three column data file", {
       "PeakSegFPOP_interface",
       bedGraph.file=three.file,
       penalty="0.1",
+      db.file=db.file,
       PACKAGE="PeakSegDisk")
   }, "should have exactly four columns")
 })
@@ -82,6 +90,7 @@ test_that("error for non-integer data", {
       "PeakSegFPOP_interface",
       bedGraph.file=dbl.file,
       penalty="0.1",
+      db.file=db.file,
       PACKAGE="PeakSegDisk")
   }, "should be integer")
 })
@@ -94,6 +103,7 @@ test_that("error for non-integer data", {
       "PeakSegFPOP_interface",
       bedGraph.file=gap.file,
       penalty="0.1",
+      db.file=db.file,
       PACKAGE="PeakSegDisk")
   }, "there should be no gaps")
 })
@@ -106,6 +116,7 @@ test_that("error for no data", {
       "PeakSegFPOP_interface",
       bedGraph.file=empty.file,
       penalty="0.1",
+      db.file=db.file,
       PACKAGE="PeakSegDisk")
   }, "no data")
 })
@@ -121,6 +132,7 @@ test_that("error if segments file unwritable", {
       "PeakSegFPOP_interface",
       bedGraph.file=noseg.file,
       penalty=pen.str,
+      db.file=db.file,
       PACKAGE="PeakSegDisk")
   }, "unable to write to segments output file")
 })
@@ -136,6 +148,7 @@ test_that("error if loss file unwritable", {
       "PeakSegFPOP_interface",
       bedGraph.file=noloss.file,
       penalty=pen.str,
+      db.file=db.file,
       PACKAGE="PeakSegDisk")
   }, "unable to write to loss output file")
 })
@@ -151,6 +164,7 @@ test_that("error if db file unwritable", {
       "PeakSegFPOP_interface",
       bedGraph.file=nodb.file,
       penalty=pen.str,
+      db.file=db.file,
       PACKAGE="PeakSegDisk")
   }, "unable to write to cost function database file")
 })
@@ -161,16 +175,29 @@ test_that("error if first arg non-char", {
       "PeakSegFPOP_interface",
       bedGraph.file=TRUE,
       penalty=pen.str,
+      db.file=db.file,
       PACKAGE="PeakSegDisk")
   }, "wrong type for argument 1")
 })
 
-test_that("error if first arg non-char", {
+test_that("error if second arg non-char", {
   expect_error({
     .C(
       "PeakSegFPOP_interface",
       bedGraph.file="foobar",
       penalty=0.1,
+      db.file=db.file,
       PACKAGE="PeakSegDisk")
   }, "wrong type for argument 2")
+})
+
+test_that("error if third arg non-char", {
+  expect_error({
+    .C(
+      "PeakSegFPOP_interface",
+      bedGraph.file="foobar",
+      penalty="sars",
+      db.file=0.1,
+      PACKAGE="PeakSegDisk")
+  }, "wrong type for argument 3")
 })

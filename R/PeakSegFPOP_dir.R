@@ -19,11 +19,19 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
 ### user can run the algo on an arbitrarily named file via
 ### PeakSegFPOP_file (see that man page for an explanation of how
 ### storage on disk happens).
- penalty.param
+ penalty.param,
 ### non-negative numeric penalty parameter (larger values for fewer
 ### peaks), or character scalar which can be interpreted as such. 0
-### means max peaks, Inf means no peaks. 
+### means max peaks, Inf means no peaks.
+  db.file=NULL
+### character scalar: file for writing temporary cost function
+### database -- there will be a lot of disk writing to this
+### file. Default NULL means to write the same disk where the input
+### bedGraph file is stored; another option is tempfile() which may
+### result in speedups if the input bedGraph file is on a slow network
+### disk and the temporary storage is a fast local disk.
 ){
+  megabytes <- NULL
   ##details<< Finds the optimal change-points using the Poisson loss
   ## and the PeakSeg constraint (changes in mean alternate between
   ## non-decreasing and non-increasing). For \eqn{N} data points, the
@@ -32,7 +40,7 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
   ## exact solution to the optimization problem in
   ## \code{vignette("Examples", package="PeakSegDisk")}.
   if(!(
-    is.character(problem.dir) && 
+    is.character(problem.dir) &&
     length(problem.dir)==1 &&
     dir.exists(problem.dir))){
     stop(
@@ -46,7 +54,7 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
     length(penalty.param)==1 &&
     (!is.na(penalty.param))
   )){
-    stop("penalty.param must be numeric or character, length 1, not missing") 
+    stop("penalty.param must be numeric or character, length 1, not missing")
   }
   penalty.str <- paste(penalty.param)
   prob.cov.bedGraph <- file.path(problem.dir, "coverage.bedGraph")
@@ -79,26 +87,18 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
     FALSE
   })
   if(!already.computed){
-    penalty.db <- paste0(pre, ".db")
-    unlink(penalty.db)#in case interrupted previously.
     seconds <- system.time({
-      PeakSegFPOP_file(prob.cov.bedGraph, penalty.str)
+      result <- PeakSegFPOP_file(prob.cov.bedGraph, penalty.str, db.file)
     })[["elapsed"]]
-    megabytes <- if(file.exists(penalty.db)){
-      file.size(penalty.db)/1024/1024
-    }else{
-      0
-    }
     timing <- data.table(
       penalty=as.numeric(penalty.str),
-      megabytes,
+      megabytes=result$megabytes,
       seconds)
     write.table(
       timing,
       penalty_timing.tsv,
       row.names=FALSE, col.names=FALSE,
       quote=FALSE, sep="\t")
-    unlink(penalty.db)
     penalty.loss <- fread(penalty_loss.tsv, col.names=col.name.list$loss)
   }
   penalty.segs <- fread(penalty_segments.bed, col.names=col.name.list$segments)
@@ -203,7 +203,7 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
       chromStart, count),
       color="grey50",
       data=Mono27ac$coverage)
-    
+
 })
 
 ### Compute changes and peaks to display/plot.
@@ -222,7 +222,7 @@ coef.PeakSegFPOP_dir <- function(object, ...){
   object
 ### model list with additional named elements peaks and changes.
 }
-  
+
 ### Plot a PeakSeg model with attached data.
 plot.PeakSegFPOP_dir <- function(x, ...){
   chromStart <- type <- chromEnd <- constraint <- NULL

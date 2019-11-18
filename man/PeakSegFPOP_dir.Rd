@@ -14,7 +14,7 @@ To run the algo on an integer vector, use \code{\link{PeakSegFPOP_vec}};
 for a data.frame, use \code{\link{PeakSegFPOP_df}}.
 To compute the optimal model for a given number of peaks,
 use \code{\link{sequentialSearch_dir}}.}
-\usage{PeakSegFPOP_dir(problem.dir, penalty.param)}
+\usage{PeakSegFPOP_dir(problem.dir, penalty.param, db.file = NULL)}
 \arguments{
   \item{problem.dir}{Path to a directory like sampleID/problems/chrXX-start-end which
 contains a coverage.bedGraph file with the aligned read counts for
@@ -25,7 +25,13 @@ user can run the algo on an arbitrarily named file via
 storage on disk happens).}
   \item{penalty.param}{non-negative numeric penalty parameter (larger values for fewer
 peaks), or character scalar which can be interpreted as such. 0
-means max peaks, Inf means no peaks. }
+means max peaks, Inf means no peaks.}
+  \item{db.file}{character scalar: file for writing temporary cost function
+database -- there will be a lot of disk writing to this
+file. Default NULL means to write the same disk where the input
+bedGraph file is stored; another option is tempfile() which may
+result in speedups if the input bedGraph file is on a slow network
+disk and the temporary storage is a fast local disk.}
 }
 \details{Finds the optimal change-points using the Poisson loss
 and the PeakSeg constraint (changes in mean alternate between
@@ -134,5 +140,5 @@ gg+
     chromStart, count),
     color="grey50",
     data=Mono27ac$coverage)
-  
+
 }

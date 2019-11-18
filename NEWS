@@ -44,6 +44,10 @@ setkey(segs.dt, segStart1, segEnd)
 over.dt <- foverlaps(cov.dt, segs.dt, nomatch=0L)
 sprintf("%.12f", over.dt[, PeakSegDP::PoissonLoss(count, mean, chromEnd-chromStart)])
 
+2019.9.27
+
+db file may be specified.
+
 2019.9.10
 
 Change-Point pkg title for CRAN.
