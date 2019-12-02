@@ -14,10 +14,15 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
 (problem.dir,
 ### Path to a directory like sampleID/problems/chrXX-start-end which
 ### contains a coverage.bedGraph file with the aligned read counts for
-### one genomic segmentation problem. Note that the standard
-### coverage.bedGraph file name is required; for full flexibility the
-### user can run the algo on an arbitrarily named file via
-### PeakSegFPOP_file (see that man page for an explanation of how
+### one genomic segmentation problem. This must be a plain text file
+### with the following four columns: chrom (character chromosome
+### name), chromStart (integer start position), chromEnd (integer end
+### position), count (integer aligned read count on chrom from
+### chromStart+1 to chromEnd); see also
+### https://genome.ucsc.edu/goldenPath/help/bedgraph.html. Note that
+### the standard coverage.bedGraph file name is required; for full
+### flexibility the user can run the algo on an arbitrarily named file
+### via PeakSegFPOP_file (see that man page for an explanation of how
 ### storage on disk happens).
  penalty.param,
 ### non-negative numeric penalty parameter (larger values for fewer
@@ -149,6 +154,7 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
 
   ## Compute one model with penalty=1952.6
   (fit <- PeakSegDisk::PeakSegFPOP_dir(data.dir, 1952.6))
+  summary(fit)#same as fit$loss
 
   ## Visualize that model.
   ann.colors <- c(
@@ -221,6 +227,12 @@ coef.PeakSegFPOP_dir <- function(object, ...){
   object$segments <- data.table(type="segmentation", object$segments)
   object
 ### model list with additional named elements peaks and changes.
+}
+
+### Summary of PeakSegFPOP_dir object.
+summary.PeakSegFPOP_dir <- function(object, ...){
+  object$loss
+### Data table with one row and columns describing model summary.
 }
 
 ### Plot a PeakSeg model with attached data.

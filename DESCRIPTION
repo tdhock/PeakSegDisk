@@ -1,7 +1,7 @@
 Package: PeakSegDisk
 Type: Package
 Title: Disk-Based Constrained Change-Point Detection
-Version: 2019.9.27
+Version: 2019.12.2
 Author: Toby Dylan Hocking
 Maintainer: Toby Dylan Hocking <toby.hocking@r-project.org>
 Description: Disk-based implementation of

@@ -17,7 +17,8 @@ computed. If there is a labels.bed file then the number of
 incorrect labels will be computed in order to find the target
 interval of minimal error penalty values.}
   \item{peaks.int}{int: target number of peaks.}
-  \item{verbose}{Print messages?}
+  \item{verbose}{numeric verbosity: if >0 then \code{\link[base]{cat}} is used to print a message
+for each penalty.}
 }
 
 \value{Same result list from \code{\link{PeakSegFPOP_dir}}, with an additional

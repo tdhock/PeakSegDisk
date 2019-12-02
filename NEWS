@@ -44,6 +44,11 @@ setkey(segs.dt, segStart1, segEnd)
 over.dt <- foverlaps(cov.dt, segs.dt, nomatch=0L)
 sprintf("%.12f", over.dt[, PeakSegDP::PoissonLoss(count, mean, chromEnd-chromStart)])
 
+2019.12.2
+
+test/bugfix for PeakSegFPOP_vec, pen.num passed along to
+PeakSegFPOP_df instead of always using 10.5 for penalty.
+
 2019.9.27
 
 db file may be specified.

@@ -1,7 +1,12 @@
 \name{writeBedGraph}
 \alias{writeBedGraph}
-\title{Write bedGraph file }
-\description{Write a data.frame in R to a bedGraph file on disk.}
+\title{Write bedGraph file}
+\description{Write a data.frame in R to a bedGraph file on disk. This must be a
+plain text file with the following four columns: chrom (character
+chromosome name), chromStart (integer start position), chromEnd
+(integer end position), count (integer aligned read count on chrom
+from chromStart+1 to chromEnd); see also
+https://genome.ucsc.edu/goldenPath/help/bedgraph.html}
 \usage{writeBedGraph(count.df, coverage.bedGraph)}
 \arguments{
   \item{count.df}{data.frame with four columns: chrom, chromStart, chromEnd, count.}
