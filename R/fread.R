@@ -35,7 +35,7 @@ fread.first <- structure(function # Quickly read first line
   col.name.vec
 ### Character vector of column names.
 ){
-  dt <- fread(file.name, nrows=1L, col.names=col.name.vec)
+  dt <- fread(file=file.name, nrows=1L, col.names=col.name.vec)
   dt
 ### Data table with one row.
 }, ex=function(){
@@ -80,10 +80,10 @@ fread.last <- structure(function # Quickly read last line
   col.name.vec
 ### Character vector of column names.
 ){
-  wc.cmd <- paste("wc -l", file.name)
+  wc.cmd <- paste("wc -l", shQuote(file.name))
   wc.output <- system(wc.cmd, intern=TRUE)
   lines.int <- wc2int(wc.output)
-  dt <- fread(file.name, skip=lines.int-1L, col.names=col.name.vec)
+  dt <- fread(file=file.name, skip=lines.int-1L, col.names=col.name.vec)
   dt
 ### Data table with one row.
 }, ex=function(){
