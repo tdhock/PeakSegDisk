@@ -8,7 +8,8 @@ This is a low-level function that just runs the algo
 and produces the result files (without reading them into R),
 so normal users are recommended to instead use \code{\link{PeakSegFPOP_dir}},
 which calls this function then reads the result files into R.}
-\usage{PeakSegFPOP_file(bedGraph.file, pen.str, db.file = NULL)}
+\usage{PeakSegFPOP_file(bedGraph.file, 
+    pen.str, db.file = NULL)}
 \arguments{
   \item{bedGraph.file}{character scalar: tab-delimited tabular text file with four
 columns: chrom, chromStart, chromEnd, coverage. The algorithm

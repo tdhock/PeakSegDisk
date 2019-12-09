@@ -7,7 +7,8 @@ chromosome name), chromStart (integer start position), chromEnd
 (integer end position), count (integer aligned read count on chrom
 from chromStart+1 to chromEnd); see also
 https://genome.ucsc.edu/goldenPath/help/bedgraph.html}
-\usage{writeBedGraph(count.df, coverage.bedGraph)}
+\usage{writeBedGraph(count.df, 
+    coverage.bedGraph)}
 \arguments{
   \item{count.df}{data.frame with four columns: chrom, chromStart, chromEnd, count.}
   \item{coverage.bedGraph}{file path where data will be saved in plain text / bedGraph format.}

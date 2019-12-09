@@ -2,7 +2,8 @@
 \alias{coef.PeakSegFPOP_dir}
 \title{coef PeakSegFPOP dir}
 \description{Compute changes and peaks to display/plot.}
-\usage{\method{coef}{PeakSegFPOP_dir}(object, ...)}
+\usage{\method{coef}{PeakSegFPOP_dir}(object, 
+    ...)}
 \arguments{
   \item{object}{
 }

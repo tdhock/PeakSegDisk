@@ -14,7 +14,8 @@ To run the algo on an integer vector, use \code{\link{PeakSegFPOP_vec}};
 for a data.frame, use \code{\link{PeakSegFPOP_df}}.
 To compute the optimal model for a given number of peaks,
 use \code{\link{sequentialSearch_dir}}.}
-\usage{PeakSegFPOP_dir(problem.dir, penalty.param, db.file = NULL)}
+\usage{PeakSegFPOP_dir(problem.dir, 
+    penalty.param, db.file = NULL)}
 \arguments{
   \item{problem.dir}{Path to a directory like sampleID/problems/chrXX-start-end which
 contains a coverage.bedGraph file with the aligned read counts for

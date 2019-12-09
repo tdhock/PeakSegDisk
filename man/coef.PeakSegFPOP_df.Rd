@@ -3,7 +3,8 @@
 \title{coef PeakSegFPOP df}
 \description{Create a list of data tables describing PeakSegFPOP model and
 data.}
-\usage{\method{coef}{PeakSegFPOP_df}(object, ...)}
+\usage{\method{coef}{PeakSegFPOP_df}(object, 
+    ...)}
 \arguments{
   \item{object}{
 }

@@ -2,7 +2,8 @@
 \alias{plot.PeakSegFPOP_dir}
 \title{plot PeakSegFPOP dir}
 \description{Plot a PeakSeg model with attached data.}
-\usage{\method{plot}{PeakSegFPOP_dir}(x, ...)}
+\usage{\method{plot}{PeakSegFPOP_dir}(x, 
+    ...)}
 \arguments{
   \item{x}{
 }

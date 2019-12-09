@@ -10,7 +10,8 @@ model (with fewer peaks than \code{peaks.int}).
 The first pair of penalty values (0, Inf) is run in parallel
 via the user-specified future plan,
 if the future.apply package is available.}
-\usage{sequentialSearch_dir(problem.dir, peaks.int, verbose = 0)}
+\usage{sequentialSearch_dir(problem.dir, 
+    peaks.int, verbose = 0)}
 \arguments{
   \item{problem.dir}{problemID directory in which coverage.bedGraph has already been
 computed. If there is a labels.bed file then the number of

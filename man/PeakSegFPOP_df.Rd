@@ -2,7 +2,8 @@
 \alias{PeakSegFPOP_df}
 \title{PeakSeg penalized solver for data.frame}
 \description{Write data frame to disk then run \code{\link{PeakSegFPOP_dir}} solver.}
-\usage{PeakSegFPOP_df(count.df, pen.num, base.dir = tempdir())}
+\usage{PeakSegFPOP_df(count.df, 
+    pen.num, base.dir = tempdir())}
 \arguments{
   \item{count.df}{data.frame with columns count, chromStart, chromEnd. These data
 will be saved via \code{\link{writeBedGraph}}, creating a plain text file with

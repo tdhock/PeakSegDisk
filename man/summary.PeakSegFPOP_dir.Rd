@@ -2,7 +2,8 @@
 \alias{summary.PeakSegFPOP_dir}
 \title{summary PeakSegFPOP dir}
 \description{Summary of \code{\link{PeakSegFPOP_dir}} \code{object}.}
-\usage{\method{summary}{PeakSegFPOP_dir}(object, ...)}
+\usage{\method{summary}{PeakSegFPOP_dir}(object, 
+    ...)}
 \arguments{
   \item{object}{
 }
