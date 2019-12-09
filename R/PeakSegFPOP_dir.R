@@ -69,13 +69,13 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
   penalty_timing.tsv <- paste0(pre, "_timing.tsv")
   already.computed <- tryCatch({
     timing <- fread(
-      penalty_timing.tsv,
+      file=penalty_timing.tsv,
       col.names=c("penalty", "megabytes", "seconds"))
     first.seg.line <- fread.first(penalty_segments.bed, col.name.list$segments)
     last.seg.line <- fread.last(penalty_segments.bed, col.name.list$segments)
     first.cov.line <- fread.first(prob.cov.bedGraph, col.name.list$coverage)
     last.cov.line <- fread.last(prob.cov.bedGraph, col.name.list$coverage)
-    penalty.loss <- fread(penalty_loss.tsv, col.names=col.name.list$loss)
+    penalty.loss <- fread(file=penalty_loss.tsv, col.names=col.name.list$loss)
     nrow.ok <- nrow(timing)==1 && nrow(penalty.loss)==1 &&
       nrow(first.seg.line)==1 && nrow(last.seg.line)==1 &&
       nrow(first.cov.line)==1 && nrow(last.cov.line)==1
@@ -104,9 +104,10 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
       penalty_timing.tsv,
       row.names=FALSE, col.names=FALSE,
       quote=FALSE, sep="\t")
-    penalty.loss <- fread(penalty_loss.tsv, col.names=col.name.list$loss)
+    penalty.loss <- fread(file=penalty_loss.tsv, col.names=col.name.list$loss)
   }
-  penalty.segs <- fread(penalty_segments.bed, col.names=col.name.list$segments)
+  penalty.segs <- fread(
+    file=penalty_segments.bed, col.names=col.name.list$segments)
   L <- list(
     segments=penalty.segs,
     loss=data.table(
