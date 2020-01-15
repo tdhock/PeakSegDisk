@@ -16,7 +16,8 @@ sequentialSearch_dir <- structure(function # Compute PeakSeg model with given nu
   peaks.int,
 ### int: target number of peaks.
   verbose=0
-### Print messages?
+### numeric verbosity: if >0 then base::cat is used to print a message
+### for each penalty.
 ){
   stopifnot(
     is.integer(peaks.int) &&

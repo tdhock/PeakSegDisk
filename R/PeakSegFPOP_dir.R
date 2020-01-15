@@ -14,10 +14,15 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
 (problem.dir,
 ### Path to a directory like sampleID/problems/chrXX-start-end which
 ### contains a coverage.bedGraph file with the aligned read counts for
-### one genomic segmentation problem. Note that the standard
-### coverage.bedGraph file name is required; for full flexibility the
-### user can run the algo on an arbitrarily named file via
-### PeakSegFPOP_file (see that man page for an explanation of how
+### one genomic segmentation problem. This must be a plain text file
+### with the following four columns: chrom (character chromosome
+### name), chromStart (integer start position), chromEnd (integer end
+### position), count (integer aligned read count on chrom from
+### chromStart+1 to chromEnd); see also
+### https://genome.ucsc.edu/goldenPath/help/bedgraph.html. Note that
+### the standard coverage.bedGraph file name is required; for full
+### flexibility the user can run the algo on an arbitrarily named file
+### via PeakSegFPOP_file (see that man page for an explanation of how
 ### storage on disk happens).
  penalty.param,
 ### non-negative numeric penalty parameter (larger values for fewer
@@ -64,13 +69,13 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
   penalty_timing.tsv <- paste0(pre, "_timing.tsv")
   already.computed <- tryCatch({
     timing <- fread(
-      penalty_timing.tsv,
+      file=penalty_timing.tsv,
       col.names=c("penalty", "megabytes", "seconds"))
     first.seg.line <- fread.first(penalty_segments.bed, col.name.list$segments)
     last.seg.line <- fread.last(penalty_segments.bed, col.name.list$segments)
     first.cov.line <- fread.first(prob.cov.bedGraph, col.name.list$coverage)
     last.cov.line <- fread.last(prob.cov.bedGraph, col.name.list$coverage)
-    penalty.loss <- fread(penalty_loss.tsv, col.names=col.name.list$loss)
+    penalty.loss <- fread(file=penalty_loss.tsv, col.names=col.name.list$loss)
     nrow.ok <- nrow(timing)==1 && nrow(penalty.loss)==1 &&
       nrow(first.seg.line)==1 && nrow(last.seg.line)==1 &&
       nrow(first.cov.line)==1 && nrow(last.cov.line)==1
@@ -99,9 +104,10 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
       penalty_timing.tsv,
       row.names=FALSE, col.names=FALSE,
       quote=FALSE, sep="\t")
-    penalty.loss <- fread(penalty_loss.tsv, col.names=col.name.list$loss)
+    penalty.loss <- fread(file=penalty_loss.tsv, col.names=col.name.list$loss)
   }
-  penalty.segs <- fread(penalty_segments.bed, col.names=col.name.list$segments)
+  penalty.segs <- fread(
+    file=penalty_segments.bed, col.names=col.name.list$segments)
   L <- list(
     segments=penalty.segs,
     loss=data.table(
@@ -149,6 +155,7 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
 
   ## Compute one model with penalty=1952.6
   (fit <- PeakSegDisk::PeakSegFPOP_dir(data.dir, 1952.6))
+  summary(fit)#same as fit$loss
 
   ## Visualize that model.
   ann.colors <- c(
@@ -221,6 +228,12 @@ coef.PeakSegFPOP_dir <- function(object, ...){
   object$segments <- data.table(type="segmentation", object$segments)
   object
 ### model list with additional named elements peaks and changes.
+}
+
+### Summary of PeakSegFPOP_dir object.
+summary.PeakSegFPOP_dir <- function(object, ...){
+  object$loss
+### Data table with one row and columns describing model summary.
 }
 
 ### Plot a PeakSeg model with attached data.

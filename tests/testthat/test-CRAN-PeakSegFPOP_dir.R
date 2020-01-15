@@ -15,7 +15,7 @@ chr6_dbb_hap3   3701633 3736386 0
 prob.dir <- file.path(
   tempfile(),
   "samples",
-  "sample1",
+  "sample name (bad)",
   "problems",
   "chr6_dbb_hap3-3491790-3736386")
 dir.create(prob.dir, showWarnings=FALSE, recursive=TRUE)

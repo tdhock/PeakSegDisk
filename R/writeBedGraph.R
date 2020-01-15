@@ -1,5 +1,10 @@
-writeBedGraph <- structure(function # Write bedGraph file 
-### Write a data.frame in R to a bedGraph file on disk.
+writeBedGraph <- structure(function # Write bedGraph file
+### Write a data.frame in R to a bedGraph file on disk. This must be a
+### plain text file with the following four columns: chrom (character
+### chromosome name), chromStart (integer start position), chromEnd
+### (integer end position), count (integer aligned read count on chrom
+### from chromStart+1 to chromEnd); see also
+### https://genome.ucsc.edu/goldenPath/help/bedgraph.html
 (count.df,
 ### data.frame with four columns: chrom, chromStart, chromEnd, count.
   coverage.bedGraph
@@ -50,5 +55,5 @@ writeBedGraph <- structure(function # Write bedGraph file
   writeBedGraph(Mono27ac$coverage, coverage.bedGraph)
   fread.first(coverage.bedGraph, col.name.list$coverage)
   fread.last(coverage.bedGraph, col.name.list$coverage)
-  
+
 })

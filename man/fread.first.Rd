@@ -5,7 +5,8 @@
 the coverage.bedGraph_penalty=VALUE_segments.bed file is
 consistent with the coverage.bedGraph_penalty=VALUE_loss.tsv
 file. (used by the \code{\link{PeakSegFPOP_dir}} caching mechanism)}
-\usage{fread.first(file.name, col.name.vec)}
+\usage{fread.first(file.name, 
+    col.name.vec)}
 \arguments{
   \item{file.name}{Name of file to read.}
   \item{col.name.vec}{Character vector of column names.}

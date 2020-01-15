@@ -3,7 +3,8 @@
 \title{PeakSeg penalized solver for integer vector}
 \description{Convert integer data vector to run-length encoding,
 then run \code{\link{PeakSegFPOP_df}}.}
-\usage{PeakSegFPOP_vec(count.vec, pen.num)}
+\usage{PeakSegFPOP_vec(count.vec, 
+    pen.num)}
 \arguments{
   \item{count.vec}{integer vector, noisy non-negatve count data to segment.}
   \item{pen.num}{Non-negative numeric scalar.}

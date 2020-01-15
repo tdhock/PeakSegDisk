@@ -1,7 +1,7 @@
 PeakSegFPOP_vec <- structure(function # PeakSeg penalized solver for integer vector
 ### Convert integer data vector to run-length encoding,
 ### then run PeakSegFPOP_df.
-(count.vec, 
+(count.vec,
 ### integer vector, noisy non-negatve count data to segment.
   pen.num
 ### Non-negative numeric scalar.
@@ -22,7 +22,7 @@ PeakSegFPOP_vec <- structure(function # PeakSeg penalized solver for integer vec
     chromStart=c(0L, chromEnd[-length(chromEnd)]),
     chromEnd,
     count=z.rle.vec$values)
-  PeakSegFPOP_df(coverage.df, 10.5)
+  PeakSegFPOP_df(coverage.df, pen.num)
 ### List of solver results, same as PeakSegFPOP_dir.
 }, ex=function(){
 
@@ -73,6 +73,6 @@ PeakSegFPOP_vec <- structure(function # PeakSeg penalized solver for integer vec
   z.slow.vec <- 1:length(z.rep.vec)
   fit.slow <- PeakSegDisk::PeakSegFPOP_vec(z.slow.vec, 10.5)
   rbind(fit.slow$loss, fit$loss)
-  
+
 })
-  
+

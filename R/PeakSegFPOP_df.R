@@ -1,7 +1,13 @@
 PeakSegFPOP_df <- structure(function # PeakSeg penalized solver for data.frame
 ### Write data frame to disk then run PeakSegFPOP_dir solver.
-(count.df, 
-### data.frame with columns count, chromStart, chromEnd.
+(count.df,
+### data.frame with columns count, chromStart, chromEnd. These data
+### will be saved via writeBedGraph, creating a plain text file with
+### the following four columns: chrom (character chromosome name),
+### chromStart (integer start position), chromEnd (integer end
+### position), count (integer aligned read count on chrom from
+### chromStart+1 to chromEnd); see also
+### https://genome.ucsc.edu/goldenPath/help/bedgraph.html
   pen.num,
 ### Non-negative numeric scalar.
   base.dir=tempdir()
@@ -97,7 +103,7 @@ PeakSegFPOP_df <- structure(function # PeakSeg penalized solver for data.frame
       color="grey",
       shape=1,
       data=count.df)
-  
+
 })
 
 ### Create a list of data tables describing PeakSegFPOP model and
@@ -109,7 +115,7 @@ coef.PeakSegFPOP_df <- function(object, ...){
 ### list of data tables with named elements segments, loss, data,
 ### changes, peaks.
 }
-  
+
 ### Plot a PeakSeg model with attached data.
 plot.PeakSegFPOP_df <- function(x, ...){
   chromStart <- count <- type <- NULL

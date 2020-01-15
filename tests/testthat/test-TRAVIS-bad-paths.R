@@ -1,9 +1,9 @@
 library(testthat)
 library(data.table)
 library(PeakSegDisk)
-context("CRAN bad paths")
+context("TRAVIS bad paths")
 
-bad.dir <- file.path(tempdir(), "prob (bad)")
+bad.dir <- file.path("~/prob (bad)")
 dir.create(bad.dir)
 foo.csv <- file.path(bad.dir, "foo.csv")
 cat("foo bar\n1 2", file=foo.csv)
@@ -16,3 +16,4 @@ test_that("fread.last works with bad path", {
   computed <- fread.last(foo.csv)
   expect_equal(computed, expected)
 })
+unlink(bad.dir, recursive=TRUE)
