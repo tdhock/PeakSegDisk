@@ -1,5 +1,3 @@
-/* -*- compile-command: "R CMD INSTALL .." -*- */
-
 #include <list>
 
 // NOTE: please only define prototypes in this file (do not define

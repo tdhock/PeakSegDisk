@@ -1,5 +1,3 @@
-/* -*- compile-command: "R CMD INSTALL .." -*- */
-
 #include <iomanip> //for setprecision.
 #include <fstream> //for ifstream etc.
 #include <exception>//for std::exception

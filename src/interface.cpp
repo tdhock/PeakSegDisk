@@ -1,5 +1,3 @@
-/* -*- compile-command: "R CMD INSTALL .." -*- */
-
 #include "PeakSegFPOPLog.h"
 #include <R.h>//for error
 #include <R_ext/Rdynload.h>//for registering routines.

@@ -1,5 +1,3 @@
-/* -*- compile-command: "R CMD INSTALL .." -*- */
-
 #define ERROR_PENALTY_NOT_FINITE 1
 #define ERROR_PENALTY_NEGATIVE 2
 #define ERROR_UNABLE_TO_OPEN_BEDGRAPH 3
