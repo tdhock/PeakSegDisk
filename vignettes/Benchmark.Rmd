@@ -1,0 +1,124 @@
+<!--
+%\VignetteEngine{knitr::knitr}
+%\VignetteIndexEntry{Benchmark}
+-->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+options(width=100)
+```
+
+The speed of the algorithm may be limited by disk I/O when running
+concurrent processes that write to the same disk.
+
+```{r}
+data("ChIPreads", package="PeakSegDisk")
+library(data.table)
+end.counts <- ChIPreads[experiment=="H3K36me3", list(
+  count=.N #ignores dup reads, sum(count) would not.
+), by=.(chrom, chromEnd)]
+aligned.dt <- end.counts[, .(
+  chrom,
+  chromStart=chromEnd-1L, chromEnd,
+  count
+)]
+(seq.dt <- aligned.dt[, {
+  event.dt <- rbind(
+    data.table(count, pos=chromStart+1L),
+    data.table(count=-count, pos=chromEnd+1L))
+  edge.vec <- event.dt[, {
+    as.integer(seq(min(pos), max(pos), l=100))
+  }]
+  event.bins <- rbind(
+    event.dt,
+    data.table(count=0L, pos=edge.vec))
+  total.dt <- event.bins[, .(
+    count=sum(count)
+  ), by=list(pos)][order(pos)]
+  total.dt[, cum := cumsum(count)]
+  ## it is somewhat confusing because total.dt pos is the first base
+  ## with cum, and cum goes all the way up to but not including the
+  ## pos of the next row.
+  total.dt[, data.table(
+    chromStart=pos[-.N]-1L,
+    chromEnd=pos[-1]-1L,
+    count=cum[-.N]
+  )]
+}, by=chrom])
+future::plan("multisession")
+
+max.cores <- future::availableCores()
+##max.cores <- 3
+N.cores.vec <- 1:max.cores
+bdir <- file.path(
+  tempdir(),
+  "benchmark")
+for(core.i in N.cores.vec){
+  data.dir <- file.path(bdir, core.i)
+  dir.create(data.dir, recursive=TRUE, showWarnings=FALSE)
+  write.table(
+    seq.dt, file.path(data.dir, "coverage.bedGraph"),
+    col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t")
+}
+penalty.num <- 1952.6
+penalty.str <- paste(penalty.num)
+fun.list <- list(disk=function(core.i){
+  coverage.bedGraph <- file.path(bdir, core.i, "coverage.bedGraph")
+  PeakSegDisk::PeakSegFPOP_file(coverage.bedGraph, penalty.str)
+},
+memory=if(requireNamespace("PeakSegOptimal"))function(core.i){
+  with(seq.dt, PeakSegOptimal::PeakSegFPOP(count, chromEnd-chromStart, penalty.num))
+})
+
+seconds.dt.list <- list()
+for(repetition in 1:2){
+  for(N.cores in N.cores.vec){
+    for(storage in names(fun.list)){
+      fun <- fun.list[[storage]]
+      overall <- system.time({
+        seconds.list <- future.apply::future_lapply(1:N.cores, function(core.i){
+          seconds <- system.time({
+            fun(core.i)
+          })[["elapsed"]]
+          data.table(N.cores, core.i, seconds)
+        })
+      })[["elapsed"]]
+      core.dt <- do.call(rbind, seconds.list)
+      seconds.dt.list[[paste(repetition, N.cores, storage)]] <- data.table(
+        repetition,
+        N.cores,
+        storage,
+        overall,
+        sum=sum(core.dt[["seconds"]]))
+    }
+  }
+}
+(seconds.dt <- do.call(rbind, seconds.dt.list))
+data.table::fwrite(seconds.dt, "seconds.csv")
+
+seconds.dt <- data.table::fread("seconds.csv")
+library(ggplot2)
+ggplot()+
+  geom_point(aes(
+    N.cores, sum, color=storage),
+    data=seconds.dt)+
+  scale_x_continuous(breaks=unique(seconds.dt[["N.cores"]]))
+
+## should be flat in ideal speedup case.
+ggplot()+
+  geom_point(aes(
+    N.cores, overall, color=storage),
+    data=seconds.dt)+
+  scale_x_continuous(breaks=unique(seconds.dt[["N.cores"]]))
+
+## no speedups after it flattens out.
+ggplot()+
+  geom_point(aes(
+    N.cores, overall/N.cores, color=storage),
+    data=seconds.dt)+
+  scale_x_continuous(breaks=unique(seconds.dt[["N.cores"]]))
+
+```
