@@ -1,0 +1,23 @@
+bibentry(bibtype = "Article",
+  title        = "Generalized Functional Pruning Optimal Partitioning ({GFPOP}) for Constrained Changepoint Detection in Genomic Data",
+  author       = c(person(given = c("Toby", "Dylan"),
+                          family = "Hocking",
+                          email = "Toby.Hocking@nau.edu"),
+                   person(given = "Guillem",
+                          family = "Rigaill",
+                          email = "Guillem.Rigaill@inra.fr"),
+                   person(given = "Paul",
+                          family = "Fearnhead",
+                          email = "p.fearnhead@lancaster.ac.uk"),
+                   person(given = "Guillaume",
+                          family = "Bourque",
+                          email = "guil.bourque@mcgill.ca")),
+  journal      = "Journal of Statistical Software",
+  year         = "2022",
+  volume       = "101",
+  number       = "10",
+  pages        = "1--31",
+  doi          = "10.18637/jss.v101.i10",
+  header       = "To cite PeakSegDisk in publications use:"
+)
+

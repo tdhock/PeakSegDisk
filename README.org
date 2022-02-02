@@ -1,8 +1,8 @@
-[[https://travis-ci.org/tdhock/PeakSegDisk][https://travis-ci.org/tdhock/PeakSegDisk.png?branch=master]]
+[[https://github.com/tdhock/PeakSegDisk/actions][https://github.com/tdhock/PeakSegDisk/workflows/R-CMD-check/badge.svg]]
 
-PeakSegDisk: an R package for fast and optimal ChIP-seq peak
-detection. Two major differences between other packages for peak
-detection: 
+PeakSegDisk: an R package for fast and optimal peak detection in large
+count data sequences. Two major differences between other packages for
+peak detection:
 - *The optimal piecewise constant model works well in many kinds of
   genomic data.* The dynamic programming C++ code computes the most
   likely piecewise constant model (for a given penalty / number of

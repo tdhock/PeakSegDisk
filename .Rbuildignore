@@ -6,3 +6,4 @@ valgrind.sh
 README.org
 bin
 .gitignore
+^\.github$

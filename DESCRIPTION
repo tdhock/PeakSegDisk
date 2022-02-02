@@ -1,12 +1,12 @@
 Package: PeakSegDisk
 Type: Package
 Title: Disk-Based Constrained Change-Point Detection
-Version: 2020.8.13
+Version: 2022.2.1
 Author: Toby Dylan Hocking
 Maintainer: Toby Dylan Hocking <toby.hocking@r-project.org>
 Description: Disk-based implementation of
  Functional Pruning Optimal Partitioning with up-down constraints
- <arXiv:1810.00117> for single-sample peak calling
+ <doi:10.18637/jss.v101.i10> for single-sample peak calling
  (independently for each sample and genomic problem),
  can handle huge data sets (10^7 or more).
 License: GPL-3

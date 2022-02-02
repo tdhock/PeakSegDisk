@@ -44,6 +44,8 @@ setkey(segs.dt, segStart1, segEnd)
 over.dt <- foverlaps(cov.dt, segs.dt, nomatch=0L)
 sprintf("%.12f", over.dt[, PeakSegDP::PoissonLoss(count, mean, chromEnd-chromStart)])
 
+2022.2.1
+
 2020.8.13
 
 DESCRIPTION: https for URL/BugReports, Suggests: markdown.
