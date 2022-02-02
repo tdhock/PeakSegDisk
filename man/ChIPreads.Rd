@@ -10,7 +10,7 @@
   chunk H3K36me3_AM_immune/8. The other is sample ID McGill0002,
   experiment H3K4me3, chr2, chunk H3K4me3_PGP_immune/7.
   The chunk ID numbers refer to parts of the McGill benchmark data set,
-  \url{http://members.cbio.mines-paristech.fr/~thocking/chip-seq-chunk-db/}
+  \url{https://rcdata.nau.edu/genomic-ml/chip-seq-chunk-db/}
 }
 \usage{data("ChIPreads")}
 \format{
