@@ -43,11 +43,9 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v1
         with:
-          extra-packages: rcmdcheck
+          extra-packages: rcmdcheck, tinytex
 
       - name: Install LaTeX packages
-        with:
-          extra-packages: tinytex
         run: |
           tinytex::parse_install(text = "! LaTeX Error: File `fullpage.sty' not found.")
           tinytex::parse_install(text = "! LaTeX Error: File `pdfpages.sty' not found.")
