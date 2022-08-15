@@ -45,6 +45,14 @@ jobs:
         with:
           extra-packages: rcmdcheck
 
+      - name: Install dependencies
+        run: |
+          tinytex::parse_install(text = "! LaTeX Error: File `fullpage.sty' not found.")
+          tinytex::parse_install(text = "! LaTeX Error: File `pdfpages.sty' not found.")
+          tinytex::parse_install(text = "! LaTeX Error: File `ae.sty' not found.")
+          tinytex::parse_install(text = "! LaTeX Error: File `pdflscape.sty' not found.")
+        shell: Rscript {0}
+
       - uses: r-lib/actions/check-r-package@v1
 
       - name: Show testthat output
