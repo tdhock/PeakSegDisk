@@ -12,7 +12,7 @@ jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
 
-    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+    name: ${{ matrix.config.os }} ${{ matrix.config.r }} test=${{ matrix.test-suite }}
 
     strategy:
       fail-fast: false
@@ -48,6 +48,7 @@ jobs:
 
       - name: Install LaTeX packages
         run: |
+          Sys.getenv("TEST_SUITE")
           tinytex::parse_install(text = "! LaTeX Error: File `fullpage.sty' not found.")
           tinytex::parse_install(text = "! LaTeX Error: File `pdfpages.sty' not found.")
           tinytex::parse_install(text = "! LaTeX Error: File `ae.sty' not found.")
