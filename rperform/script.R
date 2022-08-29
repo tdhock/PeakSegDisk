@@ -4,16 +4,22 @@
 ## TEST 1
 Rperform::plot_metrics(
     test_path = "tests/testthat/test-TRAVIS-sequentialSearch.R",
-    metric = "time", save_data = TRUE,
-    save_plots = TRUE
+    metric = "time",
+    num_commits=20,
+    save_data = TRUE,
+    save_plots = TRUE,
+    total_width_in=20
 )
 
 
 ## TEST 2
 Rperform::plot_metrics(
     test_path = "tests/testthat/test-CRAN-PeakSegFPOP_dir.R",
-    metric = "time", save_data = TRUE,
-    save_plots = TRUE
+    metric = "time",
+    num_commits=20,
+    save_data = TRUE,
+    save_plots = TRUE,
+    total_width_in=20
 )
 
 ## TEST 3
