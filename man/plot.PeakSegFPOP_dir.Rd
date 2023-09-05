@@ -5,10 +5,8 @@
 \usage{\method{plot}{PeakSegFPOP_dir}(x, 
     ...)}
 \arguments{
-  \item{x}{
-}
-  \item{\dots}{
-}
+  \item{x}{x }
+  \item{\dots}{\dots }
 }
 
 \value{a ggplot.}

@@ -6,10 +6,8 @@ data.}
 \usage{\method{coef}{PeakSegFPOP_df}(object, 
     ...)}
 \arguments{
-  \item{object}{
-}
-  \item{\dots}{
-}
+  \item{object}{object }
+  \item{\dots}{\dots }
 }
 
 \value{list of data tables with named elements segments, loss, data,

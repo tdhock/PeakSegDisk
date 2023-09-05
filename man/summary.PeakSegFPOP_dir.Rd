@@ -5,10 +5,8 @@
 \usage{\method{summary}{PeakSegFPOP_dir}(object, 
     ...)}
 \arguments{
-  \item{object}{
-}
-  \item{\dots}{
-}
+  \item{object}{object }
+  \item{\dots}{\dots }
 }
 
 \value{Data table with one row and columns describing model summary.}

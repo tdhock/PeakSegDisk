@@ -5,10 +5,8 @@
 \usage{\method{coef}{PeakSegFPOP_dir}(object, 
     ...)}
 \arguments{
-  \item{object}{
-}
-  \item{\dots}{
-}
+  \item{object}{object }
+  \item{\dots}{\dots }
 }
 
 \value{model list with additional named elements peaks and changes.}
