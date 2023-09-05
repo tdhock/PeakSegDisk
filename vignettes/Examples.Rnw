@@ -344,7 +344,7 @@ The \verb|sequentialSearch_dir| function can be used to compute the
 optimal model with a certain number of peaks:
 
 <<>>=
-if(interactive() && requireNamespace("future"))future::plan("multiprocess")
+if(interactive() && requireNamespace("future"))future::plan("multisession")
 (fit$search <- PeakSegDisk::sequentialSearch_dir(data.dir, 2L, verbose=1))
 @
 

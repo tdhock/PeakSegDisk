@@ -132,7 +132,7 @@ sequentialSearch_dir <- structure(function # Compute PeakSeg model with given nu
 
   ## register a parallel future plan to compute the first two
   ## penalties in parallel during the sequential search.
-  if(interactive() && requireNamespace("future"))future::plan("multiprocess")
+  if(interactive() && requireNamespace("future"))future::plan("multisession")
 
   ## Compute optimal up-down model with 2 peaks via sequential search.
   fit <- PeakSegDisk::sequentialSearch_dir(data.dir, 2L)
