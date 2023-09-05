@@ -163,53 +163,51 @@ PeakSegFPOP_dir <- structure(function # PeakSeg penalized solver with caching
     peakStart="#ffafaf",
     peakEnd="#ff4c4c",
     peaks="#a445ee")
-  library(ggplot2)
-  lab.min <- Mono27ac$labels[1, chromStart]
-  lab.max <- Mono27ac$labels[.N, chromEnd]
-
-  plist <- coef(fit)
-  gg <- ggplot()+
-    theme_bw()+
-    geom_rect(aes(
-      xmin=chromStart/1e3, xmax=chromEnd/1e3,
-      ymin=-Inf, ymax=Inf,
-      fill=annotation),
-      color="grey",
-      alpha=0.5,
-      data=Mono27ac$labels)+
-    scale_fill_manual("label", values=ann.colors)+
-    geom_step(aes(
-      chromStart/1e3, count),
-      color="grey50",
-      data=Mono27ac$coverage)+
-    geom_segment(aes(
-      chromStart/1e3, mean,
-      xend=chromEnd/1e3, yend=mean),
-      color="green",
-      size=1,
-      data=plist$segments)+
-    geom_vline(aes(
-      xintercept=chromEnd/1e3, linetype=constraint),
-      color="green",
-      data=plist$changes)+
-    scale_linetype_manual(
-      values=c(
-        inequality="dotted",
-        equality="solid"))
-  gg
-
-  gg+
-    coord_cartesian(xlim=c(lab.min, lab.max)/1e3, ylim=c(0, 10))
-
-  ## Default plotting method only shows model.
-  (gg <- plot(fit))
-
-  ## Data can be added on top of model.
-  gg+
-    geom_step(aes(
-      chromStart, count),
-      color="grey50",
-      data=Mono27ac$coverage)
+  if(require(ggplot2)){
+    lab.min <- Mono27ac$labels[1, chromStart]
+    lab.max <- Mono27ac$labels[.N, chromEnd]
+    plist <- coef(fit)
+    gg <- ggplot()+
+      theme_bw()+
+      geom_rect(aes(
+        xmin=chromStart/1e3, xmax=chromEnd/1e3,
+        ymin=-Inf, ymax=Inf,
+        fill=annotation),
+        color="grey",
+        alpha=0.5,
+        data=Mono27ac$labels)+
+      scale_fill_manual("label", values=ann.colors)+
+      geom_step(aes(
+        chromStart/1e3, count),
+        color="grey50",
+        data=Mono27ac$coverage)+
+      geom_segment(aes(
+        chromStart/1e3, mean,
+        xend=chromEnd/1e3, yend=mean),
+        color="green",
+        size=1,
+        data=plist$segments)+
+      geom_vline(aes(
+        xintercept=chromEnd/1e3, linetype=constraint),
+        color="green",
+        data=plist$changes)+
+      scale_linetype_manual(
+        values=c(
+          inequality="dotted",
+          equality="solid"))
+    print(gg)
+    print(gg+coord_cartesian(xlim=c(lab.min, lab.max)/1e3, ylim=c(0, 10)))
+    ## Default plotting method only shows model.
+    print(gg <- plot(fit))
+    ## Data can be added on top of model.
+    print(
+      gg+
+        geom_step(aes(
+          chromStart, count),
+          color="grey50",
+          data=Mono27ac$coverage)
+    )
+  }
 
 })
 

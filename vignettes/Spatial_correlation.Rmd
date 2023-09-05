@@ -102,7 +102,7 @@ reads, `count`, have been counted at all positions between
 below:
 
 ```{r}
-library(ggplot2)
+if(require(ggplot2)){
 gg.data <- ggplot()+
   theme_bw()+
   theme(panel.spacing=grid::unit(0, "lines"))+
@@ -120,6 +120,7 @@ gg.data <- ggplot()+
   ))+
   scale_x_continuous("Position on hg19 chrom (kb = kilo bases)")
 print(gg.data)
+}
 ```
 
 It is clear from the plot above that, for each experiment (left:H3K36,
@@ -138,14 +139,16 @@ bin.dt <- seq.dt[, {
     mean.count=sum(count*bases)/sum(bases),
     bases=sum(bases)
   )}, by=list(bases.counted, experiment, bin.i)]
+if(require(ggplot2)){
 gg.bins <- gg.data+
   geom_step(aes(
     binStart/1e3, mean.count, color=data.type),
     alpha=0.75,
-    size=1,
+    linewidth=1,
     data=data.table(bin.dt, data.type="bins"))+
   scale_y_log10("Aligned DNA sequence reads (log scale)")
 print(gg.bins)
+}
 ```
 
 The mean counts in each bin appear in the plot above as a red line.
@@ -171,6 +174,7 @@ segs.dt <- seq.dt[, {
 changes.dt <- segs.dt[, {
   .SD[-1]
 }, by=list(bases.counted, experiment, data.type)]
+if(require(ggplot2)){
 gg.model <- gg.bins+
   geom_segment(aes(
     chromStart/1e3, mean,
@@ -182,6 +186,7 @@ gg.model <- gg.bins+
     color=data.type),
     data=changes.dt)
 print(gg.model)
+}
 ```
 
 The plot above shows that the predicted peaks (blue) of the models
@@ -209,6 +214,7 @@ diff.y <- bases.max.dt[
   diff.panel, max.count, on=list(bases.counted)]
 diff.y <- Inf
 diff.vjust <- 1.1
+if(require(ggplot2)){
 gg.model+
   geom_text(aes(
     chromStart/1e3, read.size.y, label=sprintf(
@@ -238,6 +244,7 @@ gg.model+
     data.type="model",
     bases.counted=diff.panel,
     experiments["H3K36me3", on=list(experiment)]))
+}
 ```
 
 In the plot above the blue numbers show the differences (in bases)

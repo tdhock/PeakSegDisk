@@ -47,16 +47,17 @@ PeakSegFPOP_df <- structure(function # PeakSeg penalized solver for data.frame
   z.rep.vec <- unlist(z.list)
 
   ## Plot the simulated data sequence.
-  library(ggplot2)
-  count.df <- data.frame(
-    position=seq_along(z.rep.vec),
-    count=z.rep.vec)
-  gg.count <- ggplot()+
-    geom_point(aes(
-      position, count),
-      shape=1,
-      data=count.df)
-  gg.count
+  if(require(ggplot2)){
+    count.df <- data.frame(
+      position=seq_along(z.rep.vec),
+      count=z.rep.vec)
+    gg.count <- ggplot()+
+      geom_point(aes(
+        position, count),
+        shape=1,
+        data=count.df)
+    gg.count
+  }
 
   ## Plot the true changes.
   n.segs <- length(seg.mean.vec)

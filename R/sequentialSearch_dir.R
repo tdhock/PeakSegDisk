@@ -137,16 +137,17 @@ sequentialSearch_dir <- structure(function # Compute PeakSeg model with given nu
   ## Compute optimal up-down model with 2 peaks via sequential search.
   fit <- PeakSegDisk::sequentialSearch_dir(data.dir, 2L)
 
-  library(ggplot2)
-  ggplot()+
-    theme_bw()+
-    geom_point(aes(
-      chromEnd, coverage),
-      data=supp)+
-    geom_segment(aes(
-      chromStart+0.5, mean,
-      xend=chromEnd+0.5, yend=mean),
-      data=fit$segments,
-      color="green")
+  if(require(ggplot2)){
+    ggplot()+
+      theme_bw()+
+      geom_point(aes(
+        chromEnd, coverage),
+        data=supp)+
+      geom_segment(aes(
+        chromStart+0.5, mean,
+        xend=chromEnd+0.5, yend=mean),
+        data=fit$segments,
+        color="green")
+  }
 
 })
