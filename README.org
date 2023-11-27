@@ -11,12 +11,12 @@ peak detection:
   H3K4me3). 
 - *Fast and memory efficient solver.* The on-disk implementation of
   the Generalized Functional Pruning Optimal Partitioning algorithm
-  (GFPOP, [[https://arxiv.org/abs/1810.00117][arXiv:1810.00117]]) is O(N log N) time, O(N log N) disk, O(log
-  N) memory, which makes it possible to compute optimal peak models
-  for even very large genomic subsets. For example when we split
-  typical ChIP-seq data aligned to the human genome (hg19) into one
-  bedGraph file per contig (between [[http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/gap.txt.gz][gaps]]), we end up with files of up
-  to 10 million lines. Analyzing such large files is possible on
+  (GFPOP, [[https://jmlr.org/papers/v21/18-843.html][JMLR 2021]]) is empirically O(N log N) time, O(N log N) disk,
+  O(log N) memory, which makes it possible to compute optimal peak
+  models for even very large genomic subsets. For example when we
+  split typical ChIP-seq data aligned to the human genome (hg19) into
+  one bedGraph file per contig (between [[http://hgdownload.soe.ucsc.edu/goldenPath/hg19/database/gap.txt.gz][gaps]]), we end up with files of
+  up to 10 million lines. Analyzing such large files is possible on
   common laptops, because the algorithm uses <1GB memory and <100GB
   disk (in a temporary file which is deleted after finding the optimal
   solution).
@@ -95,11 +95,11 @@ runs the dynamic programming C++ code in order to create those files.
 It returns the model as a named list of data.tables -- see
 =help(PeakSegFPOP_dir)= for details of how to interpret.
 
-*Computational complexity:* O(N log N) time, O(N log N) disk, O(log N)
-memory. Basically you will never have to worry about running out of
-memory, but make sure you have some free space on the disk where you
-put your bedGraph file. The algorithm stores the optimal cost
-functions in a file named
+*Computational complexity:* empirically O(N log N) time, O(N log N)
+disk, O(log N) memory. Basically you will never have to worry about
+running out of memory, but make sure you have some free space on the
+disk where you put your bedGraph file. The algorithm stores the
+optimal cost functions in a file named
 sampleID/problem/c-0-6/coverage.bedGraph_penalty=0.1.db -- for large
 genomic data sets (e.g. bedGraph file with 10 million lines) the db
 file is about 80GB.
@@ -120,13 +120,13 @@ PeakSegDisk::sequentialSearch_dir("sampleID/problems/c-0-6", 17L)
 
 computes the most likely model with at most 17 peaks.
 
-*Computational complexity:* O(N*log(N)*log(P)) time, O(N log N) disk,
-O(log N) memory. The sequential search has the same storage
-requirements as one run of GFPOP, so make sure you have some free disk
-space. Note that it is slower than GFPOP by a factor of O(log P) --
-this is because it needs to call GFPOP to solve for that number of
-penalties/models before finding the one with the desired number of
-peaks.
+*Computational complexity:* empirically O(N*log(N)*log(P)) time, O(N
+log N) disk, O(log N) memory. The sequential search has the same
+storage requirements as one run of GFPOP, so make sure you have some
+free disk space. Note that it is slower than GFPOP by a factor of
+O(log P) -- this is because it needs to call GFPOP to solve for that
+number of penalties/models before finding the one with the desired
+number of peaks.
 
 ** Related work
 
