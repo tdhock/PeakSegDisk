@@ -1036,7 +1036,7 @@ void PiecewisePoissonLossLog::push_min_pieces
       double cost_between_zeros = diff_piece.getCost(log_mean_between_zeros);
       double log_mean_at_optimum = diff_piece.argmin();
       if(verbose){
-	Rprintf("Determining if there is a crossing point in interval...\n", last_min_log_mean, cost_diff_left);
+	Rprintf("Determining if there is a crossing point in interval...\n");
 	diff_piece.print();
 	Rprintf("cost_diff(left:%e)=%e\n", last_min_log_mean, cost_diff_left);
 	Rprintf("cost_diff(cross:%e)=%e\n", log_mean_at_crossing, diff_piece.getCost(log_mean_at_crossing));
