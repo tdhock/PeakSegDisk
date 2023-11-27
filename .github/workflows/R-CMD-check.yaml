@@ -35,7 +35,7 @@ jobs:
 
       - name: Install additional LaTeX packages
         run: |
-          tlmgr install preprint hyperref amsfonts amsmath
+          tlmgr install preprint hyperref amsfonts amsmath grffile
           tlmgr list --only-installed
       - uses: r-lib/actions/setup-pandoc@v2
 
