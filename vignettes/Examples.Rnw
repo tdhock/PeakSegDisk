@@ -46,17 +46,19 @@ can be interpreted in terms of peaks (after up changes) and background
   \url{https://CRAN.R-project.org/package=PeakSegOptimal} provides
   log-linear time algorithms for computing optimal models with
   multiple peaks for a single sample. The algorithms are faster and
-  more accurate than PeakSegDP, \url{https://arxiv.org/abs/1703.03352}
+  more accurate than PeakSegDP. Citation: JMLR'20,
+  \url{https://jmlr.org/papers/v21/18-843.html}
 \item[PeakSegDisk] \url{https://github.com/tdhock/PeakSegDisk}
   provides an on-disk implementation of optimal log-linear algorithms
   for computing multiple peaks in a single sample. Computes same
   models as PeakSegOptimal but works for much larger data sets because
-  disk is used for storage instead of memory.
-  \url{https://arxiv.org/abs/1810.00117}
-\item[PeakSegJoint] \url{https://CRAN.R-project.org/package=PeakSegJoint}
-  provides a fast heuristic algorithm for computing models with a single
-  common peak in $0,...,S$
-  samples. \url{https://arxiv.org/abs/1506.01286}
+  disk is used for storage instead of memory. Citation: JSS'22,
+  \url{https://www.jstatsoft.org/article/view/v101i10}
+\item[PeakSegJoint]
+  \url{https://CRAN.R-project.org/package=PeakSegJoint} provides a
+  fast heuristic algorithm for computing models with a single common
+  peak in $0,...,S$ samples. Citation: PSB'20
+  \url{http://psb.stanford.edu/psb-online/proceedings/psb20/Hocking.pdf}
 \item[PeakSegPipeline]
   \url{https://github.com/tdhock/PeakSegPipeline} provides a pipeline
   for genome-wide peak calling using the other PeakSeg packages. 

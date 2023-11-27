@@ -1,8 +1,20 @@
 [[https://github.com/tdhock/PeakSegDisk/actions][https://github.com/tdhock/PeakSegDisk/workflows/R-CMD-check/badge.svg]]
 
 PeakSegDisk: an R package for fast and optimal peak detection in large
-count data sequences. Two major differences between other packages for
-peak detection:
+count data sequences. If you use this package, please read/[[https://tdhock.github.io/assets/TDH-refs.bib][cite]] the
+related papers:
+
+- [[https://www.jstatsoft.org/article/view/v101i10][JSS'22]]: Hocking TD, Rigaill G, Fearnhead P, Bourque G. Generalized
+  Functional Pruning Optimal Partitioning (GFPOP) for Constrained
+  Changepoint Detection in Genomic Data. Journal of Statistical
+  Software Vol. 101, Issue 10 (2022).
+- [[https://jmlr.org/papers/v21/18-843.html][JMLR'20]]: Hocking TD, Rigaill G, Fearnhead P, Bourque G. Constrained
+  Dynamic Programming and Supervised Penalty Learning Algorithms for
+  Peak Detection in Genomic Data. Journal of Machine Learning Research
+  21(87):1-40 (2020).
+
+There are two major differences between PeakSegDisk, and other
+bioinformatics software for peak detection:
 - *The optimal piecewise constant model works well in many kinds of
   genomic data.* The dynamic programming C++ code computes the most
   likely piecewise constant model (for a given penalty / number of
@@ -11,7 +23,7 @@ peak detection:
   H3K4me3). 
 - *Fast and memory efficient solver.* The on-disk implementation of
   the Generalized Functional Pruning Optimal Partitioning algorithm
-  (GFPOP, [[https://jmlr.org/papers/v21/18-843.html][JMLR 2021]]) is empirically O(N log N) time, O(N log N) disk,
+  (GFPOP) is empirically O(N log N) time, O(N log N) disk,
   O(log N) memory, which makes it possible to compute optimal peak
   models for even very large genomic subsets. For example when we
   split typical ChIP-seq data aligned to the human genome (hg19) into
