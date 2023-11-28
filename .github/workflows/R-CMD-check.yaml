@@ -42,7 +42,7 @@ jobs:
       - name: Install additional LaTeX packages
         run: |
           R -e 'install.packages("tinytex")'
-          R -e 'tinytex::install_yihui_pkgs()'
+          R -e 'tinytex:::install_yihui_pkgs()'
           tlmgr list --only-installed
 
       - uses: r-lib/actions/setup-r-dependencies@v2
