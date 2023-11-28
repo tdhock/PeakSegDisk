@@ -41,9 +41,10 @@ jobs:
           use-public-rspm: true
 
       - name: Install tinytex
-        run: install.packages("tinytex")
- 	shell: Rscript {0}
-	
+        run: |
+          install.packages("tinytex")
+        shell: Rscript {0}
+
       - name: Install additional LaTeX packages
         run: |
           R -e 'tinytex:::install_yihui_pkgs()'
