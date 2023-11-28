@@ -1,5 +1,3 @@
-# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
-# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
     branches: [main, master]
@@ -33,10 +31,6 @@ jobs:
 
       - uses: r-lib/actions/setup-tinytex@v2
 
-      - name: Install additional LaTeX packages
-        run: |
-          tlmgr install preprint hyperref amsfonts amsmath grffile
-          tlmgr list --only-installed
       - uses: r-lib/actions/setup-pandoc@v2
 
       - uses: r-lib/actions/setup-r@v2
@@ -44,6 +38,11 @@ jobs:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
+
+      - name: Install additional LaTeX packages
+        run: |
+          R -e 'tinytex::install_yihui_pkgs()'
+          tlmgr list --only-installed
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
