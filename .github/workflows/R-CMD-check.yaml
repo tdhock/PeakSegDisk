@@ -40,15 +40,11 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - name: Install tinytex
+      - name: Install tinytex and LaTeX packages
         run: |
           install.packages("tinytex")
+          tinytex:::install_yihui_pkgs()
         shell: Rscript {0}
-
-      - name: Install additional LaTeX packages
-        run: |
-          R -e 'tinytex:::install_yihui_pkgs()'
-          tlmgr list --only-installed
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
