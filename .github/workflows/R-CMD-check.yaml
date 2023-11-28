@@ -41,6 +41,7 @@ jobs:
 
       - name: Install additional LaTeX packages
         run: |
+          R -e 'install.packages("tinytex")'
           R -e 'tinytex::install_yihui_pkgs()'
           tlmgr list --only-installed
 
