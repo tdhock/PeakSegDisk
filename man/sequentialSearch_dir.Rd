@@ -30,7 +30,7 @@ peaks in smaller model during binary search; over=number of peaks
 in larger model during binary search; iteration=number of times
 PeakSegFPOP has been run.}
 
-\author{Toby Dylan Hocking}
+\author{Toby Dylan Hocking <toby.hocking@r-project.org> [aut, cre]}
 
 
 

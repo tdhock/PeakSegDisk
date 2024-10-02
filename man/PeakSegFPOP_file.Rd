@@ -33,7 +33,7 @@ disk and the temporary storage is a fast local disk.}
 \value{A named list of input parameters, and the temporary cost function
 database file size in megabytes.}
 
-\author{Toby Dylan Hocking}
+\author{Toby Dylan Hocking <toby.hocking@r-project.org> [aut, cre]}
 
 
 

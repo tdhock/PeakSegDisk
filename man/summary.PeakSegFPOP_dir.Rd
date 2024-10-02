@@ -11,7 +11,7 @@
 
 \value{Data table with one row and columns describing model summary.}
 
-\author{Toby Dylan Hocking}
+\author{Toby Dylan Hocking <toby.hocking@r-project.org> [aut, cre]}
 
 
 

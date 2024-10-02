@@ -69,7 +69,7 @@ characterizing the computational complexity of the algorithm}
 \item{seconds}{timing of PeakSegFPOP_file}
 }}
 
-\author{Toby Dylan Hocking}
+\author{Toby Dylan Hocking <toby.hocking@r-project.org> [aut, cre]}
 
 
 

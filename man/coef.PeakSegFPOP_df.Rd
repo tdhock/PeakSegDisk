@@ -13,7 +13,7 @@ data.}
 \value{list of data tables with named elements segments, loss, data,
 changes, peaks.}
 
-\author{Toby Dylan Hocking}
+\author{Toby Dylan Hocking <toby.hocking@r-project.org> [aut, cre]}
 
 
 

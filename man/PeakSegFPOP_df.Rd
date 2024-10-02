@@ -20,7 +20,7 @@ and end is the last chromEnd position.}
 
 \value{List of solver results, same as \code{\link{PeakSegFPOP_dir}}.}
 
-\author{Toby Dylan Hocking}
+\author{Toby Dylan Hocking <toby.hocking@r-project.org> [aut, cre]}
 
 
 

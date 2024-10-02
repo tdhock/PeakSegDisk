@@ -14,7 +14,7 @@ file. (used by the \code{\link{PeakSegFPOP_dir}} caching mechanism)}
 
 \value{Data table with one row.}
 
-\author{Toby Dylan Hocking}
+\author{Toby Dylan Hocking <toby.hocking@r-project.org> [aut, cre]}
 
 
 

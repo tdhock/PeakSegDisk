@@ -6,7 +6,6 @@ Authors@R: person(given = c("Toby", "Dylan"),
  family = "Hocking",
  role = c("aut", "cre"),
  email = "toby.hocking@r-project.org")
-Maintainer: Toby Dylan Hocking <toby.hocking@r-project.org>
 Description: Disk-based implementation of
  Functional Pruning Optimal Partitioning with up-down constraints
  <doi:10.18637/jss.v101.i10> for single-sample peak calling

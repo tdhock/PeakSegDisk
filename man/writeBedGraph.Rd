@@ -16,7 +16,7 @@ https://genome.ucsc.edu/goldenPath/help/bedgraph.html}
 
 \value{NULL (same as write.table).}
 
-\author{Toby Dylan Hocking}
+\author{Toby Dylan Hocking <toby.hocking@r-project.org> [aut, cre]}
 
 
 
