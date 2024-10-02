@@ -14,44 +14,44 @@ void PeakSegFPOP_interface
   char *db = temp_vec[0];
   int status = PeakSegFPOP_disk(bedGraph, penalty, db);
   if(status==ERROR_PENALTY_NOT_FINITE){
-    error("penalty=%s but must be finite", penalty);
+    Rf_error("penalty=%s but must be finite", penalty);
   }
   if(status==ERROR_PENALTY_NEGATIVE){
-    error("penalty=%s must be non-negative", penalty);
+    Rf_error("penalty=%s must be non-negative", penalty);
   }
   if(status==ERROR_UNABLE_TO_OPEN_BEDGRAPH){
-    error("unable to open input file for reading %s", bedGraph);
+    Rf_error("unable to open input file for reading %s", bedGraph);
   }
   if(status==ERROR_NOT_ENOUGH_COLUMNS){
-    error("each line of input data file %s should have exactly four columns", bedGraph);
+    Rf_error("each line of input data file %s should have exactly four columns", bedGraph);
   }
   if(status==ERROR_NON_INTEGER_DATA){
-    error("fourth column of input data file %s should be integer", bedGraph);
+    Rf_error("fourth column of input data file %s should be integer", bedGraph);
   }
   if(status==ERROR_INCONSISTENT_CHROMSTART_CHROMEND){
-    error("there should be no gaps (columns 2-3) in input data file %s", bedGraph);
+    Rf_error("there should be no gaps (columns 2-3) in input data file %s", bedGraph);
   }
   if(status==ERROR_WRITING_COST_FUNCTIONS){
-    error("unable to write to cost function database file %s", db);
+    Rf_error("unable to write to cost function database file %s", db);
   }
   if(status==ERROR_WRITING_LOSS_OUTPUT){
-    error("unable to write to loss output file %s_penalty=%s_loss.tsv",
+    Rf_error("unable to write to loss output file %s_penalty=%s_loss.tsv",
 	  bedGraph, penalty);
   }
   if(status==ERROR_WRITING_SEGMENTS_OUTPUT){
-    error("unable to write to segments output file %s_penalty=%s_segments.bed",
+    Rf_error("unable to write to segments output file %s_penalty=%s_segments.bed",
 	  bedGraph, penalty);
   }
   if(status==ERROR_NO_DATA){
-    error("input file %s contains no data", bedGraph);
+    Rf_error("input file %s contains no data", bedGraph);
   }
   if(status==ERROR_PENALTY_NOT_NUMERIC){
-    error
+    Rf_error
       ("penalty string '%s' is not numeric; it should be convertible to double",
        penalty);
   }
   if(status != 0){
-    error("error code %d", status);
+    Rf_error("error code %d", status);
   }
 }
   

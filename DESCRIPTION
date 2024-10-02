@@ -1,8 +1,11 @@
 Package: PeakSegDisk
 Type: Package
 Title: Disk-Based Constrained Change-Point Detection
-Version: 2023.11.27
-Author: Toby Dylan Hocking
+Version: 2024.10.1
+Authors@R: person(given = c("Toby", "Dylan"),
+ family = "Hocking",
+ role = c("aut", "cre"),
+ email = "toby.hocking@r-project.org")
 Maintainer: Toby Dylan Hocking <toby.hocking@r-project.org>
 Description: Disk-based implementation of
  Functional Pruning Optimal Partitioning with up-down constraints

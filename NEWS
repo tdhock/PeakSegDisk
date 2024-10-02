@@ -1,3 +1,7 @@
+Changes in version 2024.10.1
+
+- src/interface.cpp error -> Rf_error for compilation without remap, thanks CRAN.
+
 Changes in version 2023.11.27
 
 - remove extra Rprintf args from funPieceListLog.cpp to silence compilation warning on CRAN: funPieceListLog.cpp:1039:17: warning: too many arguments for format [-Wformat-extra-args]
